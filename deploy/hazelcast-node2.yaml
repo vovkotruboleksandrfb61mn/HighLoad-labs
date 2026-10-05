@@ -1,0 +1,31 @@
+# Hazelcast 5.4.0 member 2 of 3 (scripts/hz.sh starts it).
+# All members run on this machine: TCP-IP discovery over 127.0.0.1:5701-5703,
+# each pinned to its own port, and a CP Subsystem on all three members.
+hazelcast:
+  cluster-name: dev
+  instance-name: hz-node2
+  properties:
+    hazelcast.phone.home.enabled: false
+    hazelcast.socket.bind.any: false
+  network:
+    port:
+      port: 5702
+      auto-increment: false
+    interfaces:
+      enabled: true
+      interfaces:
+        - 127.0.0.1
+    join:
+      auto-detection:
+        enabled: false
+      multicast:
+        enabled: false
+      tcp-ip:
+        enabled: true
+        member-list:
+          - 127.0.0.1:5701
+          - 127.0.0.1:5702
+          - 127.0.0.1:5703
+  cp-subsystem:
+    cp-member-count: 3
+    group-size: 3

@@ -1,0 +1,4 @@
+repeat,store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+1,hazelcast,10,10000,100000,8.7884,11378.6,100000,100000,true
+2,hazelcast,10,10000,100000,8.8812,11259.7,100000,100000,true
+3,hazelcast,10,10000,100000,9.0846,11007.6,100000,100000,true

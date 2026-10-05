@@ -1,2 +1,13 @@
-.ipynb_checkpoints/
+# збірка Swift, дані запусків і завантажені інструменти
+.build/
+.data/
+.pgdata/
+.hzdata/
+.toolchain/
+perf.data*
+*.perf.data
+
+# Python і Jupyter
+.venv/
 __pycache__/
+.ipynb_checkpoints/

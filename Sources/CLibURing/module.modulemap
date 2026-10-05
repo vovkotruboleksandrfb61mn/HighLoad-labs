@@ -1,0 +1,5 @@
+module CLibURing [system] {
+    header "shim.h"
+    link "uring"
+    export *
+}

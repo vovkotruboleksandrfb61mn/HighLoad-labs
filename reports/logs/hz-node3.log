@@ -1,0 +1,209 @@
+########################################
+# JAVA=/usr/bin/java
+# JAVA_OPTS=--add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED -Dlog4j.shutdownHookEnabled=false -Dhazelcast.logging.shutdown=true -Dhazelcast.logging.type=log4j2 -Dlog4j.configurationFile=file:./deploy/hazelcast-log4j2.properties -Dhazelcast.config=./deploy/hazelcast-node3.yaml -Djet.custom.lib.dir=./.toolchain/hazelcast-5.4.0/custom-lib -Xms512m -Xmx512m
+# CLASSPATH=./.toolchain/hazelcast-5.4.0/lib:./.toolchain/hazelcast-5.4.0/lib/*:./.toolchain/hazelcast-5.4.0/bin/user-lib:./.toolchain/hazelcast-5.4.0/bin/user-lib/*
+########################################
+2026-10-02 18:52:32,089 [ INFO] [main] [c.h.i.c.AbstractConfigLocator]: Loading configuration './deploy/hazelcast-node3.yaml' from System property 'hazelcast.config'
+2026-10-02 18:52:32,093 [ INFO] [main] [c.h.i.c.AbstractConfigLocator]: Using configuration file at ./deploy/hazelcast-node3.yaml
+2026-10-02 18:52:32,932 [ INFO] [main] [c.h.i.AddressPicker]: [LOCAL] [dev] [5.4.0] Interfaces is enabled, trying to pick one address matching to one of: [127.0.0.1, 127.0.0.1]
+2026-10-02 18:52:32,976 [ INFO] [main] [c.h.s.logo]: [127.0.0.1]:5703 [dev] [5.4.0] 
+	o    o     o     o---o   o--o o      o---o     o     o----o o--o--o
+	|    |    / \       /         |     /         / \    |         |   
+	o----o       o     o   o----o |    o             o   o----o    |   
+	|    |  *     \   /           |     \       *     \       |    |   
+	o    o *       o o---o   o--o o----o o---o *       o o----o    o   
+2026-10-02 18:52:32,976 [ INFO] [main] [c.h.system]: [127.0.0.1]:5703 [dev] [5.4.0] Copyright (c) 2008-2024, Hazelcast, Inc. All Rights Reserved.
+2026-10-02 18:52:32,978 [ INFO] [main] [c.h.system]: [127.0.0.1]:5703 [dev] [5.4.0] Hazelcast Platform 5.4.0 (20240415) starting at [127.0.0.1]:5703
+2026-10-02 18:52:32,978 [ INFO] [main] [c.h.system]: [127.0.0.1]:5703 [dev] [5.4.0] Cluster name: dev
+2026-10-02 18:52:32,979 [ INFO] [main] [c.h.system]: [127.0.0.1]:5703 [dev] [5.4.0] Integrity Checker is disabled. Fail-fast on corrupted executables will not be performed. For more information, see the documentation for Integrity Checker.
+2026-10-02 18:52:32,982 [ INFO] [main] [c.h.system]: [127.0.0.1]:5703 [dev] [5.4.0] The Jet engine is disabled.
+To enable the Jet engine on the members, do one of the following:
+  - Change member config using Java API: config.getJetConfig().setEnabled(true)
+  - Change XML/YAML configuration property: Set hazelcast.jet.enabled to true
+  - Add system property: -Dhz.jet.enabled=true (for Hazelcast embedded, works only when loading config via Config.load)
+  - Add environment variable: HZ_JET_ENABLED=true (recommended when running container image. For Hazelcast embedded, works only when loading config via Config.load)
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.hazelcast.shaded.org.jctools.util.UnsafeAccess (file:./.toolchain/hazelcast-5.4.0/lib/hazelcast-5.4.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.hazelcast.shaded.org.jctools.util.UnsafeAccess
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+2026-10-02 18:52:34,153 [ INFO] [main] [c.h.s.security]: [127.0.0.1]:5703 [dev] [5.4.0] Enable DEBUG/FINE log level for log category com.hazelcast.system.security  or use -Dhazelcast.security.recommendations system property to see 🔒 security recommendations and the status of current config.
+2026-10-02 18:52:34,234 [ INFO] [main] [c.h.i.i.Node]: [127.0.0.1]:5703 [dev] [5.4.0] Using TCP/IP discovery
+2026-10-02 18:52:34,237 [ INFO] [main] [c.h.c.CPSubsystem]: [127.0.0.1]:5703 [dev] [5.4.0] CP Subsystem is enabled with 3 members.
+2026-10-02 18:52:34,483 [ INFO] [main] [c.h.i.d.Diagnostics]: [127.0.0.1]:5703 [dev] [5.4.0] Diagnostics disabled. To enable add -Dhazelcast.diagnostics.enabled=true to the JVM arguments.
+2026-10-02 18:52:34,495 [ INFO] [main] [c.h.c.LifecycleService]: [127.0.0.1]:5703 [dev] [5.4.0] [127.0.0.1]:5703 is STARTING
+2026-10-02 18:52:34,553 [ INFO] [hz.hz-node3.IO.thread-in-2] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5703 [dev] [5.4.0] Initialized new cluster connection between /127.0.0.1:5703 and /127.0.0.1:46877
+2026-10-02 18:52:34,556 [ INFO] [hz.hz-node3.IO.thread-in-0] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5703 [dev] [5.4.0] Initialized new cluster connection between /127.0.0.1:44451 and /127.0.0.1:5701
+2026-10-02 18:52:34,638 [ INFO] [hz.hz-node3.IO.thread-in-0] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5703 [dev] [5.4.0] Initialized new cluster connection between /127.0.0.1:5703 and /127.0.0.1:43699
+2026-10-02 18:52:34,652 [ INFO] [hz.hz-node3.IO.thread-in-1] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5703 [dev] [5.4.0] Initialized new cluster connection between /127.0.0.1:60437 and /127.0.0.1:5702
+2026-10-02 18:52:39,549 [ INFO] [hz.hz-node3.priority-generic-operation.thread-0] [c.h.i.c.ClusterService]: [127.0.0.1]:5703 [dev] [5.4.0] 
+
+Members {size:2, ver:2} [
+	Member [127.0.0.1]:5701 - 89211daa-dca9-4cd9-ab96-01a4ee1c39ae
+	Member [127.0.0.1]:5703 - 255cb7ad-4963-4017-a75b-6fcce9b43890 this
+]
+
+2026-10-02 18:52:39,550 [ INFO] [hz.hz-node3.generic-operation.thread-2] [c.h.i.c.i.ClusterJoinManager]: [127.0.0.1]:5703 [dev] [5.4.0] The address ([127.0.0.1]:5701) will be added as a temporary member address to the TCP-IP joiner configuration.
+2026-10-02 18:52:39,550 [ INFO] [hz.hz-node3.generic-operation.thread-4] [c.h.i.c.i.ClusterJoinManager]: [127.0.0.1]:5703 [dev] [5.4.0] The address ([127.0.0.1]:5701) will be added as a temporary member address to the TCP-IP joiner configuration.
+2026-10-02 18:52:39,556 [ INFO] [main] [c.h.c.LifecycleService]: [127.0.0.1]:5703 [dev] [5.4.0] [127.0.0.1]:5703 is STARTED
+2026-10-02 18:52:39,635 [ INFO] [hz.hz-node3.priority-generic-operation.thread-0] [c.h.i.c.ClusterService]: [127.0.0.1]:5703 [dev] [5.4.0] 
+
+Members {size:3, ver:3} [
+	Member [127.0.0.1]:5701 - 89211daa-dca9-4cd9-ab96-01a4ee1c39ae
+	Member [127.0.0.1]:5703 - 255cb7ad-4963-4017-a75b-6fcce9b43890 this
+	Member [127.0.0.1]:5702 - 1d98c7c6-827f-485a-945b-f73dcf06362a
+]
+
+2026-10-02 18:52:40,470 [ INFO] [hz.hz-node3.cached.thread-1] [c.h.c.i.RaftInvocationManager]: [127.0.0.1]:5703 [dev] [5.4.0] Replaced CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=-1}, members=[]} with CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=0}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]}
+2026-10-02 18:52:40,479 [ INFO] [hz.hz-node3.cached.thread-1] [c.h.c.i.RaftService]: [127.0.0.1]:5703 [dev] [5.4.0] RaftNode[CPGroupId{name='METADATA', seed=0, groupId=0}] is created with [RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}, RaftEndpoint{uuid='1d98c7c6-827f-485a-945b-f73dcf06362a'}, RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}]
+2026-10-02 18:52:40,480 [ INFO] [hz.hz-node3.partition-operation.thread-0] [c.h.c.i.r.i.RaftNode(METADATA)]: [127.0.0.1]:5703 [dev] [5.4.0] Status is set to: ACTIVE
+2026-10-02 18:52:42,784 [ INFO] [hz.hz-node3.partition-operation.thread-0] [c.h.c.i.r.i.h.PreVoteRequestHandlerTask(METADATA)]: [127.0.0.1]:5703 [dev] [5.4.0] Granted pre-vote for PreVoteRequest{candidate=RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}, nextTerm=1, lastLogTerm=0, lastLogIndex=0}
+2026-10-02 18:52:42,791 [ INFO] [hz.hz-node3.partition-operation.thread-0] [c.h.c.i.r.i.h.VoteRequestHandlerTask(METADATA)]: [127.0.0.1]:5703 [dev] [5.4.0] Moving to new term: 1 from current term: 0 after VoteRequest{candidate=RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}, term=1, lastLogTerm=0, lastLogIndex=0, disruptive=false}
+2026-10-02 18:52:42,791 [ INFO] [hz.hz-node3.partition-operation.thread-0] [c.h.c.i.r.i.RaftNode(METADATA)]: [127.0.0.1]:5703 [dev] [5.4.0] 
+
+CP Group Members {groupId: METADATA(0), size:3, term:1, logIndex:0} [
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} - FOLLOWER this
+]
+
+2026-10-02 18:52:42,791 [ INFO] [hz.hz-node3.partition-operation.thread-0] [c.h.c.i.r.i.h.VoteRequestHandlerTask(METADATA)]: [127.0.0.1]:5703 [dev] [5.4.0] Granted vote for VoteRequest{candidate=RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}, term=1, lastLogTerm=0, lastLogIndex=0, disruptive=false}
+2026-10-02 18:52:42,795 [ INFO] [hz.hz-node3.partition-operation.thread-0] [c.h.c.i.r.i.h.AppendRequestHandlerTask(METADATA)]: [127.0.0.1]:5703 [dev] [5.4.0] Setting leader: RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}
+2026-10-02 18:52:42,795 [ INFO] [hz.hz-node3.partition-operation.thread-0] [c.h.c.i.r.i.RaftNode(METADATA)]: [127.0.0.1]:5703 [dev] [5.4.0] 
+
+CP Group Members {groupId: METADATA(0), size:3, term:1, logIndex:0} [
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} - LEADER
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} - FOLLOWER this
+]
+
+2026-10-02 18:52:43,563 [ INFO] [hz.hz-node3.partition-operation.thread-0] [c.h.c.i.RaftInvocationManager]: [127.0.0.1]:5703 [dev] [5.4.0] Replaced CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=0}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]} with CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=2}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]}
+2026-10-02 18:52:43,566 [ INFO] [hz.hz-node3.partition-operation.thread-0] [c.h.c.i.RaftInvocationManager]: [127.0.0.1]:5703 [dev] [5.4.0] Replaced CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=2}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]} with CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=3}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]}
+2026-10-02 18:52:43,599 [ INFO] [hz.hz-node3.cached.thread-1] [c.h.c.i.MetadataRaftGroupManager]: [127.0.0.1]:5703 [dev] [5.4.0] CP Subsystem is initialized with: [CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]
+2026-10-02 18:52:43,599 [ INFO] [hz.hz-node3.partition-operation.thread-0] [c.h.c.i.RaftInvocationManager]: [127.0.0.1]:5703 [dev] [5.4.0] Replaced CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=3}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]} with CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=4}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]}
+2026-10-02 18:54:32,515 [ INFO] [hz.hz-node3.partition-operation.thread-0] [c.h.c.i.MetadataRaftGroupManager]: [127.0.0.1]:5703 [dev] [5.4.0] New CPGroupId{name='default', seed=0, groupId=3883} is created with [CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]
+2026-10-02 18:54:32,516 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.RaftNode(default)]: [127.0.0.1]:5703 [dev] [5.4.0] Status is set to: ACTIVE
+2026-10-02 18:54:32,515 [ INFO] [hz.hz-node3.generic-operation.thread-0] [c.h.c.i.RaftService]: [127.0.0.1]:5703 [dev] [5.4.0] RaftNode[CPGroupId{name='default', seed=0, groupId=3883}] is created with [RaftEndpoint{uuid='1d98c7c6-827f-485a-945b-f73dcf06362a'}, RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}, RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}]
+2026-10-02 18:54:34,799 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.h.PreVoteRequestHandlerTask(default)]: [127.0.0.1]:5703 [dev] [5.4.0] Granted pre-vote for PreVoteRequest{candidate=RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}, nextTerm=1, lastLogTerm=0, lastLogIndex=0}
+2026-10-02 18:54:34,800 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.h.VoteRequestHandlerTask(default)]: [127.0.0.1]:5703 [dev] [5.4.0] Moving to new term: 1 from current term: 0 after VoteRequest{candidate=RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}, term=1, lastLogTerm=0, lastLogIndex=0, disruptive=false}
+2026-10-02 18:54:34,801 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.RaftNode(default)]: [127.0.0.1]:5703 [dev] [5.4.0] 
+
+CP Group Members {groupId: default(3883), size:3, term:1, logIndex:0} [
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} - FOLLOWER this
+]
+
+2026-10-02 18:54:34,801 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.h.VoteRequestHandlerTask(default)]: [127.0.0.1]:5703 [dev] [5.4.0] Granted vote for VoteRequest{candidate=RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}, term=1, lastLogTerm=0, lastLogIndex=0, disruptive=false}
+2026-10-02 18:54:34,801 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.h.AppendRequestHandlerTask(default)]: [127.0.0.1]:5703 [dev] [5.4.0] Setting leader: RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}
+2026-10-02 18:54:34,801 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.RaftNode(default)]: [127.0.0.1]:5703 [dev] [5.4.0] 
+
+CP Group Members {groupId: default(3883), size:3, term:1, logIndex:0} [
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} - LEADER
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} - FOLLOWER this
+]
+
+2026-10-02 18:54:43,609 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.h.TriggerLeaderElectionHandlerTask(default)]: [127.0.0.1]:5703 [dev] [5.4.0] Starting a new leader election since the current leader: RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'} in term: 1 asked for a leadership transfer!
+2026-10-02 18:54:43,612 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.t.LeaderElectionTask(default)]: [127.0.0.1]:5703 [dev] [5.4.0] Leader election started for term: 2, last log index: 100002, last log term: 1
+2026-10-02 18:54:43,612 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.RaftNode(default)]: [127.0.0.1]:5703 [dev] [5.4.0] 
+
+CP Group Members {groupId: default(3883), size:3, term:2, logIndex:0} [
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} - CANDIDATE this
+]
+
+2026-10-02 18:54:43,616 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.h.VoteResponseHandlerTask(default)]: [127.0.0.1]:5703 [dev] [5.4.0] Vote granted from RaftEndpoint{uuid='1d98c7c6-827f-485a-945b-f73dcf06362a'} for term: 2, number of votes: 2, majority: 2
+2026-10-02 18:54:43,617 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.h.VoteResponseHandlerTask(default)]: [127.0.0.1]:5703 [dev] [5.4.0] We are the LEADER!
+2026-10-02 18:54:43,618 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.RaftNode(default)]: [127.0.0.1]:5703 [dev] [5.4.0] 
+
+CP Group Members {groupId: default(3883), size:3, term:2, logIndex:0} [
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} - LEADER this
+]
+
+2026-10-02 18:54:43,620 [ INFO] [hz.hz-node3.partition-operation.thread-9] [c.h.c.i.r.i.h.VoteResponseHandlerTask(default)]: [127.0.0.1]:5703 [dev] [5.4.0] Ignored VoteResponse{voter=RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}, term=2, granted=true}. We are not CANDIDATE anymore.
+2026-10-02 18:57:19,577 [ INFO] [hz.hz-node3.HealthMonitor] [c.h.i.d.HealthMonitor]: [127.0.0.1]:5703 [dev] [5.4.0] The HealthMonitor has detected a high load on the system. For more detailed information,
+enable Diagnostics by adding the property -Dhazelcast.diagnostics.enabled=true
+2026-10-02 18:57:19,587 [ INFO] [hz.hz-node3.HealthMonitor] [c.h.i.d.HealthMonitor]: [127.0.0.1]:5703 [dev] [5.4.0] processors=16, physical.memory.total=24,0G, physical.memory.free=17,7G, swap.space.total=72,0G, swap.space.free=47,9G, heap.memory.used=269,4M, heap.memory.free=242,3M, heap.memory.total=512,0M, heap.memory.max=512,0M, heap.memory.used/total=52,61%, heap.memory.used/max=52,61%, minor.gc.count=3, minor.gc.time=45ms, major.gc.count=0, major.gc.time=0ms, unknown.gc.count=2, unknown.gc.time=12ms, load.process=0,05%, load.system=99,64%, load.systemAverage=7,77, thread.count=67, thread.peakCount=68, cluster.timeDiff=-1, event.q.size=0, executor.q.async.size=0, executor.q.client.size=0, executor.q.client.query.size=0, executor.q.client.blocking.size=0, executor.q.query.size=0, executor.q.scheduled.size=0, executor.q.io.size=0, executor.q.system.size=0, executor.q.operations.size=0, executor.q.priorityOperation.size=0, operations.completed.count=206516, executor.q.mapLoad.size=0, executor.q.mapLoadAllKeys.size=0, executor.q.cluster.size=0, executor.q.response.size=0, operations.running.count=0, operations.pending.invocations.percentage=0,00%, operations.pending.invocations.count=0, proxy.count=0, clientEndpoint.count=0, connection.active.count=4, client.connection.count=0, connection.count=2
+2026-10-02 18:58:52,672 [ INFO] [hz.hz-node3.IO.thread-in-2] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5703 [dev] [5.4.0] Connection[id=3, /127.0.0.1:5703->/127.0.0.1:46877, qualifier=null, endpoint=[127.0.0.1]:5701, remoteUuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, alive=false, connectionType=MEMBER, planeIndex=0] closed. Reason: Connection closed by the other side
+2026-10-02 18:58:52,672 [ INFO] [hz.hz-node3.IO.thread-in-0] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5703 [dev] [5.4.0] Connection[id=2, /127.0.0.1:44451->/127.0.0.1:5701, qualifier=null, endpoint=[127.0.0.1]:5701, remoteUuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, alive=false, connectionType=MEMBER, planeIndex=0] closed. Reason: Connection closed by the other side
+2026-10-02 18:58:52,675 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5701, timeout: 10000, bind-any: false
+2026-10-02 18:58:52,676 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5701. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5701]
+2026-10-02 18:58:52,776 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5701, timeout: 10000, bind-any: false
+2026-10-02 18:58:52,777 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5701. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5701]
+2026-10-02 18:58:52,877 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5701, timeout: 10000, bind-any: false
+2026-10-02 18:58:52,877 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5701. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5701]
+2026-10-02 18:58:52,978 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5701, timeout: 10000, bind-any: false
+2026-10-02 18:58:52,978 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5701. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5701]
+2026-10-02 18:58:53,079 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5701, timeout: 10000, bind-any: false
+2026-10-02 18:58:53,079 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5701. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5701]
+2026-10-02 18:58:53,079 [ WARN] [hz.hz-node3.cached.thread-2] [c.h.i.s.t.TcpServerConnectionErrorHandler]: [127.0.0.1]:5703 [dev] [5.4.0] Removing connection to endpoint [127.0.0.1]:5701 Cause => java.io.IOException {У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5701}, Error-Count: 5
+2026-10-02 18:58:53,080 [ WARN] [hz.hz-node3.cached.thread-2] [c.h.i.c.i.MembershipManager]: [127.0.0.1]:5703 [dev] [5.4.0] Member [127.0.0.1]:5701 - 89211daa-dca9-4cd9-ab96-01a4ee1c39ae is suspected to be dead for reason: No connection
+2026-10-02 18:58:53,080 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.c.i.MembershipManager]: [127.0.0.1]:5703 [dev] [5.4.0] Starting mastership claim process...
+2026-10-02 18:58:53,081 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.i.c.i.MembershipManager]: [127.0.0.1]:5703 [dev] [5.4.0] Local MembersView{version=3, members=[MemberInfo{address=[127.0.0.1]:5701, uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, cpMemberUUID=null, liteMember=false, memberListJoinVersion=1}, MemberInfo{address=[127.0.0.1]:5703, uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, cpMemberUUID=null, liteMember=false, memberListJoinVersion=2}, MemberInfo{address=[127.0.0.1]:5702, uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, cpMemberUUID=null, liteMember=false, memberListJoinVersion=3}]} with suspected members: [Member [127.0.0.1]:5701 - 89211daa-dca9-4cd9-ab96-01a4ee1c39ae] and initial addresses to ask: [Member [127.0.0.1]:5702 - 1d98c7c6-827f-485a-945b-f73dcf06362a]
+2026-10-02 18:58:53,086 [ INFO] [hz.hz-node3.cached.thread-4] [c.h.i.p.i.PartitionStateManager]: [127.0.0.1]:5703 [dev] [5.4.0] Storing snapshot of partition assignments while removing UUID 89211daa-dca9-4cd9-ab96-01a4ee1c39ae
+2026-10-02 18:58:53,087 [ INFO] [hz.hz-node3.cached.thread-4] [c.h.i.c.ClusterService]: [127.0.0.1]:5703 [dev] [5.4.0] 
+
+Members {size:2, ver:4} [
+	Member [127.0.0.1]:5703 - 255cb7ad-4963-4017-a75b-6fcce9b43890 this
+	Member [127.0.0.1]:5702 - 1d98c7c6-827f-485a-945b-f73dcf06362a
+]
+
+2026-10-02 18:58:53,088 [ INFO] [hz.hz-node3.cached.thread-4] [c.h.i.c.i.MembershipManager]: [127.0.0.1]:5703 [dev] [5.4.0] Mastership is claimed with: MembersView{version=4, members=[MemberInfo{address=[127.0.0.1]:5703, uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, cpMemberUUID=null, liteMember=false, memberListJoinVersion=2}, MemberInfo{address=[127.0.0.1]:5702, uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, cpMemberUUID=null, liteMember=false, memberListJoinVersion=3}]}
+2026-10-02 18:58:53,088 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.t.TransactionManagerService]: [127.0.0.1]:5703 [dev] [5.4.0] Committing/rolling-back live transactions of [127.0.0.1]:5701, UUID: 89211daa-dca9-4cd9-ab96-01a4ee1c39ae
+2026-10-02 18:58:53,090 [ WARN] [hz.hz-node3.cached.thread-2] [c.h.c.i.RaftService]: [127.0.0.1]:5703 [dev] [5.4.0] CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} is not present in the cluster. It will be auto-removed from the CP Subsystem after 14400 seconds.
+2026-10-02 18:58:53,338 [ INFO] [hz.hz-node3.migration] [c.h.i.p.InternalPartitionService]: [127.0.0.1]:5703 [dev] [5.4.0] Fetching partition tables from cluster to determine the most recent one... Local stamp: 8082085890800019451
+2026-10-02 18:58:53,341 [ INFO] [hz.hz-node3.migration] [c.h.i.p.InternalPartitionService]: [127.0.0.1]:5703 [dev] [5.4.0] Most recent partition table is determined.
+2026-10-02 18:58:53,341 [ INFO] [hz.hz-node3.migration] [c.h.i.p.InternalPartitionService]: [127.0.0.1]:5703 [dev] [5.4.0] Applying the most recent of partition state...
+2026-10-02 18:58:53,342 [ WARN] [hz.hz-node3.migration] [c.h.i.p.InternalPartitionService]: [127.0.0.1]:5703 [dev] [5.4.0] Following unknown addresses are found in partition table sent from master[[127.0.0.1]:5703]. (Probably they have recently joined or left the cluster.) {
+	[127.0.0.1]:5701 - 89211daa-dca9-4cd9-ab96-01a4ee1c39ae
+}
+2026-10-02 18:58:53,393 [ INFO] [hz.hz-node3.migration] [c.h.i.p.i.MigrationManager]: [127.0.0.1]:5703 [dev] [5.4.0] Repartitioning cluster data. Migration tasks count: 183
+2026-10-02 18:58:53,510 [ INFO] [hz.hz-node3.migration] [c.h.i.p.i.MigrationManager]: [127.0.0.1]:5703 [dev] [5.4.0] All migration tasks have been completed. (repartitionTime=Fri Oct 02 18:58:53 EEST 2026, plannedMigrations=183, completedMigrations=183, remainingMigrations=0, totalCompletedMigrations=183)
+2026-10-02 18:58:53,676 [ INFO] [hz.hz-node3.IO.thread-in-1] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5703 [dev] [5.4.0] Connection[id=1, /127.0.0.1:60437->/127.0.0.1:5702, qualifier=null, endpoint=[127.0.0.1]:5702, remoteUuid=1d98c7c6-827f-485a-945b-f73dcf06362a, alive=false, connectionType=MEMBER, planeIndex=0] closed. Reason: Connection closed by the other side
+2026-10-02 18:58:53,676 [ INFO] [hz.hz-node3.IO.thread-in-0] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5703 [dev] [5.4.0] Connection[id=4, /127.0.0.1:5703->/127.0.0.1:43699, qualifier=null, endpoint=[127.0.0.1]:5702, remoteUuid=1d98c7c6-827f-485a-945b-f73dcf06362a, alive=false, connectionType=MEMBER, planeIndex=0] closed. Reason: Connection closed by the other side
+2026-10-02 18:58:53,676 [ INFO] [hz.hz-node3.cached.thread-1] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5702, timeout: 10000, bind-any: false
+2026-10-02 18:58:53,676 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5702, timeout: 10000, bind-any: false
+2026-10-02 18:58:53,676 [ INFO] [hz.hz-node3.cached.thread-1] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5702. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5702]
+2026-10-02 18:58:53,677 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5702. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5702]
+2026-10-02 18:58:53,777 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5702, timeout: 10000, bind-any: false
+2026-10-02 18:58:53,777 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5702. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5702]
+2026-10-02 18:58:53,862 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5702, timeout: 10000, bind-any: false
+2026-10-02 18:58:53,862 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5702. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5702]
+2026-10-02 18:58:53,878 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5702, timeout: 10000, bind-any: false
+2026-10-02 18:58:53,878 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5702. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5702]
+2026-10-02 18:58:53,963 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5702, timeout: 10000, bind-any: false
+2026-10-02 18:58:53,963 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5702. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5702]
+2026-10-02 18:58:53,978 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Connecting to /127.0.0.1:5702, timeout: 10000, bind-any: false
+2026-10-02 18:58:53,979 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnector]: [127.0.0.1]:5703 [dev] [5.4.0] Could not connect to: /127.0.0.1:5702. Reason: IOException[У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5702]
+2026-10-02 18:58:53,979 [ WARN] [hz.hz-node3.cached.thread-9] [c.h.i.s.t.TcpServerConnectionErrorHandler]: [127.0.0.1]:5703 [dev] [5.4.0] Removing connection to endpoint [127.0.0.1]:5702 Cause => java.io.IOException {У з'єднанні відмовлено (connect failed) to address /127.0.0.1:5702}, Error-Count: 5
+2026-10-02 18:58:53,979 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.c.i.MembershipManager]: [127.0.0.1]:5703 [dev] [5.4.0] Removing Member [127.0.0.1]:5702 - 1d98c7c6-827f-485a-945b-f73dcf06362a
+2026-10-02 18:58:53,979 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.p.i.PartitionStateManager]: [127.0.0.1]:5703 [dev] [5.4.0] Storing snapshot of partition assignments while removing UUID 1d98c7c6-827f-485a-945b-f73dcf06362a
+2026-10-02 18:58:53,980 [ INFO] [hz.hz-node3.cached.thread-2] [c.h.t.TransactionManagerService]: [127.0.0.1]:5703 [dev] [5.4.0] Committing/rolling-back live transactions of [127.0.0.1]:5702, UUID: 1d98c7c6-827f-485a-945b-f73dcf06362a
+2026-10-02 18:58:53,980 [ INFO] [hz.hz-node3.cached.thread-9] [c.h.i.c.ClusterService]: [127.0.0.1]:5703 [dev] [5.4.0] 
+
+Members {size:1, ver:5} [
+	Member [127.0.0.1]:5703 - 255cb7ad-4963-4017-a75b-6fcce9b43890 this
+]
+
+2026-10-02 18:58:53,980 [ WARN] [hz.hz-node3.cached.thread-2] [c.h.c.i.RaftService]: [127.0.0.1]:5703 [dev] [5.4.0] CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} is not present in the cluster. It will be auto-removed from the CP Subsystem after 14400 seconds.
+2026-10-02 18:58:54,008 [ INFO] [hz.hz-node3.migration] [c.h.i.p.i.MigrationManager]: [127.0.0.1]:5703 [dev] [5.4.0] Partition balance is ok, no need to repartition.
+2026-10-02 18:58:54,680 [ INFO] [hz.ShutdownThread] [c.h.i.i.Node]: [127.0.0.1]:5703 [dev] [5.4.0] Running shutdown hook... Current node state: ACTIVE
+2026-10-02 18:58:54,680 [ INFO] [hz.ShutdownThread] [c.h.c.LifecycleService]: [127.0.0.1]:5703 [dev] [5.4.0] [127.0.0.1]:5703 is SHUTTING_DOWN
+2026-10-02 18:58:54,681 [ WARN] [hz.ShutdownThread] [c.h.i.i.Node]: [127.0.0.1]:5703 [dev] [5.4.0] Terminating forcefully...
+2026-10-02 18:58:54,681 [ INFO] [hz.ShutdownThread] [c.h.i.i.Node]: [127.0.0.1]:5703 [dev] [5.4.0] Shutting down connection manager...
+2026-10-02 18:58:54,683 [ INFO] [hz.ShutdownThread] [c.h.i.i.Node]: [127.0.0.1]:5703 [dev] [5.4.0] Shutting down node engine...
+2026-10-02 18:58:54,683 [ WARN] [hz.hz-node3.async.thread-11] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5703 [dev] [5.4.0] Could not get CP group info of CPGroupId{name='default', seed=0, groupId=3883}
+com.hazelcast.core.HazelcastInstanceNotActiveException: Hazelcast instance is not active!
+	at com.hazelcast.spi.impl.operationservice.impl.InvocationRegistry.shutdown(InvocationRegistry.java:229) ~[hazelcast-5.4.0.jar:5.4.0]
+	at com.hazelcast.spi.impl.operationservice.impl.OperationServiceImpl.shutdownInvocations(OperationServiceImpl.java:562) ~[hazelcast-5.4.0.jar:5.4.0]
+	at com.hazelcast.spi.impl.NodeEngineImpl.shutdown(NodeEngineImpl.java:592) ~[hazelcast-5.4.0.jar:5.4.0]
+	at com.hazelcast.instance.impl.Node.shutdownServices(Node.java:664) ~[hazelcast-5.4.0.jar:5.4.0]
+	at com.hazelcast.instance.impl.Node.shutdown(Node.java:599) ~[hazelcast-5.4.0.jar:5.4.0]
+	at com.hazelcast.instance.impl.LifecycleServiceImpl.shutdown(LifecycleServiceImpl.java:101) ~[hazelcast-5.4.0.jar:5.4.0]
+	at com.hazelcast.instance.impl.LifecycleServiceImpl.terminate(LifecycleServiceImpl.java:89) ~[hazelcast-5.4.0.jar:5.4.0]
+	at com.hazelcast.instance.impl.Node$NodeShutdownHookThread.run(Node.java:843) ~[hazelcast-5.4.0.jar:5.4.0]
+2026-10-02 18:58:54,742 [ INFO] [hz.ShutdownThread] [c.h.i.i.NodeExtension]: [127.0.0.1]:5703 [dev] [5.4.0] Destroying node NodeExtension.
+2026-10-02 18:58:54,743 [ INFO] [hz.ShutdownThread] [c.h.i.i.Node]: [127.0.0.1]:5703 [dev] [5.4.0] Hazelcast Shutdown is completed in 62 ms.

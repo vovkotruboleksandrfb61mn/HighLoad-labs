@@ -1,0 +1,3 @@
+store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+memory,10,10000,100000,2.9187,34261.2,100000,100000,true
+disk,10,10000,100000,600.0003,166.7,100000,100000,true

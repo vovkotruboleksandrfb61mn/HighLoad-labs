@@ -1,0 +1,341 @@
+########################################
+# JAVA=/usr/bin/java
+# JAVA_OPTS=--add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED -Dlog4j.shutdownHookEnabled=false -Dhazelcast.logging.shutdown=true -Dhazelcast.logging.type=log4j2 -Dlog4j.configurationFile=file:./deploy/hazelcast-log4j2.properties -Dhazelcast.config=./deploy/hazelcast-node1.yaml -Djet.custom.lib.dir=./.toolchain/hazelcast-5.4.0/custom-lib -Xms512m -Xmx512m
+# CLASSPATH=./.toolchain/hazelcast-5.4.0/lib:./.toolchain/hazelcast-5.4.0/lib/*:./.toolchain/hazelcast-5.4.0/bin/user-lib:./.toolchain/hazelcast-5.4.0/bin/user-lib/*
+########################################
+2026-10-02 18:52:32,089 [ INFO] [main] [c.h.i.c.AbstractConfigLocator]: Loading configuration './deploy/hazelcast-node1.yaml' from System property 'hazelcast.config'
+2026-10-02 18:52:32,093 [ INFO] [main] [c.h.i.c.AbstractConfigLocator]: Using configuration file at ./deploy/hazelcast-node1.yaml
+2026-10-02 18:52:32,929 [ INFO] [main] [c.h.i.AddressPicker]: [LOCAL] [dev] [5.4.0] Interfaces is enabled, trying to pick one address matching to one of: [127.0.0.1, 127.0.0.1]
+2026-10-02 18:52:32,990 [ INFO] [main] [c.h.s.logo]: [127.0.0.1]:5701 [dev] [5.4.0] 
+	o    o     o     o---o   o--o o      o---o     o     o----o o--o--o
+	|    |    / \       /         |     /         / \    |         |   
+	o----o       o     o   o----o |    o             o   o----o    |   
+	|    |  *     \   /           |     \       *     \       |    |   
+	o    o *       o o---o   o--o o----o o---o *       o o----o    o   
+2026-10-02 18:52:32,990 [ INFO] [main] [c.h.system]: [127.0.0.1]:5701 [dev] [5.4.0] Copyright (c) 2008-2024, Hazelcast, Inc. All Rights Reserved.
+2026-10-02 18:52:32,992 [ INFO] [main] [c.h.system]: [127.0.0.1]:5701 [dev] [5.4.0] Hazelcast Platform 5.4.0 (20240415) starting at [127.0.0.1]:5701
+2026-10-02 18:52:32,993 [ INFO] [main] [c.h.system]: [127.0.0.1]:5701 [dev] [5.4.0] Cluster name: dev
+2026-10-02 18:52:32,994 [ INFO] [main] [c.h.system]: [127.0.0.1]:5701 [dev] [5.4.0] Integrity Checker is disabled. Fail-fast on corrupted executables will not be performed. For more information, see the documentation for Integrity Checker.
+2026-10-02 18:52:32,998 [ INFO] [main] [c.h.system]: [127.0.0.1]:5701 [dev] [5.4.0] The Jet engine is disabled.
+To enable the Jet engine on the members, do one of the following:
+  - Change member config using Java API: config.getJetConfig().setEnabled(true)
+  - Change XML/YAML configuration property: Set hazelcast.jet.enabled to true
+  - Add system property: -Dhz.jet.enabled=true (for Hazelcast embedded, works only when loading config via Config.load)
+  - Add environment variable: HZ_JET_ENABLED=true (recommended when running container image. For Hazelcast embedded, works only when loading config via Config.load)
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.hazelcast.shaded.org.jctools.util.UnsafeAccess (file:./.toolchain/hazelcast-5.4.0/lib/hazelcast-5.4.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.hazelcast.shaded.org.jctools.util.UnsafeAccess
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+2026-10-02 18:52:34,161 [ INFO] [main] [c.h.s.security]: [127.0.0.1]:5701 [dev] [5.4.0] Enable DEBUG/FINE log level for log category com.hazelcast.system.security  or use -Dhazelcast.security.recommendations system property to see 🔒 security recommendations and the status of current config.
+2026-10-02 18:52:34,258 [ INFO] [main] [c.h.i.i.Node]: [127.0.0.1]:5701 [dev] [5.4.0] Using TCP/IP discovery
+2026-10-02 18:52:34,261 [ INFO] [main] [c.h.c.CPSubsystem]: [127.0.0.1]:5701 [dev] [5.4.0] CP Subsystem is enabled with 3 members.
+2026-10-02 18:52:34,469 [ INFO] [main] [c.h.i.d.Diagnostics]: [127.0.0.1]:5701 [dev] [5.4.0] Diagnostics disabled. To enable add -Dhazelcast.diagnostics.enabled=true to the JVM arguments.
+2026-10-02 18:52:34,482 [ INFO] [main] [c.h.c.LifecycleService]: [127.0.0.1]:5701 [dev] [5.4.0] [127.0.0.1]:5701 is STARTING
+2026-10-02 18:52:34,553 [ INFO] [hz.hz-node1.IO.thread-in-2] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Initialized new cluster connection between /127.0.0.1:5701 and /127.0.0.1:44451
+2026-10-02 18:52:34,555 [ INFO] [hz.hz-node1.IO.thread-in-1] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Initialized new cluster connection between /127.0.0.1:46877 and /127.0.0.1:5703
+2026-10-02 18:52:34,651 [ INFO] [hz.hz-node1.IO.thread-in-0] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Initialized new cluster connection between /127.0.0.1:5701 and /127.0.0.1:53295
+2026-10-02 18:52:34,652 [ INFO] [hz.hz-node1.IO.thread-in-0] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Initialized new cluster connection between /127.0.0.1:50989 and /127.0.0.1:5702
+2026-10-02 18:52:39,538 [ INFO] [main] [c.h.i.c.ClusterService]: [127.0.0.1]:5701 [dev] [5.4.0] 
+
+Members {size:1, ver:1} [
+	Member [127.0.0.1]:5701 - 89211daa-dca9-4cd9-ab96-01a4ee1c39ae this
+]
+
+2026-10-02 18:52:39,544 [ INFO] [hz.hz-node1.generic-operation.thread-4] [c.h.i.c.ClusterService]: [127.0.0.1]:5701 [dev] [5.4.0] 
+
+Members {size:2, ver:2} [
+	Member [127.0.0.1]:5701 - 89211daa-dca9-4cd9-ab96-01a4ee1c39ae this
+	Member [127.0.0.1]:5703 - 255cb7ad-4963-4017-a75b-6fcce9b43890
+]
+
+2026-10-02 18:52:39,544 [ INFO] [main] [c.h.c.LifecycleService]: [127.0.0.1]:5701 [dev] [5.4.0] [127.0.0.1]:5701 is STARTED
+2026-10-02 18:52:39,632 [ INFO] [hz.hz-node1.priority-generic-operation.thread-0] [c.h.i.c.ClusterService]: [127.0.0.1]:5701 [dev] [5.4.0] 
+
+Members {size:3, ver:3} [
+	Member [127.0.0.1]:5701 - 89211daa-dca9-4cd9-ab96-01a4ee1c39ae this
+	Member [127.0.0.1]:5703 - 255cb7ad-4963-4017-a75b-6fcce9b43890
+	Member [127.0.0.1]:5702 - 1d98c7c6-827f-485a-945b-f73dcf06362a
+]
+
+2026-10-02 18:52:40,460 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftInvocationManager]: [127.0.0.1]:5701 [dev] [5.4.0] Replaced CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=-1}, members=[]} with CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=0}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]}
+2026-10-02 18:52:40,468 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftService]: [127.0.0.1]:5701 [dev] [5.4.0] RaftNode[CPGroupId{name='METADATA', seed=0, groupId=0}] is created with [RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}, RaftEndpoint{uuid='1d98c7c6-827f-485a-945b-f73dcf06362a'}, RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}]
+2026-10-02 18:52:40,469 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.RaftNode(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] Status is set to: ACTIVE
+2026-10-02 18:52:40,470 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.i.p.i.PartitionStateManager]: [127.0.0.1]:5701 [dev] [5.4.0] Initializing cluster partition table arrangement...
+2026-10-02 18:52:42,780 [ WARN] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.RaftNodeImpl$LeaderFailureDetectionTask(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] We are FOLLOWER and there is no current leader. Will start new election round...
+2026-10-02 18:52:42,782 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.t.PreVoteTask(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] Pre-vote started for next term: 1, last log index: 0, last log term: 0
+2026-10-02 18:52:42,782 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.RaftNode(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] 
+
+CP Group Members {groupId: METADATA(0), size:3, term:0, logIndex:0} [
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} - FOLLOWER this
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}
+]
+
+2026-10-02 18:52:42,787 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.h.PreVoteResponseHandlerTask(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] Pre-vote granted from RaftEndpoint{uuid='1d98c7c6-827f-485a-945b-f73dcf06362a'} for term: 1, number of votes: 2, majority: 2
+2026-10-02 18:52:42,787 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.h.PreVoteResponseHandlerTask(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] We have the majority during pre-vote phase. Let's start real election!
+2026-10-02 18:52:42,787 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.t.LeaderElectionTask(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] Leader election started for term: 1, last log index: 0, last log term: 0
+2026-10-02 18:52:42,788 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.RaftNode(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] 
+
+CP Group Members {groupId: METADATA(0), size:3, term:1, logIndex:0} [
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} - CANDIDATE this
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}
+]
+
+2026-10-02 18:52:42,790 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.h.PreVoteResponseHandlerTask(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] Ignored PreVoteResponse{voter=RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}, term=1, granted=true}. We are not FOLLOWER anymore.
+2026-10-02 18:52:42,792 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.h.VoteResponseHandlerTask(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] Vote granted from RaftEndpoint{uuid='1d98c7c6-827f-485a-945b-f73dcf06362a'} for term: 1, number of votes: 2, majority: 2
+2026-10-02 18:52:42,792 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.h.VoteResponseHandlerTask(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] We are the LEADER!
+2026-10-02 18:52:42,793 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.RaftNode(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] 
+
+CP Group Members {groupId: METADATA(0), size:3, term:1, logIndex:0} [
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} - LEADER this
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}
+]
+
+2026-10-02 18:52:42,794 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.r.i.h.VoteResponseHandlerTask(METADATA)]: [127.0.0.1]:5701 [dev] [5.4.0] Ignored VoteResponse{voter=RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}, term=1, granted=true}. We are not CANDIDATE anymore.
+2026-10-02 18:52:43,558 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.RaftInvocationManager]: [127.0.0.1]:5701 [dev] [5.4.0] Replaced CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=0}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]} with CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=2}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]}
+2026-10-02 18:52:43,564 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.RaftInvocationManager]: [127.0.0.1]:5701 [dev] [5.4.0] Replaced CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=2}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]} with CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=3}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]}
+2026-10-02 18:52:43,598 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.RaftInvocationManager]: [127.0.0.1]:5701 [dev] [5.4.0] Replaced CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=3}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]} with CPMembersContainer{version=CPMembersVersion{groupIdSeed=0, version=4}, members=[CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]}
+2026-10-02 18:52:43,598 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.MetadataRaftGroupManager]: [127.0.0.1]:5701 [dev] [5.4.0] CP Subsystem is initialized with: [CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]
+2026-10-02 18:52:58,430 [ INFO] [hz.hz-node1.priority-generic-operation.thread-0] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=5, /127.0.0.1:5701->/127.0.0.1:36350, qualifier=null, endpoint=[127.0.0.1]:36350, remoteUuid=8290f9bc-a60f-4f8c-8424-f8dce1747038, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: 8290f9bc-a60f-4f8c-8424-f8dce1747038, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:53:04,510 [ INFO] [hz.hz-node1.IO.thread-in-1] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=5, /127.0.0.1:5701->/127.0.0.1:36350, qualifier=null, endpoint=[127.0.0.1]:36350, remoteUuid=8290f9bc-a60f-4f8c-8424-f8dce1747038, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:53:04,513 [ INFO] [hz.hz-node1.event-1] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=5, /127.0.0.1:5701->/127.0.0.1:36350, qualifier=null, endpoint=[127.0.0.1]:36350, remoteUuid=8290f9bc-a60f-4f8c-8424-f8dce1747038, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=8290f9bc-a60f-4f8c-8424-f8dce1747038, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956378427, latest clientAttributes=null, labels=[]}
+2026-10-02 18:53:04,531 [ INFO] [hz.hz-node1.priority-generic-operation.thread-0] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=6, /127.0.0.1:5701->/127.0.0.1:57046, qualifier=null, endpoint=[127.0.0.1]:57046, remoteUuid=53150d99-a358-4fca-895f-294aa5f42b05, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: 53150d99-a358-4fca-895f-294aa5f42b05, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:53:43,604 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 0,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:53:43,609 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 0,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:53:43,610 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} with 1 leaderships.
+2026-10-02 18:53:43,610 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] No candidate could be found to get leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}. Skipping to next...
+2026-10-02 18:53:43,611 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 0,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:53:43,611 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] CPGroup leadership balance is fine, cannot rebalance further...
+2026-10-02 18:54:05,067 [ INFO] [hz.hz-node1.IO.thread-in-2] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=6, /127.0.0.1:5701->/127.0.0.1:57046, qualifier=null, endpoint=[127.0.0.1]:57046, remoteUuid=53150d99-a358-4fca-895f-294aa5f42b05, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:54:05,068 [ INFO] [hz.hz-node1.event-2] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=6, /127.0.0.1:5701->/127.0.0.1:57046, qualifier=null, endpoint=[127.0.0.1]:57046, remoteUuid=53150d99-a358-4fca-895f-294aa5f42b05, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=53150d99-a358-4fca-895f-294aa5f42b05, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956384531, latest clientAttributes=null, labels=[]}
+2026-10-02 18:54:05,082 [ INFO] [hz.hz-node1.priority-generic-operation.thread-0] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=7, /127.0.0.1:5701->/127.0.0.1:44208, qualifier=null, endpoint=[127.0.0.1]:44208, remoteUuid=fcd0bcaf-be9d-4093-bbc2-4b3be8c9562c, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: fcd0bcaf-be9d-4093-bbc2-4b3be8c9562c, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:54:14,458 [ WARN] [hz.hz-node1.cached.thread-1] [c.h.c.i.ClientEngine]: [127.0.0.1]:5701 [dev] [5.4.0] No connection left to client cluster wide 53150d99-a358-4fca-895f-294aa5f42b05 for 9390 millis, cleaning resources of the client
+2026-10-02 18:54:14,459 [ INFO] [hz.hz-node1.cached.thread-1] [c.h.t.TransactionManagerService]: [127.0.0.1]:5701 [dev] [5.4.0] Committing/rolling-back live transactions of client, UUID: 53150d99-a358-4fca-895f-294aa5f42b05
+2026-10-02 18:54:32,489 [ INFO] [hz.hz-node1.IO.thread-in-0] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=7, /127.0.0.1:5701->/127.0.0.1:44208, qualifier=null, endpoint=[127.0.0.1]:44208, remoteUuid=fcd0bcaf-be9d-4093-bbc2-4b3be8c9562c, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:54:32,490 [ INFO] [hz.hz-node1.event-4] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=7, /127.0.0.1:5701->/127.0.0.1:44208, qualifier=null, endpoint=[127.0.0.1]:44208, remoteUuid=fcd0bcaf-be9d-4093-bbc2-4b3be8c9562c, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=fcd0bcaf-be9d-4093-bbc2-4b3be8c9562c, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956445082, latest clientAttributes=null, labels=[]}
+2026-10-02 18:54:32,502 [ INFO] [hz.hz-node1.priority-generic-operation.thread-0] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=8, /127.0.0.1:5701->/127.0.0.1:35320, qualifier=null, endpoint=[127.0.0.1]:35320, remoteUuid=c56e9ad7-fa67-4b29-9161-ddf3ca23bf49, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: c56e9ad7-fa67-4b29-9161-ddf3ca23bf49, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:54:32,514 [ INFO] [hz.hz-node1.partition-operation.thread-0] [c.h.c.i.MetadataRaftGroupManager]: [127.0.0.1]:5701 [dev] [5.4.0] New CPGroupId{name='default', seed=0, groupId=3883} is created with [CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}, CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}, CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}]
+2026-10-02 18:54:32,515 [ INFO] [hz.hz-node1.cached.thread-1] [c.h.c.i.RaftService]: [127.0.0.1]:5701 [dev] [5.4.0] RaftNode[CPGroupId{name='default', seed=0, groupId=3883}] is created with [RaftEndpoint{uuid='1d98c7c6-827f-485a-945b-f73dcf06362a'}, RaftEndpoint{uuid='89211daa-dca9-4cd9-ab96-01a4ee1c39ae'}, RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}]
+2026-10-02 18:54:32,515 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.RaftNode(default)]: [127.0.0.1]:5701 [dev] [5.4.0] Status is set to: ACTIVE
+2026-10-02 18:54:34,799 [ WARN] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.RaftNodeImpl$LeaderFailureDetectionTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] We are FOLLOWER and there is no current leader. Will start new election round...
+2026-10-02 18:54:34,799 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.t.PreVoteTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] Pre-vote started for next term: 1, last log index: 0, last log term: 0
+2026-10-02 18:54:34,799 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.RaftNode(default)]: [127.0.0.1]:5701 [dev] [5.4.0] 
+
+CP Group Members {groupId: default(3883), size:3, term:0, logIndex:0} [
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} - FOLLOWER this
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}
+]
+
+2026-10-02 18:54:34,800 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.h.PreVoteResponseHandlerTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] Pre-vote granted from RaftEndpoint{uuid='1d98c7c6-827f-485a-945b-f73dcf06362a'} for term: 1, number of votes: 2, majority: 2
+2026-10-02 18:54:34,800 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.h.PreVoteResponseHandlerTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] We have the majority during pre-vote phase. Let's start real election!
+2026-10-02 18:54:34,800 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.t.LeaderElectionTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] Leader election started for term: 1, last log index: 0, last log term: 0
+2026-10-02 18:54:34,800 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.RaftNode(default)]: [127.0.0.1]:5701 [dev] [5.4.0] 
+
+CP Group Members {groupId: default(3883), size:3, term:1, logIndex:0} [
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} - CANDIDATE this
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}
+]
+
+2026-10-02 18:54:34,800 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.h.PreVoteResponseHandlerTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] Ignored PreVoteResponse{voter=RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}, term=1, granted=true}. We are not FOLLOWER anymore.
+2026-10-02 18:54:34,801 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.h.VoteResponseHandlerTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] Vote granted from RaftEndpoint{uuid='1d98c7c6-827f-485a-945b-f73dcf06362a'} for term: 1, number of votes: 2, majority: 2
+2026-10-02 18:54:34,801 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.h.VoteResponseHandlerTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] We are the LEADER!
+2026-10-02 18:54:34,801 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.RaftNode(default)]: [127.0.0.1]:5701 [dev] [5.4.0] 
+
+CP Group Members {groupId: default(3883), size:3, term:1, logIndex:0} [
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} - LEADER this
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}
+]
+
+2026-10-02 18:54:34,801 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.h.VoteResponseHandlerTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] Ignored VoteResponse{voter=RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}, term=1, granted=true}. We are not CANDIDATE anymore.
+2026-10-02 18:54:39,762 [ INFO] [hz.hz-node1.IO.thread-in-0] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=8, /127.0.0.1:5701->/127.0.0.1:35320, qualifier=null, endpoint=[127.0.0.1]:35320, remoteUuid=c56e9ad7-fa67-4b29-9161-ddf3ca23bf49, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:54:39,763 [ INFO] [hz.hz-node1.event-1] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=8, /127.0.0.1:5701->/127.0.0.1:35320, qualifier=null, endpoint=[127.0.0.1]:35320, remoteUuid=c56e9ad7-fa67-4b29-9161-ddf3ca23bf49, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=c56e9ad7-fa67-4b29-9161-ddf3ca23bf49, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956472502, latest clientAttributes=null, labels=[]}
+2026-10-02 18:54:39,777 [ INFO] [hz.hz-node1.priority-generic-operation.thread-0] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=9, /127.0.0.1:5701->/127.0.0.1:35324, qualifier=null, endpoint=[127.0.0.1]:35324, remoteUuid=67eafb56-94fc-4da5-b5b0-cc58fe724977, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: 67eafb56-94fc-4da5-b5b0-cc58fe724977, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:54:43,603 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 0,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 2, leaderships.
+2026-10-02 18:54:43,604 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 0,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 2, leaderships.
+2026-10-02 18:54:43,604 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} with 2 leaderships.
+2026-10-02 18:54:43,605 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Transferring leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} to CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} in CPGroupId{name='default', seed=0, groupId=3883}
+2026-10-02 18:54:43,607 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.t.LeadershipTransferTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] Transferring leadership to RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}
+2026-10-02 18:54:43,615 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.h.VoteRequestHandlerTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] Demoting to FOLLOWER after VoteRequest{candidate=RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}, term=2, lastLogTerm=1, lastLogIndex=100002, disruptive=true} since current term: 1 is smaller
+2026-10-02 18:54:43,616 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.RaftNode(default)]: [127.0.0.1]:5701 [dev] [5.4.0] 
+
+CP Group Members {groupId: default(3883), size:3, term:2, logIndex:0} [
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} - FOLLOWER this
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}
+]
+
+2026-10-02 18:54:43,616 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.h.VoteRequestHandlerTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] Granted vote for VoteRequest{candidate=RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}, term=2, lastLogTerm=1, lastLogIndex=100002, disruptive=true}
+2026-10-02 18:54:43,617 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 0,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:54:43,617 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} with 1 leaderships.
+2026-10-02 18:54:43,617 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] No candidate could be found to get leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}. Skipping to next...
+2026-10-02 18:54:43,618 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:54:43,618 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} with 1 leaderships.
+2026-10-02 18:54:43,618 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] No candidate could be found to get leadership from CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}. Skipping to next...
+2026-10-02 18:54:43,619 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:54:43,619 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] CPGroup leadership balance is fine, cannot rebalance further...
+2026-10-02 18:54:43,619 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.h.AppendRequestHandlerTask(default)]: [127.0.0.1]:5701 [dev] [5.4.0] Setting leader: RaftEndpoint{uuid='255cb7ad-4963-4017-a75b-6fcce9b43890'}
+2026-10-02 18:54:43,620 [ INFO] [hz.hz-node1.partition-operation.thread-9] [c.h.c.i.r.i.RaftNode(default)]: [127.0.0.1]:5701 [dev] [5.4.0] 
+
+CP Group Members {groupId: default(3883), size:3, term:2, logIndex:0} [
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702}
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} - FOLLOWER this
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} - LEADER
+]
+
+2026-10-02 18:54:44,861 [ INFO] [hz.hz-node1.IO.thread-in-2] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=9, /127.0.0.1:5701->/127.0.0.1:35324, qualifier=null, endpoint=[127.0.0.1]:35324, remoteUuid=67eafb56-94fc-4da5-b5b0-cc58fe724977, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:54:44,862 [ INFO] [hz.hz-node1.event-5] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=9, /127.0.0.1:5701->/127.0.0.1:35324, qualifier=null, endpoint=[127.0.0.1]:35324, remoteUuid=67eafb56-94fc-4da5-b5b0-cc58fe724977, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=67eafb56-94fc-4da5-b5b0-cc58fe724977, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956479777, latest clientAttributes=null, labels=[]}
+2026-10-02 18:54:44,875 [ INFO] [hz.hz-node1.generic-operation.thread-6] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=10, /127.0.0.1:5701->/127.0.0.1:48992, qualifier=null, endpoint=[127.0.0.1]:48992, remoteUuid=df7fa572-6722-442b-8569-4a0e71ac02e9, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: df7fa572-6722-442b-8569-4a0e71ac02e9, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:55:39,071 [ INFO] [hz.hz-node1.IO.thread-in-0] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=10, /127.0.0.1:5701->/127.0.0.1:48992, qualifier=null, endpoint=[127.0.0.1]:48992, remoteUuid=df7fa572-6722-442b-8569-4a0e71ac02e9, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:55:39,071 [ INFO] [hz.hz-node1.event-3] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=10, /127.0.0.1:5701->/127.0.0.1:48992, qualifier=null, endpoint=[127.0.0.1]:48992, remoteUuid=df7fa572-6722-442b-8569-4a0e71ac02e9, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=df7fa572-6722-442b-8569-4a0e71ac02e9, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956484875, latest clientAttributes=null, labels=[]}
+2026-10-02 18:55:39,084 [ INFO] [hz.hz-node1.priority-generic-operation.thread-0] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=11, /127.0.0.1:5701->/127.0.0.1:41176, qualifier=null, endpoint=[127.0.0.1]:41176, remoteUuid=5b832b83-e0c5-42a3-932b-f062f78c415c, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: 5b832b83-e0c5-42a3-932b-f062f78c415c, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:55:43,602 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:55:43,604 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:55:43,604 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} with 1 leaderships.
+2026-10-02 18:55:43,604 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] No candidate could be found to get leadership from CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}. Skipping to next...
+2026-10-02 18:55:43,604 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:55:43,605 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} with 1 leaderships.
+2026-10-02 18:55:43,605 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] No candidate could be found to get leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}. Skipping to next...
+2026-10-02 18:55:43,605 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:55:43,605 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] CPGroup leadership balance is fine, cannot rebalance further...
+2026-10-02 18:55:44,456 [ WARN] [hz.hz-node1.cached.thread-3] [c.h.c.i.ClientEngine]: [127.0.0.1]:5701 [dev] [5.4.0] No connection left to client cluster wide df7fa572-6722-442b-8569-4a0e71ac02e9 for 5386 millis, cleaning resources of the client
+2026-10-02 18:55:44,456 [ INFO] [hz.hz-node1.cached.thread-3] [c.h.t.TransactionManagerService]: [127.0.0.1]:5701 [dev] [5.4.0] Committing/rolling-back live transactions of client, UUID: df7fa572-6722-442b-8569-4a0e71ac02e9
+2026-10-02 18:56:01,742 [ INFO] [hz.hz-node1.IO.thread-in-1] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=11, /127.0.0.1:5701->/127.0.0.1:41176, qualifier=null, endpoint=[127.0.0.1]:41176, remoteUuid=5b832b83-e0c5-42a3-932b-f062f78c415c, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:56:01,742 [ INFO] [hz.hz-node1.event-2] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=11, /127.0.0.1:5701->/127.0.0.1:41176, qualifier=null, endpoint=[127.0.0.1]:41176, remoteUuid=5b832b83-e0c5-42a3-932b-f062f78c415c, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=5b832b83-e0c5-42a3-932b-f062f78c415c, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956539084, latest clientAttributes=null, labels=[]}
+2026-10-02 18:56:01,755 [ INFO] [hz.hz-node1.priority-generic-operation.thread-0] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=12, /127.0.0.1:5701->/127.0.0.1:51028, qualifier=null, endpoint=[127.0.0.1]:51028, remoteUuid=b01ef5db-2f19-457a-9eff-e59dab174564, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: b01ef5db-2f19-457a-9eff-e59dab174564, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:56:06,032 [ INFO] [hz.hz-node1.IO.thread-in-2] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=12, /127.0.0.1:5701->/127.0.0.1:51028, qualifier=null, endpoint=[127.0.0.1]:51028, remoteUuid=b01ef5db-2f19-457a-9eff-e59dab174564, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:56:06,033 [ INFO] [hz.hz-node1.event-4] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=12, /127.0.0.1:5701->/127.0.0.1:51028, qualifier=null, endpoint=[127.0.0.1]:51028, remoteUuid=b01ef5db-2f19-457a-9eff-e59dab174564, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=b01ef5db-2f19-457a-9eff-e59dab174564, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956561755, latest clientAttributes=null, labels=[]}
+2026-10-02 18:56:06,047 [ INFO] [hz.hz-node1.priority-generic-operation.thread-0] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=13, /127.0.0.1:5701->/127.0.0.1:51034, qualifier=null, endpoint=[127.0.0.1]:51034, remoteUuid=48ac60d9-bf82-4c21-b441-b438f0415c02, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: 48ac60d9-bf82-4c21-b441-b438f0415c02, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:56:11,188 [ INFO] [hz.hz-node1.IO.thread-in-0] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=13, /127.0.0.1:5701->/127.0.0.1:51034, qualifier=null, endpoint=[127.0.0.1]:51034, remoteUuid=48ac60d9-bf82-4c21-b441-b438f0415c02, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:56:11,188 [ INFO] [hz.hz-node1.event-5] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=13, /127.0.0.1:5701->/127.0.0.1:51034, qualifier=null, endpoint=[127.0.0.1]:51034, remoteUuid=48ac60d9-bf82-4c21-b441-b438f0415c02, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=48ac60d9-bf82-4c21-b441-b438f0415c02, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956566046, latest clientAttributes=null, labels=[]}
+2026-10-02 18:56:11,204 [ INFO] [hz.hz-node1.priority-generic-operation.thread-0] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=14, /127.0.0.1:5701->/127.0.0.1:48760, qualifier=null, endpoint=[127.0.0.1]:48760, remoteUuid=e7cdcf02-d1fe-4367-a70f-b3de2c01afbd, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: e7cdcf02-d1fe-4367-a70f-b3de2c01afbd, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:56:43,602 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:56:43,603 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:56:43,603 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} with 1 leaderships.
+2026-10-02 18:56:43,603 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] No candidate could be found to get leadership from CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}. Skipping to next...
+2026-10-02 18:56:43,603 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:56:43,604 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} with 1 leaderships.
+2026-10-02 18:56:43,604 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] No candidate could be found to get leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}. Skipping to next...
+2026-10-02 18:56:43,604 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:56:43,604 [ INFO] [hz.hz-node1.cached.thread-4] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] CPGroup leadership balance is fine, cannot rebalance further...
+2026-10-02 18:57:10,256 [ INFO] [hz.hz-node1.IO.thread-in-1] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=14, /127.0.0.1:5701->/127.0.0.1:48760, qualifier=null, endpoint=[127.0.0.1]:48760, remoteUuid=e7cdcf02-d1fe-4367-a70f-b3de2c01afbd, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:57:10,256 [ INFO] [hz.hz-node1.event-1] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=14, /127.0.0.1:5701->/127.0.0.1:48760, qualifier=null, endpoint=[127.0.0.1]:48760, remoteUuid=e7cdcf02-d1fe-4367-a70f-b3de2c01afbd, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=e7cdcf02-d1fe-4367-a70f-b3de2c01afbd, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956571204, latest clientAttributes=null, labels=[]}
+2026-10-02 18:57:10,269 [ INFO] [hz.hz-node1.generic-operation.thread-6] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=15, /127.0.0.1:5701->/127.0.0.1:53942, qualifier=null, endpoint=[127.0.0.1]:53942, remoteUuid=449a3139-e8b1-4c76-9969-8930e46a7171, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: 449a3139-e8b1-4c76-9969-8930e46a7171, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:57:14,457 [ WARN] [hz.hz-node1.cached.thread-2] [c.h.c.i.ClientEngine]: [127.0.0.1]:5701 [dev] [5.4.0] No connection left to client cluster wide e7cdcf02-d1fe-4367-a70f-b3de2c01afbd for 4201 millis, cleaning resources of the client
+2026-10-02 18:57:14,457 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.t.TransactionManagerService]: [127.0.0.1]:5701 [dev] [5.4.0] Committing/rolling-back live transactions of client, UUID: e7cdcf02-d1fe-4367-a70f-b3de2c01afbd
+2026-10-02 18:57:19,560 [ INFO] [hz.hz-node1.HealthMonitor] [c.h.i.d.HealthMonitor]: [127.0.0.1]:5701 [dev] [5.4.0] The HealthMonitor has detected a high load on the system. For more detailed information,
+enable Diagnostics by adding the property -Dhazelcast.diagnostics.enabled=true
+2026-10-02 18:57:19,572 [ INFO] [hz.hz-node1.HealthMonitor] [c.h.i.d.HealthMonitor]: [127.0.0.1]:5701 [dev] [5.4.0] processors=16, physical.memory.total=24,0G, physical.memory.free=17,7G, swap.space.total=72,0G, swap.space.free=47,9G, heap.memory.used=294,2M, heap.memory.free=217,5M, heap.memory.total=512,0M, heap.memory.max=512,0M, heap.memory.used/total=57,46%, heap.memory.used/max=57,46%, minor.gc.count=28, minor.gc.time=152ms, major.gc.count=0, major.gc.time=0ms, unknown.gc.count=4, unknown.gc.time=14ms, load.process=1,59%, load.system=99,64%, load.systemAverage=7,77, thread.count=78, thread.peakCount=94, cluster.timeDiff=0, event.q.size=0, executor.q.async.size=0, executor.q.client.size=0, executor.q.client.query.size=0, executor.q.client.blocking.size=0, executor.q.query.size=0, executor.q.scheduled.size=0, executor.q.io.size=0, executor.q.system.size=0, executor.q.operations.size=5, executor.q.priorityOperation.size=0, operations.completed.count=4591923, executor.q.mapLoad.size=0, executor.q.mapLoadAllKeys.size=0, executor.q.cluster.size=0, executor.q.response.size=2, operations.running.count=0, operations.pending.invocations.percentage=0,00%, operations.pending.invocations.count=1, proxy.count=0, clientEndpoint.count=1, connection.active.count=5, client.connection.count=1, connection.count=3
+2026-10-02 18:57:43,602 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:57:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:57:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} with 1 leaderships.
+2026-10-02 18:57:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] No candidate could be found to get leadership from CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}. Skipping to next...
+2026-10-02 18:57:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:57:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} with 1 leaderships.
+2026-10-02 18:57:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] No candidate could be found to get leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}. Skipping to next...
+2026-10-02 18:57:43,604 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:57:43,604 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] CPGroup leadership balance is fine, cannot rebalance further...
+2026-10-02 18:57:51,571 [ INFO] [hz.hz-node1.IO.thread-in-1] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=15, /127.0.0.1:5701->/127.0.0.1:53942, qualifier=null, endpoint=[127.0.0.1]:53942, remoteUuid=449a3139-e8b1-4c76-9969-8930e46a7171, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:57:51,572 [ INFO] [hz.hz-node1.event-3] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=15, /127.0.0.1:5701->/127.0.0.1:53942, qualifier=null, endpoint=[127.0.0.1]:53942, remoteUuid=449a3139-e8b1-4c76-9969-8930e46a7171, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=449a3139-e8b1-4c76-9969-8930e46a7171, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956630268, latest clientAttributes=null, labels=[]}
+2026-10-02 18:57:51,587 [ INFO] [hz.hz-node1.priority-generic-operation.thread-0] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=16, /127.0.0.1:5701->/127.0.0.1:48350, qualifier=null, endpoint=[127.0.0.1]:48350, remoteUuid=2930da44-cde2-444c-b6d9-746babd98f33, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: 2930da44-cde2-444c-b6d9-746babd98f33, client name: hz-bench, client version: 5.4.0
+2026-10-02 18:57:55,932 [ INFO] [hz.hz-node1.IO.thread-in-0] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=16, /127.0.0.1:5701->/127.0.0.1:48350, qualifier=null, endpoint=[127.0.0.1]:48350, remoteUuid=2930da44-cde2-444c-b6d9-746babd98f33, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:57:55,932 [ INFO] [hz.hz-node1.event-1] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=16, /127.0.0.1:5701->/127.0.0.1:48350, qualifier=null, endpoint=[127.0.0.1]:48350, remoteUuid=2930da44-cde2-444c-b6d9-746babd98f33, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=2930da44-cde2-444c-b6d9-746babd98f33, clientName=hz-bench, authenticated=true, clientVersion=5.4.0, creationTime=1790956671586, latest clientAttributes=null, labels=[]}
+2026-10-02 18:58:15,499 [ INFO] [hz.hz-node1.generic-operation.thread-1] [c.h.c.i.p.t.AuthenticationMessageTask]: [127.0.0.1]:5701 [dev] [5.4.0] Received auth from Connection[id=17, /127.0.0.1:5701->/127.0.0.1:48860, qualifier=null, endpoint=[127.0.0.1]:48860, remoteUuid=c892d815-8359-4faf-83b7-03cb17310524, alive=true, connectionType=SWF, planeIndex=-1], successfully authenticated, clientUuid: c892d815-8359-4faf-83b7-03cb17310524, client name: counter-server, client version: 5.4.0
+2026-10-02 18:58:42,425 [ INFO] [hz.hz-node1.IO.thread-in-1] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=17, /127.0.0.1:5701->/127.0.0.1:48860, qualifier=null, endpoint=[127.0.0.1]:48860, remoteUuid=c892d815-8359-4faf-83b7-03cb17310524, alive=false, connectionType=SWF, planeIndex=-1] closed. Reason: Connection closed by the other side
+2026-10-02 18:58:42,426 [ INFO] [hz.hz-node1.event-1] [c.h.c.i.ClientEndpointManager]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying ClientEndpoint{connection=Connection[id=17, /127.0.0.1:5701->/127.0.0.1:48860, qualifier=null, endpoint=[127.0.0.1]:48860, remoteUuid=c892d815-8359-4faf-83b7-03cb17310524, alive=false, connectionType=SWF, planeIndex=-1], clientUuid=c892d815-8359-4faf-83b7-03cb17310524, clientName=counter-server, authenticated=true, clientVersion=5.4.0, creationTime=1790956695498, latest clientAttributes=null, labels=[]}
+2026-10-02 18:58:43,602 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:58:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:58:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} with 1 leaderships.
+2026-10-02 18:58:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] No candidate could be found to get leadership from CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703}. Skipping to next...
+2026-10-02 18:58:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:58:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Searching a candidate transfer leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} with 1 leaderships.
+2026-10-02 18:58:43,603 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] No candidate could be found to get leadership from CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701}. Skipping to next...
+2026-10-02 18:58:43,604 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] Current leadership claims:
+	CPMember{uuid=1d98c7c6-827f-485a-945b-f73dcf06362a, address=[127.0.0.1]:5702} priority 0 has 0,
+	CPMember{uuid=255cb7ad-4963-4017-a75b-6fcce9b43890, address=[127.0.0.1]:5703} priority 0 has 1,
+	CPMember{uuid=89211daa-dca9-4cd9-ab96-01a4ee1c39ae, address=[127.0.0.1]:5701} priority 0 has 1, leaderships.
+2026-10-02 18:58:43,604 [ INFO] [hz.hz-node1.cached.thread-2] [c.h.c.i.RaftGroupMembershipManager]: [127.0.0.1]:5701 [dev] [5.4.0] CPGroup leadership balance is fine, cannot rebalance further...
+2026-10-02 18:58:52,667 [ INFO] [hz.ShutdownThread] [c.h.i.i.Node]: [127.0.0.1]:5701 [dev] [5.4.0] Running shutdown hook... Current node state: ACTIVE
+2026-10-02 18:58:52,668 [ INFO] [hz.ShutdownThread] [c.h.c.LifecycleService]: [127.0.0.1]:5701 [dev] [5.4.0] [127.0.0.1]:5701 is SHUTTING_DOWN
+2026-10-02 18:58:52,669 [ WARN] [hz.ShutdownThread] [c.h.i.i.Node]: [127.0.0.1]:5701 [dev] [5.4.0] Terminating forcefully...
+2026-10-02 18:58:52,669 [ INFO] [hz.ShutdownThread] [c.h.i.i.Node]: [127.0.0.1]:5701 [dev] [5.4.0] Shutting down connection manager...
+2026-10-02 18:58:52,669 [ INFO] [hz.ShutdownThread] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=1, /127.0.0.1:50989->/127.0.0.1:5702, qualifier=null, endpoint=[127.0.0.1]:5702, remoteUuid=1d98c7c6-827f-485a-945b-f73dcf06362a, alive=false, connectionType=MEMBER, planeIndex=0] closed. Reason: TcpServer is stopping
+2026-10-02 18:58:52,670 [ INFO] [hz.ShutdownThread] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=2, /127.0.0.1:46877->/127.0.0.1:5703, qualifier=null, endpoint=[127.0.0.1]:5703, remoteUuid=255cb7ad-4963-4017-a75b-6fcce9b43890, alive=false, connectionType=MEMBER, planeIndex=0] closed. Reason: TcpServer is stopping
+2026-10-02 18:58:52,670 [ INFO] [hz.ShutdownThread] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=3, /127.0.0.1:5701->/127.0.0.1:44451, qualifier=null, endpoint=[127.0.0.1]:5703, remoteUuid=255cb7ad-4963-4017-a75b-6fcce9b43890, alive=false, connectionType=MEMBER, planeIndex=0] closed. Reason: TcpServer is stopping
+2026-10-02 18:58:52,670 [ INFO] [hz.ShutdownThread] [c.h.i.s.t.TcpServerConnection]: [127.0.0.1]:5701 [dev] [5.4.0] Connection[id=4, /127.0.0.1:5701->/127.0.0.1:53295, qualifier=null, endpoint=[127.0.0.1]:5702, remoteUuid=1d98c7c6-827f-485a-945b-f73dcf06362a, alive=false, connectionType=MEMBER, planeIndex=0] closed. Reason: TcpServer is stopping
+2026-10-02 18:58:52,671 [ INFO] [hz.ShutdownThread] [c.h.i.i.Node]: [127.0.0.1]:5701 [dev] [5.4.0] Shutting down node engine...
+2026-10-02 18:58:52,678 [ INFO] [hz.ShutdownThread] [c.h.i.i.NodeExtension]: [127.0.0.1]:5701 [dev] [5.4.0] Destroying node NodeExtension.
+2026-10-02 18:58:52,678 [ INFO] [hz.ShutdownThread] [c.h.i.i.Node]: [127.0.0.1]:5701 [dev] [5.4.0] Hazelcast Shutdown is completed in 9 ms.

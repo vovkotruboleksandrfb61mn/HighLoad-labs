@@ -1,0 +1,4 @@
+repeat,store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+1,postgres,10,10000,100000,199.7578,500.6,100000,100000,true
+2,postgres,10,10000,100000,302.4360,330.6,100000,100000,true
+3,postgres,10,10000,100000,306.1745,326.6,100000,100000,true

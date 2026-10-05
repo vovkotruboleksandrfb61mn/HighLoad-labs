@@ -1,0 +1,7 @@
+variant,workers,increments_per_worker,seconds,final_value,errors,retries,commits,rollbacks,wal_fsyncs,wal_fsyncs_per_increment
+lost-update,10,1000,26.9062,1000,0,0,10014,0,10003,1.000
+serializable,10,1000,2.7315,1008,8992,0,1022,8992,1017,0.102
+serializable-retry,10,1000,26.2456,10000,0,83866,10019,83866,10052,1.005
+in-place,10,1000,16.8553,10000,0,0,10014,0,10001,1.000
+for-update,10,1000,19.5327,10000,0,0,10014,0,10001,1.000
+optimistic,10,1000,186.9836,10000,0,49875,59904,0,59884,5.988

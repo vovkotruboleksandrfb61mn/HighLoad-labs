@@ -21,3 +21,49 @@ Swift поверх Open Binary Client Protocol 2.x.
 та рисунки звітів із виміряних даних і містять живу перевірку справжніх
 бінарників на зменшеному навантаженні. Звіт кожної роботи оформлено як
 протокол лабораторної роботи з титульною сторінкою КПІ.
+
+## Вихідний код
+
+| Тека | Що там |
+|------|--------|
+| `Sources/counter-server` | HTTP-лічильник на SwiftNIO: рушії `async`, `handler`, `raw` (власний розбір HTTP) і `uring` (io_uring) |
+| `Sources/CounterCore` | сховища лічильника: пам'ять, файл з `fsync`, групування комітів, PostgreSQL, Hazelcast |
+| `Sources/HazelcastClient` | власний клієнт Hazelcast на Swift (Open Binary Client Protocol 2.x) |
+| `Sources/loadgen` | генератор навантаження: N клієнтів, кожен зі своїм з'єднанням і послідовними запитами |
+| `Sources/pg-bench`, `Sources/hz-bench` | варіанти оновлення лічильника з робіт № 2 і № 3 |
+| `Tests` | тести (swift-testing) |
+| `scripts` | запуск вимірювань, PostgreSQL, кластера Hazelcast, flame graph |
+| `deploy` | конфігурація вузлів Hazelcast і схема PostgreSQL |
+| `reports` | виміряні дані (`data/*.csv`), flame graph'и, логи вузлів |
+
+## Відтворення
+
+Потрібні Swift 6, PostgreSQL 18, Java 17+ і
+[Hazelcast 5.4.0](https://repo1.maven.org/maven2/com/hazelcast/hazelcast-distribution/5.4.0/hazelcast-distribution-5.4.0.tar.gz),
+розпакований у `.toolchain/hazelcast-5.4.0`. Для flame graph потрібні `perf` і
+[FlameGraph](https://github.com/brendangregg/FlameGraph), для рушія `uring`
+бібліотека liburing.
+
+```bash
+source scripts/env.sh
+swift build -c release
+swift test
+
+scripts/task1.sh                 # робота № 1: пам'ять і диск, 1/2/5/10 клієнтів
+scripts/pg.sh start && scripts/task2.sh && scripts/pg.sh stop
+scripts/hz.sh start && scripts/task3.sh && scripts/hz.sh stop
+```
+
+Ноутбуки (Python 3.13):
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+jupyter notebook lab1/solution.ipynb   # або lab2/..., lab3/...
+```
+
+Ноутбук читає виміряні дані з `reports/data`, тож таблиці й рисунки
+будуються без повторних вимірювань. Розділ «Жива перевірка» запускає зібрані
+бінарники на зменшеному навантаженні; вимкнути його можна прапорцем
+`RUN_LIVE = False` на початку ноутбука.
