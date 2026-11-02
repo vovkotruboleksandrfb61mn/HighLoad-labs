@@ -8,6 +8,7 @@ enum StoreKind: String, CaseIterable, ExpressibleByArgument {
     case postgres
     case postgresSharded = "postgres-sharded"
     case hazelcast
+    case mongo
 }
 
 /// Everything needed to open one of the counter stores.
@@ -20,9 +21,11 @@ struct StoreConfiguration {
     var postgresPoolSize = 20
     var postgresShards = 10
     var hazelcastAddress: String
+    var mongoURL: String
+    var mongoClients = 10
 
     /// Opens the selected store, runs `body` with it, and closes it again.
-    /// Stores that hold connections (PostgreSQL, Hazelcast) are only alive for
+    /// Stores that hold connections (PostgreSQL, Hazelcast, MongoDB) are only alive for
     /// the duration of `body`.
     func withStore<Result: Sendable>(
         _ body: (any CounterStore) async throws -> Result
@@ -53,6 +56,8 @@ struct StoreConfiguration {
             ) { try await body($0) }
         case .hazelcast:
             return try await HazelcastCounterStore.withStore(address: hazelcastAddress, log: { Log.info($0) }) { try await body($0) }
+        case .mongo:
+            return try await MongoCounterStore.withStore(url: mongoURL, clients: mongoClients) { try await body($0) }
         }
     }
 

@@ -1,0 +1,113 @@
+# Сценарій 2. Один secondary вимкнено, запис з writeConcern { w: 3, wtimeout: 5000 }.
+# Час у [квадратних дужках] і в ISODate(...) указано в UTC.
+# mongosh читає команди зі stdin: текст після підказки rs0 [...]> і є введеною командою.
+
+[17:46:29.294] $ scripts/mongo.sh status
+rs0, term 1, seen from node1
+node1  127.0.0.1:21430  PRIMARY                   health 1  optime 1793641587:1  (pid 553720)
+node2  127.0.0.1:21431  SECONDARY                 health 1  optime 1793641587:1  lag 0 s  sync node1  (pid 553814)
+node3  127.0.0.1:21432  SECONDARY                 health 1  optime 1793641587:1  lag 0 s  sync node1  (pid 555458)
+
+[17:46:31.201] $ scripts/mongo.sh stop-node 3
+node 3 stopped (SIGTERM, pid 555458), exited after 15.0 s
+[17:46:46.481] $ scripts/mongo.sh wait-down 3
+node1 sees node3 as (not reachable/healthy) after 0.2 s (Error connecting to 127.0.0.1:21432 :: caused by :: onInvoke :: caused by :: Connection refused)
+
+# Вставка чекає 5000 мс і повертає WriteConcernError, але документ не відкочується
+[17:46:47.446] $ scripts/mongo.sh shell --quiet --norc
+rs0 [primary] test> use lab4
+switched to db lab4
+rs0 [primary] lab4> let t0 = new Date(); t0
+ISODate('2026-11-02T17:46:48.255Z')
+rs0 [primary] lab4> db.part1.insertOne({ scenario: 2, note: "w: 3, wtimeout: 5000" }, { writeConcern: { w: 3, wtimeout: 5000 } })
+Uncaught:
+
+MongoWriteConcernError[WriteConcernTimeout]: waiting for replication timed out
+Additional information: {
+  wtimeout: true,
+  writeConcern: { w: 3, wtimeout: 5000, provenance: 'clientSupplied' }
+}
+Result: {
+  n: 1,
+  electionId: ObjectId('7fffffff0000000000000001'),
+  opTime: { ts: Timestamp({ t: 1793641608, i: 1 }), t: 1 },
+  writeConcernError: {
+    code: 64,
+    codeName: 'WriteConcernTimeout',
+    errmsg: 'waiting for replication timed out',
+    errInfo: {
+      wtimeout: true,
+      writeConcern: { w: 3, wtimeout: 5000, provenance: 'clientSupplied' }
+    }
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1793641608, i: 1 }),
+    signature: {
+      hash: Binary.createFromBase64('AAAAAAAAAAAAAAAAAAAAAAAAAAA=', 0),
+      keyId: 0
+    }
+  },
+  operationTime: Timestamp({ t: 1793641608, i: 1 })
+}
+rs0 [primary] lab4> (new Date() - t0) / 1000
+5.049
+rs0 [primary] lab4> db.part1.find({ scenario: 2 })
+[
+  {
+    _id: ObjectId('6ae8cc88fe64f2628907e12a'),
+    scenario: 2,
+    note: 'w: 3, wtimeout: 5000'
+  }
+]
+rs0 [primary] lab4> db.part1.find({ scenario: 2 }).readConcern("majority")
+[
+  {
+    _id: ObjectId('6ae8cc88fe64f2628907e12a'),
+    scenario: 2,
+    note: 'w: 3, wtimeout: 5000'
+  }
+]
+
+# Другий secondary (node2) напряму: документ на ньому вже є
+[17:46:53.405] $ scripts/mongo.sh shell 2 --quiet --norc
+rs0 [direct: secondary] test> use lab4
+switched to db lab4
+rs0 [direct: secondary] lab4> db.part1.find({ scenario: 2 }).readPref("secondary")
+[
+  {
+    _id: ObjectId('6ae8cc88fe64f2628907e12a'),
+    scenario: 2,
+    note: 'w: 3, wtimeout: 5000'
+  }
+]
+rs0 [direct: secondary] lab4> db.part1.find({ scenario: 2 }).readPref("secondary").readConcern("majority")
+[
+  {
+    _id: ObjectId('6ae8cc88fe64f2628907e12a'),
+    scenario: 2,
+    note: 'w: 3, wtimeout: 5000'
+  }
+]
+
+# Повертаємо node3: він дотягує документ з oplog
+[17:46:54.385] $ scripts/mongo.sh start-node 3
+node 3 started: 127.0.0.1:21432, pid 556606
+[17:46:54.905] $ scripts/mongo.sh wait-secondary 3
+node3 is SECONDARY and caught up with node1 after 1.8 s (optime 1793641608:1)
+[17:46:57.453] $ scripts/mongo.sh shell 3 --quiet --norc
+rs0 [direct: secondary] test> use lab4
+switched to db lab4
+rs0 [direct: secondary] lab4> db.part1.find({ scenario: 2 }).readPref("secondary")
+[
+  {
+    _id: ObjectId('6ae8cc88fe64f2628907e12a'),
+    scenario: 2,
+    note: 'w: 3, wtimeout: 5000'
+  }
+]
+[17:46:58.425] $ scripts/mongo.sh status
+rs0, term 1, seen from node1
+node1  127.0.0.1:21430  PRIMARY                   health 1  optime 1793641608:1  (pid 553720)
+node2  127.0.0.1:21431  SECONDARY                 health 1  optime 1793641608:1  lag 0 s  sync node1  (pid 553814)
+node3  127.0.0.1:21432  SECONDARY                 health 1  optime 1793641608:1  lag 0 s  sync node1  (pid 556606)

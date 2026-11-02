@@ -55,6 +55,12 @@ export SERVER_URL=${SERVER_URL:-http://127.0.0.1:$SERVER_PORT}
 export PG_PORT=${PG_PORT:-21410}
 export PG_URL=${PG_URL:-postgres://postgres@127.0.0.1:$PG_PORT/postgres}
 export HZ_ADDRESS=${HZ_ADDRESS:-127.0.0.1:5701}
+# The MongoDB replica set (scripts/mongo.sh): node N listens on
+# MONGO_PORT + N - 1, so 21430-21432. The URL lists every member, so a driver
+# finds the new primary after a failover.
+export MONGO_PORT=${MONGO_PORT:-21430}
+export MONGO_REPLSET=${MONGO_REPLSET:-rs0}
+export MONGO_URL=${MONGO_URL:-mongodb://127.0.0.1:$MONGO_PORT,127.0.0.1:$((MONGO_PORT + 1)),127.0.0.1:$((MONGO_PORT + 2))/?replicaSet=$MONGO_REPLSET}
 
 # Scratch data (counter file, perf recordings), gitignored and on the
 # project's disk, so fsync really reaches a device.
@@ -70,6 +76,8 @@ export HLS_LOG_DIR=${HLS_LOG_DIR:-$HLS_ROOT/reports/logs}
 # worktree talks to the same one and it outlives any worktree. The unix
 # socket sits in the data directory too.
 export PGDATA_DIR=${PGDATA_DIR:-$HLS_MAIN_ROOT/.pgdata}
+# Likewise the MongoDB replica set: .mongodata/node{1,2,3} plus PID files.
+export MONGO_DATA_DIR=${MONGO_DATA_DIR:-$HLS_MAIN_ROOT/.mongodata}
 
 # Release build with debug info, so perf can unwind and symbolise.
 hls_build_release() {
@@ -83,6 +91,7 @@ hls_store_args() {
         disk) printf '%s\n' --file "$HLS_DATA/counter.txt" ;;
         postgres) printf '%s\n' --pg-url "$PG_URL" ;;
         hazelcast) printf '%s\n' --hz-address "$HZ_ADDRESS" ;;
+        mongo) printf '%s\n' --mongo-url "$MONGO_URL" ;;
         *) echo "unknown store: $1" >&2; return 1 ;;
     esac
 }

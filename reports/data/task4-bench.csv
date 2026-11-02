@@ -1,0 +1,14 @@
+repeat,run,variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds,server_deduplicated,rollback_lines,rollback_documents
+1,w1,w1,true,10,10000,false,,,,21.9997,4545.5,100000,100000,100000,0,0,0,0,0,0.208,0,0,0
+1,majority,majority,true,10,10000,false,,,,101.5172,985.1,100000,100000,100000,0,0,0,0,0,0.082,0,0,0
+2,w1,w1,true,10,10000,false,,,,22.4869,4447.0,100000,100000,100000,0,0,0,0,0,0.139,0,0,0
+2,majority,majority,true,10,10000,false,,,,100.0766,999.2,100000,100000,100000,0,0,0,0,0,0.048,0,0,0
+3,w1,w1,true,10,10000,false,,,,29.1806,3426.9,100000,100000,100000,0,0,0,0,0,0.139,0,0,0
+3,majority,majority,true,10,10000,false,,,,103.4099,967.0,100000,100000,100000,0,0,0,0,0,0.051,0,0,0
+1,w1-kill,w1,true,10,10000,true,2,8.084,11.071,34.4842,2899.9,99996,100000,100000,4,4,480,0,1,11.230,0,0,0
+1,majority-kill,majority,true,10,10000,true,1,35.672,10.821,109.3340,914.6,100000,100000,100000,0,0,470,0,1,10.959,10,0,0
+2,w1-kill,w1,true,10,10000,true,2,8.088,11.315,34.6597,2885.2,99999,100000,100000,1,1,490,0,1,11.481,2,0,0
+2,majority-kill,majority,true,10,10000,true,1,35.672,11.095,112.3606,890.0,100000,100000,100000,0,0,480,0,1,11.236,7,0,0
+3,w1-kill,w1,true,10,10000,true,2,8.086,10.302,35.7287,2798.9,100000,100000,100000,0,0,450,0,1,10.501,0,0,0
+3,majority-kill,majority,true,10,10000,true,3,36.007,10.879,139.8524,715.0,100000,100000,100000,0,0,426,0,1,11.341,9,0,0
+1,majority-kill-noretry,majority,false,10,10000,true,2,35.665,10.301,168.4030,593.8,100010,100000,100000,-10,-10,450,0,1,10.436,0,0,0

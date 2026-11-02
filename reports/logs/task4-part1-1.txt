@@ -1,0 +1,75 @@
+# Сценарій 1. Один secondary вимкнено, запис з writeConcern { w: 3, wtimeout: 0 } (без тайм-ауту).
+# Час у [квадратних дужках] і в ISODate(...) указано в UTC.
+# mongosh читає команди зі stdin: текст після підказки rs0 [...]> і є введеною командою.
+
+[17:45:51.038] $ scripts/mongo.sh status
+rs0, term 1, seen from node1
+node1  127.0.0.1:21430  PRIMARY                   health 1  optime 1793641547:16  (pid 553720)
+node2  127.0.0.1:21431  SECONDARY                 health 1  optime 1793641547:16  lag 0 s  sync node1  (pid 553814)
+node3  127.0.0.1:21432  SECONDARY                 health 1  optime 1793641547:16  lag 0 s  sync node1  (pid 553903)
+
+[17:45:53.010] $ scripts/mongo.sh stop-node 3
+node 3 stopped (SIGTERM, pid 553903), exited after 15.0 s
+[17:46:08.196] $ scripts/mongo.sh wait-down 3
+node1 sees node3 as (not reachable/healthy) after 0.5 s (Error connecting to 127.0.0.1:21432 :: caused by :: onInvoke :: caused by :: Connection refused)
+[17:46:09.497] $ scripts/mongo.sh status
+rs0, term 1, seen from node1
+node1  127.0.0.1:21430  PRIMARY                   health 1  optime 1793641567:1  (pid 553720)
+node2  127.0.0.1:21431  SECONDARY                 health 1  optime 1793641567:1  lag 0 s  sync node1  (pid 553814)
+node3  127.0.0.1:21432  (not reachable/healthy)   health 0  optime 0:0  (process stopped)
+
+# [термінал 2] вставка з w: 3 чекає, доки документ запишуть усі три вузли
+[17:46:10.531] $ scripts/mongo.sh shell --quiet --norc
+rs0 [primary] test> use lab4
+switched to db lab4
+rs0 [primary] lab4> let t0 = new Date(); t0
+ISODate('2026-11-02T17:46:11.504Z')
+rs0 [primary] lab4> db.part1.insertOne({ scenario: 1, note: "w: 3, wtimeout: 0" }, { writeConcern: { w: 3, wtimeout: 0 } })
+
+# [термінал 1] поки вставка чекає: документ уже є на primary і на другому secondary (2 з 3 = majority)
+[17:46:15.535] $ scripts/mongo.sh shell --quiet --norc
+rs0 [primary] test> use lab4
+switched to db lab4
+rs0 [primary] lab4> db.part1.find({ scenario: 1 })
+[
+  {
+    _id: ObjectId('6ae8cc63e2c73a84600d50a5'),
+    scenario: 1,
+    note: 'w: 3, wtimeout: 0'
+  }
+]
+rs0 [primary] lab4> db.part1.find({ scenario: 1 }).readConcern("majority")
+[
+  {
+    _id: ObjectId('6ae8cc63e2c73a84600d50a5'),
+    scenario: 1,
+    note: 'w: 3, wtimeout: 0'
+  }
+]
+[17:46:20.556] $ scripts/mongo.sh start-node 3
+node 3 started: 127.0.0.1:21432, pid 555458
+
+# [термінал 2] вставка повернулася
+{
+  acknowledged: true,
+  insertedId: ObjectId('6ae8cc63e2c73a84600d50a5')
+}
+rs0 [primary] lab4> let t1 = new Date(); t1
+ISODate('2026-11-02T17:46:22.127Z')
+rs0 [primary] lab4> (t1 - t0) / 1000
+10.623
+
+# [термінал 1] вузол 3 наздогнав primary і має документ
+[17:46:22.191] $ scripts/mongo.sh wait-secondary 3
+node3 is SECONDARY and caught up with node1 after 0.4 s (optime 1793641571:2)
+[17:46:23.467] $ scripts/mongo.sh shell 3 --quiet --norc
+rs0 [direct: secondary] test> use lab4
+switched to db lab4
+rs0 [direct: secondary] lab4> db.part1.find({ scenario: 1 }).readPref("secondary")
+[
+  {
+    _id: ObjectId('6ae8cc63e2c73a84600d50a5'),
+    scenario: 1,
+    note: 'w: 3, wtimeout: 0'
+  }
+]

@@ -1,0 +1,55 @@
+Task 4, частина II: прогін majority-kill, повтор 3 (kill через 35.5 с)
+
+Рядок CSV mongo-bench:
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,true,3,36.007,10.879,139.8524,715.0,100000,100000,100000,0,0,426,0,1,11.341
+
+Вивід mongo-bench і scripts/mongo.sh (stderr):
+mongo-bench: killing the primary, node 3 (127.0.0.1:21432)
+node 3 killed (SIGKILL, pid 596340), gone after 1.0 s
+mongo-bench: retried 416x after MongoError.cannotConnect.noAvailableHosts
+mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+mongo-bench: starting node 3 again
+node 3 started: 127.0.0.1:21432, pid 609429
+node3 is SECONDARY and caught up with node2 after 4.4 s (optime 1793645053:3392)
+
+retriedStatementsCount вузлів 1-3 до прогону: 0 0 0, після: 0 9 0
+
+Рядки журналів mongod усіх трьох вузлів від початку прогону, за часом (UTC).
+
+18:42:29.933  node2  REPL_HB  Heartbeat failed after max retries  {"target":"127.0.0.1:21432","maxHeartbeatRetries":2,"error":{"code":6,"codeName":"HostUnreachable","errmsg":"Error connecting to 127.0.0.1:21432 :: caused by :: onInvoke :: caused by :: Connection refused"}}
+18:42:29.933  node2  REPL     Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21432","heartbeatMessage":"Error connecting to 127.0.0.1:21432 :: caused by :: onInvoke :: caused by :: Connection refused"}
+18:42:29.934  node1  REPL_HB  Heartbeat failed after max retries  {"target":"127.0.0.1:21432","maxHeartbeatRetries":2,"error":{"code":6,"codeName":"HostUnreachable","errmsg":"Error connecting to 127.0.0.1:21432 :: caused by :: onInvoke :: caused by :: Connection refused"}}
+18:42:29.934  node1  REPL     Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21432","heartbeatMessage":"Error connecting to 127.0.0.1:21432 :: caused by :: onInvoke :: caused by :: Connection refused"}
+18:42:40.863  node2  ELECTION Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":10000}
+18:42:40.863  node2  ELECTION Conducting a dry run election to see if we could be elected  {"currentTerm":20}
+18:42:40.864  node1  ELECTION Responding to vote request  {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: true, term: 20, candidateIndex: 1, configVersion: 1, configTerm: 20, lastWrittenOpTime: { ts: Timestamp(1793644949, 814), t: 20 }, lastAppliedOpTime: { t...
+18:42:40.865  node2  ELECTION Dry election run succeeded, running for election  {"newTerm":21}
+18:42:40.876  node1  ELECTION Responding to vote request  {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: false, term: 21, candidateIndex: 1, configVersion: 1, configTerm: 20, lastWrittenOpTime: { ts: Timestamp(1793644949, 814), t: 20 }, lastAppliedOpTime: { ...
+18:42:40.878  node2  ELECTION Election succeeded, assuming primary role  {"term":21}
+18:42:40.878  node2  REPL     Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+18:42:40.878  node2  REPL     Entering primary catch-up mode
+18:42:40.883  node2  REPL     Caught up to the latest optime known via heartbeats after becoming primary  {"targetOpTime":{"ts":"1793644949:814","t":20},"myLastApplied":{"ts":"1793644949:814","t":20}}
+18:42:40.889  node1  REPL     Member is in new state  {"hostAndPort":"127.0.0.1:21431","newState":"PRIMARY"}
+18:42:40.912  node2  REPL     Transition to primary complete; database writes are now permitted  {"term":21}
+18:42:40.928  node1  REPL     Changed sync source  {"oldSyncSource":"empty","newSyncSource":"127.0.0.1:21431"}
+18:44:13.998  node3  CONTROL  ***** SERVER RESTARTED *****
+18:44:14.776  node3  REPL     Incrementing the rollback ID after unclean shutdown
+18:44:14.782  node3  REPL     Removing unapplied oplog entries after oplogTruncateAfterPoint  {"oplogTruncateAfterPoint":{"":"1793644949:814"}}
+18:44:14.782  node3  REPL     Truncating oplog from truncateAfterOplogEntryTimestamp (non-inclusive)  {"truncateAfterOplogEntryTimestamp":"1793644949:814","oplogTruncateAfterPoint":"1793644949:814"}
+18:44:14.784  node3  REPL     Recovering from stable timestamp  {"stableTimestamp":"1793644903:2","topOfOplog":{"ts":"1793644949:814","t":20},"appliedThrough":{"ts":"0:0","t":-1}}
+18:44:15.847  node3  REPL     Completed oplog application for recovery  {"numOpsApplied":22409,"numBatches":5,"applyThroughOpTime":{"ts":"1793644949:814","t":20}}
+18:44:15.848  node3  REPL     Replica set state transition  {"newState":"STARTUP2","oldState":"STARTUP"}
+18:44:15.848  node3  REPL     No initial sync required. Attempting to begin steady replication  {"lastOpTime":{"ts":"1793644949:814","t":20}}
+18:44:15.848  node3  REPL     Replica set state transition  {"newState":"RECOVERING","oldState":"STARTUP2"}
+18:44:15.849  node3  CONTROL  mongod startup complete  {"Summary of time elapsed":{"Startup from clean shutdown?":false,"Statistics":{"setUpPeriodicRunnerMillis":0,"setUpOCSPMillis":0,"setUpTransportLayerMillis":1,"initSyncCrashRecoveryMillis":0,"createLockFileMillis":0,"...
+18:44:15.850  node3  REPL     Replica set state transition  {"newState":"SECONDARY","oldState":"RECOVERING"}
+18:44:15.852  node1  REPL     Member is in new state  {"hostAndPort":"127.0.0.1:21432","newState":"SECONDARY"}
+18:44:15.852  node2  REPL     Member is in new state  {"hostAndPort":"127.0.0.1:21432","newState":"SECONDARY"}
+18:44:15.852  node3  REPL     Member is in new state  {"hostAndPort":"127.0.0.1:21431","newState":"PRIMARY"}
+18:44:15.852  node3  REPL     Member is in new state  {"hostAndPort":"127.0.0.1:21430","newState":"SECONDARY"}
+18:44:16.853  node3  REPL     Changed sync source  {"oldSyncSource":"empty","newSyncSource":"127.0.0.1:21431"}
+
+Файлів rollback немає.
+
+rollback_lines=0 rollback_documents=0

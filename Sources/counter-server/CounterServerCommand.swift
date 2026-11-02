@@ -39,6 +39,12 @@ struct CounterServerCommand: AsyncParsableCommand {
     @Option(name: .customLong("hz-address"), help: "Hazelcast member host:port for --store hazelcast; with a comma-separated list, the member answering fastest (normally the CP group leader) is used.")
     var hzAddress = "127.0.0.1:5701"
 
+    @Option(name: .customLong("mongo-url"), help: "MongoDB replica set URL for --store mongo; list every member, so the store finds the new primary after a failover.")
+    var mongoURL = "mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0"
+
+    @Option(name: .customLong("mongo-clients"), help: "For --store mongo: MongoDB clients (each with its own connection and session) the requests share.")
+    var mongoClients = 10
+
     @Option(help: "How connections are served: async (NIOAsyncChannel + a task per connection) handler (a channel handler on the event loop) raw (our own byte-level HTTP parser, no NIOHTTP1) or uring (io_uring, no SwiftNIO; --store memory only).")
     var engine: ServerEngine = .async
 
@@ -55,6 +61,7 @@ struct CounterServerCommand: AsyncParsableCommand {
         guard eventLoops > 0 else { throw ValidationError("--event-loops must be positive") }
         guard pgPool > 0 else { throw ValidationError("--pg-pool must be positive") }
         guard pgShards > 0 else { throw ValidationError("--pg-shards must be positive") }
+        guard mongoClients > 0 else { throw ValidationError("--mongo-clients must be positive") }
         guard gatherDelayMicroseconds >= 0 else { throw ValidationError("--gather-delay-us must not be negative") }
         if let pinCPUs, pinnedCPUs(pinCPUs) == nil {
             throw ValidationError("--pin-cpus must be a comma-separated list of CPU ids, e.g. 0,1,2")
@@ -70,7 +77,9 @@ struct CounterServerCommand: AsyncParsableCommand {
             postgresURL: pgURL,
             postgresPoolSize: pgPool,
             postgresShards: pgShards,
-            hazelcastAddress: hzAddress
+            hazelcastAddress: hzAddress,
+            mongoURL: mongoURL,
+            mongoClients: mongoClients
         )
         try await configuration.withStore { store in
             try await serve(store)

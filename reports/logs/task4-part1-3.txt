@@ -1,0 +1,91 @@
+# Сценарій 3. Перевибори primary: штатно зупиняємо (SIGTERM) поточний primary, пишемо, повертаємо старий primary.
+# Час у [квадратних дужках] і в ISODate(...) указано в UTC.
+# mongosh читає команди зі stdin: текст після підказки rs0 [...]> і є введеною командою.
+
+[17:47:04.400] $ scripts/mongo.sh primary
+primary: node1 (127.0.0.1:21430), term 1
+[17:47:05.363] $ scripts/mongo.sh status
+rs0, term 1, seen from node1
+node1  127.0.0.1:21430  PRIMARY                   health 1  optime 1793641608:1  (pid 553720)
+node2  127.0.0.1:21431  SECONDARY                 health 1  optime 1793641608:1  lag 0 s  sync node1  (pid 553814)
+node3  127.0.0.1:21432  SECONDARY                 health 1  optime 1793641608:1  lag 0 s  sync node1  (pid 556606)
+
+[17:47:07.191] $ scripts/mongo.sh stop-node 1
+node 1 stopped (SIGTERM, pid 553720), exited after 15.0 s
+[17:47:22.383] $ scripts/mongo.sh wait-primary
+primary: node2 (127.0.0.1:21431), term 2, found after 0.1 s
+[17:47:23.222] $ scripts/mongo.sh wait-down 1
+node2 sees node1 as (not reachable/healthy) after 0.1 s (Error connecting to 127.0.0.1:21430 :: caused by :: onInvoke :: caused by :: Connection refused)
+[17:47:24.078] $ scripts/mongo.sh status
+rs0, term 2, seen from node2
+node1  127.0.0.1:21430  (not reachable/healthy)   health 0  optime 0:0  (process stopped)
+node2  127.0.0.1:21431  PRIMARY                   health 1  optime 1793641637:1  (pid 553814)
+node3  127.0.0.1:21432  SECONDARY                 health 1  optime 1793641637:1  lag 0 s  (pid 556606)
+
+# Новий primary: метрики виборів, час від команди stop-node до виборів, запис через URI з усіма вузлами
+[17:47:24.968] $ scripts/mongo.sh shell --quiet --norc
+rs0 [primary] test> use lab4
+switched to db lab4
+rs0 [primary] lab4> rs.status().term
+Long('2')
+rs0 [primary] lab4> db.hello().primary
+127.0.0.1:21431
+rs0 [primary] lab4> rs.status().electionCandidateMetrics
+{
+  lastElectionReason: 'stepUpRequestSkipDryRun',
+  lastElectionDate: ISODate('2026-11-02T17:47:07.220Z'),
+  electionTerm: Long('2'),
+  lastCommittedOpTimeAtElection: { ts: Timestamp({ t: 1793641608, i: 1 }), t: Long('1') },
+  lastSeenWrittenOpTimeAtElection: { ts: Timestamp({ t: 1793641608, i: 1 }), t: Long('1') },
+  lastSeenOpTimeAtElection: { ts: Timestamp({ t: 1793641608, i: 1 }), t: Long('1') },
+  numVotesNeeded: 2,
+  priorityAtElection: 1,
+  electionTimeoutMillis: Long('10000'),
+  priorPrimaryMemberId: 0,
+  numCatchUpOps: Long('0'),
+  newTermStartDate: ISODate('2026-11-02T17:47:07.235Z'),
+  wMajorityWriteAvailabilityDate: ISODate('2026-11-02T17:47:07.248Z')
+}
+rs0 [primary] lab4> (rs.status().electionCandidateMetrics.lastElectionDate - ISODate("2026-11-02T17:47:07.191Z")) / 1000
+0.029
+rs0 [primary] lab4> db.part1.insertMany([{ scenario: 3, n: 1 }, { scenario: 3, n: 2 }, { scenario: 3, n: 3 }], { writeConcern: { w: "majority" } })
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('6ae8ccade5b86584bb77ed2e'),
+    '1': ObjectId('6ae8ccade5b86584bb77ed2f'),
+    '2': ObjectId('6ae8ccade5b86584bb77ed30')
+  }
+}
+rs0 [primary] lab4> db.part1.countDocuments({ scenario: 3 })
+3
+
+# Повертаємо старий primary (node1)
+[17:47:26.290] $ scripts/mongo.sh start-node 1
+node 1 started: 127.0.0.1:21430, pid 557961
+[17:47:26.803] $ scripts/mongo.sh wait-secondary 1
+node1 is SECONDARY and caught up with node2 after 1.7 s (optime 1793641645:1)
+[17:47:29.327] $ scripts/mongo.sh status
+rs0, term 2, seen from node2
+node1  127.0.0.1:21430  SECONDARY                 health 1  optime 1793641645:1  lag 0 s  sync node2  (pid 557961)
+node2  127.0.0.1:21431  PRIMARY                   health 1  optime 1793641645:1  (pid 553814)
+node3  127.0.0.1:21432  SECONDARY                 health 1  optime 1793641645:1  lag 0 s  sync node2  (pid 556606)
+
+# node1 напряму (directConnection=true): тепер SECONDARY, має документи, записані без нього
+[17:47:30.197] $ scripts/mongo.sh shell 1 --quiet --norc
+rs0 [direct: secondary] test> use lab4
+switched to db lab4
+rs0 [direct: secondary] lab4> db.hello().isWritablePrimary
+false
+rs0 [direct: secondary] lab4> db.hello().primary
+127.0.0.1:21431
+rs0 [direct: secondary] lab4> rs.status().term
+Long('2')
+rs0 [direct: secondary] lab4> db.part1.find({ scenario: 3 }).sort({ n: 1 }).readPref("secondary")
+[
+  { _id: ObjectId('6ae8ccade5b86584bb77ed2e'), scenario: 3, n: 1 },
+  { _id: ObjectId('6ae8ccade5b86584bb77ed2f'), scenario: 3, n: 2 },
+  { _id: ObjectId('6ae8ccade5b86584bb77ed30'), scenario: 3, n: 3 }
+]
+[17:47:31.157] $ scripts/mongo.sh primary
+primary: node2 (127.0.0.1:21431), term 2

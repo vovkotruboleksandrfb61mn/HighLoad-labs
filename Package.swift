@@ -14,11 +14,14 @@ let package = Package(
         .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.30.0"),
         .package(url: "https://github.com/vapor/postgres-nio.git", from: "1.30.0"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.6.0"),
+        .package(url: "https://github.com/orlandos-nl/MongoKitten.git", from: "7.9.0"),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.6.0"),
     ],
     targets: [
-        // Counter storage backends shared by the server and the tests.
-        // Depends on PostgresNIO and HazelcastClient up front so the Task 2/3
-        // stores can be filled in without touching this manifest.
+        // Counter storage backends shared by the server and the tests:
+        // PostgresNIO for Task 2, our HazelcastClient for Task 3 and
+        // MongoKitten (connections and replica set discovery only; the
+        // retryable writes are ours) for Task 4.
         .target(
             name: "CounterCore",
             dependencies: [
@@ -26,6 +29,9 @@ let package = Package(
                 .product(name: "NIOCore", package: "swift-nio"),
                 .product(name: "NIOPosix", package: "swift-nio"),
                 .product(name: "PostgresNIO", package: "postgres-nio"),
+                .product(name: "MongoKitten", package: "MongoKitten"),
+                .product(name: "MongoClient", package: "MongoKitten"),
+                .product(name: "Logging", package: "swift-log"),
             ]
         ),
         // Our client for the Hazelcast Open Binary Client Protocol 2.x.
@@ -77,6 +83,14 @@ let package = Package(
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
         ),
+        .executableTarget(
+            name: "mongo-bench",
+            dependencies: [
+                "CommandLineSupport",
+                "CounterCore",
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ]
+        ),
         .testTarget(
             name: "CommandLineSupportTests",
             dependencies: ["CommandLineSupport"]
@@ -90,6 +104,8 @@ let package = Package(
             dependencies: [
                 "CounterCore",
                 .product(name: "NIOPosix", package: "swift-nio"),
+                .product(name: "MongoKitten", package: "MongoKitten"),
+                .product(name: "MongoClient", package: "MongoKitten"),
             ]
         ),
         .testTarget(
