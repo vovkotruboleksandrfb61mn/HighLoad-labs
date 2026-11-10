@@ -9,6 +9,8 @@ import Synchronization
 /// primary and its own logical session) and lends each request one of them.
 /// The increments are retryable writes, so a request that runs into a
 /// failover is retried on the new primary and still counted exactly once.
+/// With `location.shards` > 1 client i increments document i % shards, and
+/// the value is the sum of the documents.
 public struct MongoCounterStore: CounterStore {
     private let clients: LeasePool<MongoCounterClient>
 
@@ -27,8 +29,8 @@ public struct MongoCounterStore: CounterStore {
         precondition(count > 0, "a store needs at least one client")
         var clients: [MongoCounterClient] = []
         do {
-            for _ in 0..<count {
-                clients.append(try await MongoCounterClient(url: url, location: location))
+            for index in 0..<count {
+                clients.append(try await MongoCounterClient(url: url, location: location, shard: index % location.shards))
             }
             let store = MongoCounterStore(clients: clients)
             // Fails here, not on the first request, if the set has no primary.

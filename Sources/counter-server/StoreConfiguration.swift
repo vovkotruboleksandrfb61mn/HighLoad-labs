@@ -23,6 +23,7 @@ struct StoreConfiguration {
     var hazelcastAddress: String
     var mongoURL: String
     var mongoClients = 10
+    var mongoShards = 1
 
     /// Opens the selected store, runs `body` with it, and closes it again.
     /// Stores that hold connections (PostgreSQL, Hazelcast, MongoDB) are only alive for
@@ -57,7 +58,11 @@ struct StoreConfiguration {
         case .hazelcast:
             return try await HazelcastCounterStore.withStore(address: hazelcastAddress, log: { Log.info($0) }) { try await body($0) }
         case .mongo:
-            return try await MongoCounterStore.withStore(url: mongoURL, clients: mongoClients) { try await body($0) }
+            return try await MongoCounterStore.withStore(
+                url: mongoURL,
+                clients: mongoClients,
+                location: MongoCounterLocation(shards: mongoShards)
+            ) { try await body($0) }
         }
     }
 

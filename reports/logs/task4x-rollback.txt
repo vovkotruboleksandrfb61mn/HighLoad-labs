@@ -1,0 +1,263 @@
+# Rollback на replica set rs0: записи з { w: 1, j: true }, які мав лише primary node1.
+# Відмова старого primary: SIGSTOP (заморожено, як при розриві мережі), потім SIGCONT.
+# Вузли запущено з --setParameter enableTestCommands=1 (MONGO_TEST_COMMANDS=1), дані в .mongodata/task4x-rollback.
+# Час у [квадратних дужках] указано в UTC. Текст після підказки rs0 [...]> є введеною командою mongosh.
+
+[11:57:13.722] $ scripts/mongo.sh status
+rs0, term 1, seen from node1
+node1  127.0.0.1:21430  PRIMARY                   health 1  optime 1794311831:7  (pid 185808)
+node2  127.0.0.1:21431  SECONDARY                 health 1  optime 1794311831:7  lag 0 s  sync node1  (pid 185906)
+node3  127.0.0.1:21432  SECONDARY                 health 1  optime 1794311831:7  lag 0 s  sync node1  (pid 186003)
+
+# 1. Лічильник і документ before записано з w: majority: вони є на всіх вузлах
+[11:57:14.567] $ scripts/mongo.sh shell --quiet --norc
+rs0 [primary] test> use lab4x
+switched to db lab4x
+rs0 [primary] lab4x> db.rb.insertMany([{ _id: "counter", likes: 100 }, { _id: "before", note: "w: majority before the experiment" }], { writeConcern: { w: "majority" } })
+{ acknowledged: true, insertedIds: { '0': 'counter', '1': 'before' } }
+
+# 2. Обидва secondary перестають забирати oplog (failpoint stopReplProducer)
+[11:57:15.470] $ scripts/mongo.sh shell 2 --quiet --norc
+rs0 [direct: secondary] test> db.adminCommand({ configureFailPoint: "stopReplProducer", mode: "alwaysOn" }).ok
+1
+[11:57:16.325] $ scripts/mongo.sh shell 3 --quiet --norc
+rs0 [direct: secondary] test> db.adminCommand({ configureFailPoint: "stopReplProducer", mode: "alwaysOn" }).ok
+1
+# Старий primary після повернення зупиниться перед rollback (failpoint rollbackHangBeforeStart)
+[11:57:17.174] $ scripts/mongo.sh shell 1 --quiet --norc
+rs0 [direct: primary] test> db.adminCommand({ configureFailPoint: "rollbackHangBeforeStart", mode: "alwaysOn" }).ok
+1
+
+# Primary node1 отримує 5 x ($inc likes, вставка lost-i) з { w: 1, j: true }: підтверджено, у журналі node1, на secondary немає
+[11:57:18.036] $ scripts/mongo.sh shell 1 --quiet --norc
+rs0 [direct: primary] test> use lab4x
+switched to db lab4x
+rs0 [direct: primary] lab4x> for (let i = 1; i <= 5; i++) { db.rb.updateOne({ _id: "counter" }, { $inc: { likes: 1 } }, { writeConcern: { w: 1, j: true } }); db.rb.insertOne({ _id: "lost-" + i }, { writeConcern: { w: 1, j: true } }) }
+{ acknowledged: true, insertedId: 'lost-5' }
+rs0 [direct: primary] lab4x> db.rb.find().readConcern("local")
+[
+  { _id: 'counter', likes: 105 },
+  { _id: 'before', note: 'w: majority before the experiment' },
+  { _id: 'lost-1' },
+  { _id: 'lost-2' },
+  { _id: 'lost-3' },
+  { _id: 'lost-4' },
+  { _id: 'lost-5' }
+]
+rs0 [direct: primary] lab4x> db.rb.find().readConcern("majority")
+[
+  { _id: 'counter', likes: 100 },
+  { _id: 'before', note: 'w: majority before the experiment' }
+]
+rs0 [direct: primary] lab4x> db.rb.find({ _id: "counter" }).readConcern("linearizable").maxTimeMS(3000)
+Uncaught 
+MongoServerError[MaxTimeMSExpired]: operation exceeded time limit
+
+# Secondary node2 відстає: має лише записане з majority
+[11:57:27.282] $ scripts/mongo.sh shell 2 --quiet --norc
+rs0 [direct: secondary] test> use lab4x
+switched to db lab4x
+rs0 [direct: secondary] lab4x> db.rb.find().readPref("secondary").readConcern("local")
+[
+  { _id: 'before', note: 'w: majority before the experiment' },
+  { _id: 'counter', likes: 100 }
+]
+[11:57:29.101] $ scripts/mongo.sh status
+rs0, term 1, seen from node1
+node1  127.0.0.1:21430  PRIMARY                   health 1  optime 1794311844:1  (pid 185808)
+node2  127.0.0.1:21431  SECONDARY                 health 1  optime 1794311835:2  lag 9 s  sync node1  (pid 185906)
+node3  127.0.0.1:21432  SECONDARY                 health 1  optime 1794311835:2  lag 9 s  sync node1  (pid 186003)
+
+# 3. Старий primary node1 випадає, secondary обирають новий primary без нього
+[11:57:29.951] $ scripts/mongo.sh pause-node 1
+node 1 paused (SIGSTOP, pid 185808)
+[11:57:29.978] $ scripts/mongo.sh wait-primary
+primary: node3 (127.0.0.1:21432), term 2, found after 11.4 s
+[11:57:43.263] $ scripts/mongo.sh status
+rs0, term 2, seen from node3
+node1  127.0.0.1:21430  (not reachable/healthy)   health 0  optime 0:0  (pid 185808)
+node2  127.0.0.1:21431  SECONDARY                 health 1  optime 1794311835:2  lag 26 s  sync node1  (pid 185906)
+node3  127.0.0.1:21432  PRIMARY                   health 1  optime 1794311861:1  (pid 186003)
+
+# Реплікацію на node2 і node3 увімкнено знову, новий primary node3 приймає записи з w: majority
+[11:57:44.444] $ scripts/mongo.sh shell 2 --quiet --norc
+rs0 [direct: secondary] test> db.adminCommand({ configureFailPoint: "stopReplProducer", mode: "off" }).ok
+1
+[11:57:45.297] $ scripts/mongo.sh shell 3 --quiet --norc
+rs0 [direct: primary] test> db.adminCommand({ configureFailPoint: "stopReplProducer", mode: "off" }).ok
+1
+[11:57:46.175] $ scripts/mongo.sh shell --quiet --norc
+rs0 [primary] test> use lab4x
+switched to db lab4x
+rs0 [primary] lab4x> db.rb.updateOne({ _id: "counter" }, { $inc: { likes: 10 } }, { writeConcern: { w: "majority" } })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+rs0 [primary] lab4x> db.rb.insertOne({ _id: "after", note: "w: majority on the new primary" }, { writeConcern: { w: "majority" } })
+{ acknowledged: true, insertedId: 'after' }
+rs0 [primary] lab4x> db.rb.find()
+[
+  { _id: 'counter', likes: 110 },
+  { _id: 'before', note: 'w: majority before the experiment' },
+  { _id: 'after', note: 'w: majority on the new primary' }
+]
+
+# 4. Старий primary node1 повертається
+[11:57:50.658] $ scripts/mongo.sh resume-node 1
+node 1 resumed (SIGCONT, pid 185808)
+[11:57:50.692] $ scripts/mongo.sh status
+rs0, term 2, seen from node3
+node1  127.0.0.1:21430  SECONDARY                 health 1  optime 1794311844:1  lag 23 s  sync node3  (pid 185808)
+node2  127.0.0.1:21431  SECONDARY                 health 1  optime 1794311867:1  lag 0 s  sync node3  (pid 185906)
+node3  127.0.0.1:21432  PRIMARY                   health 1  optime 1794311867:1  (pid 186003)
+
+# node1 уже SECONDARY, але rollback ще не почався: local повертає записи, які буде відкочено, majority їх не повертає
+[11:57:51.577] $ scripts/mongo.sh shell 1 --quiet --norc
+rs0 [direct: secondary] test> use lab4x
+switched to db lab4x
+rs0 [direct: secondary] lab4x> db.hello().secondary
+true
+rs0 [direct: secondary] lab4x> db.rb.find().readPref("secondary").readConcern("local")
+[
+  { _id: 'counter', likes: 105 },
+  { _id: 'before', note: 'w: majority before the experiment' },
+  { _id: 'lost-1' },
+  { _id: 'lost-2' },
+  { _id: 'lost-3' },
+  { _id: 'lost-4' },
+  { _id: 'lost-5' }
+]
+rs0 [direct: secondary] lab4x> db.rb.find().readPref("secondary").readConcern("majority")
+[
+  { _id: 'counter', likes: 100 },
+  { _id: 'before', note: 'w: majority before the experiment' }
+]
+
+# Відпускаємо rollback
+[11:57:54.000] $ scripts/mongo.sh shell 1 --quiet --norc
+rs0 [direct: secondary] test> db.adminCommand({ configureFailPoint: "rollbackHangBeforeStart", mode: "off" }).ok
+1
+[11:57:56.110] $ scripts/mongo.sh wait-secondary 1
+node1 is SECONDARY and caught up with node3 after 0.1 s (optime 1794311867:1)
+
+# 5. Rollback у лозі node1 (рядки ROLLBACK і причина; атрибути скорочено)
+[11:57:56.962] $ rollback_log 1
+11:57:50.686 REPL Stepping down from primary, because a new term has begun  {"term":2}
+11:57:50.688 REPL Starting rollback due to fetcher error  {"error":"OplogStartMissing: the sync source's oplog and our oplog have diverged, going into rollback. our last optime fetched: { ts: Timestamp(1794311844, 1), t: 1 }. optime of first document in batch: { ts: Timestamp(1794311861, 1), t: 2 }. sync source's first optime: { ts: Timestamp(1794311820, 1), t: -1 }"}
+11:57:50.688 REPL rollback - rollbackHangBeforeStart fail point enabled. Blocking until fail point is disabled.
+11:57:55.688 REPL Rollback using 'recoverToStableTimestamp' method
+11:57:55.688 ROLLBACK Transition to ROLLBACK
+11:57:55.688 ROLLBACK Finding common point
+11:57:55.689 ROLLBACK Rollback common point  {"commonPointOpTime":{"ts":{"$timestamp":{"t":1794311835,"i":2}},"t":1}}
+11:57:55.691 ROLLBACK Waiting for all background operations to complete before starting rollback
+11:57:55.691 ROLLBACK Finished waiting for background operations to complete before rollback
+11:57:55.691 ROLLBACK Finding record store counts
+11:57:55.691 ROLLBACK Preparing to write deleted documents to a rollback file  {"namespace":"lab4x.rb","file":".mongodata/task4x-rollback/node1/rollback/86413860-0a5d-4412-a965-6f0485162bf5/removed.2026-11-10T11-57-55.1.bson"}
+11:57:55.793 ROLLBACK Rolling back to the stable timestamp
+11:57:55.962 ROLLBACK Rolling back to the stable timestamp completed by storage engine
+11:57:55.964 ROLLBACK Operations reverted by rollback  {"insert":5,"update":5,"delete":0}
+11:57:55.990 ROLLBACK Marking to truncate all oplog entries with timestamps greater than common point  {"commonPoint":{"$timestamp":{"t":1794311835,"i":2}}}
+11:57:55.996 ROLLBACK Triggering the rollback op observer
+11:57:55.997 ROLLBACK Rollback complete
+11:57:55.997 ROLLBACK Rollback summary  {"lastOptimeRolledBack":{"ts":{"$timestamp":{"t":1794311844,"i":1}},"t":1},"commonPoint":{"ts":{"$timestamp":{"t":1794311835,"i":2}},"t":1},"wallClockTimeDiff":5,"rollbackCommandCounts":{"insert":5,"update":5},"totalEntriesRolledBackIncludingNoops":12}
+11:57:55.997 ROLLBACK Transition to SECONDARY
+
+# Файли rollback у dbPath вузла node1
+[11:57:56.975] $ find .mongodata/task4x-rollback/node1/rollback -type f
+.mongodata/task4x-rollback/node1/rollback/86413860-0a5d-4412-a965-6f0485162bf5/removed.2026-11-10T11-57-55.1.bson
+.mongodata/task4x-rollback/node1/rollback/local.oplog.rs/removed.2026-11-10T11-57-55.0.bson
+
+# Документи колекції в стані до rollback (bsondump)
+[11:57:56.982] $ bsondump --quiet .mongodata/task4x-rollback/node1/rollback/86413860-0a5d-4412-a965-6f0485162bf5/removed.2026-11-10T11-57-55.1.bson
+{"_id":"lost-1"}
+{"_id":"lost-4"}
+{"_id":"lost-5"}
+{"_id":"counter","likes":{"$numberInt":"105"}}
+{"_id":"lost-2"}
+{"_id":"lost-3"}
+
+# Відкочені записи oplog (bsondump, поля ts, op, ns, o)
+[11:57:57.220] $ oplog_dump .mongodata/task4x-rollback/node1/rollback/local.oplog.rs/removed.2026-11-10T11-57-55.0.bson
+{"ts":{"t":1794311844,"i":1},"op":"n","ns":"","o":{"msg":"linearizable read"}}
+{"ts":{"t":1794311838,"i":11},"op":"n","ns":"","o":{"msg":"linearizable read"}}
+{"ts":{"t":1794311838,"i":10},"op":"i","ns":"lab4x.rb","o":{"_id":"lost-5"}}
+{"ts":{"t":1794311838,"i":9},"op":"u","ns":"lab4x.rb","o":{"$v":{"$numberInt":"2"},"diff":{"u":{"likes":{"$numberInt":"105"}}}}}
+{"ts":{"t":1794311838,"i":8},"op":"i","ns":"lab4x.rb","o":{"_id":"lost-4"}}
+{"ts":{"t":1794311838,"i":7},"op":"u","ns":"lab4x.rb","o":{"$v":{"$numberInt":"2"},"diff":{"u":{"likes":{"$numberInt":"104"}}}}}
+{"ts":{"t":1794311838,"i":6},"op":"i","ns":"lab4x.rb","o":{"_id":"lost-3"}}
+{"ts":{"t":1794311838,"i":5},"op":"u","ns":"lab4x.rb","o":{"$v":{"$numberInt":"2"},"diff":{"u":{"likes":{"$numberInt":"103"}}}}}
+{"ts":{"t":1794311838,"i":4},"op":"i","ns":"lab4x.rb","o":{"_id":"lost-2"}}
+{"ts":{"t":1794311838,"i":3},"op":"u","ns":"lab4x.rb","o":{"$v":{"$numberInt":"2"},"diff":{"u":{"likes":{"$numberInt":"102"}}}}}
+{"ts":{"t":1794311838,"i":2},"op":"i","ns":"lab4x.rb","o":{"_id":"lost-1"}}
+{"ts":{"t":1794311838,"i":1},"op":"u","ns":"lab4x.rb","o":{"$v":{"$numberInt":"2"},"diff":{"u":{"likes":{"$numberInt":"101"}}}}}
+
+# Після rollback: записів з w: 1 немає ніде, записи з majority (before, after, +10) є
+[11:57:57.461] $ scripts/mongo.sh shell --quiet --norc
+rs0 [primary] test> use lab4x
+switched to db lab4x
+rs0 [primary] lab4x> db.rb.find().readConcern("majority")
+[
+  { _id: 'counter', likes: 110 },
+  { _id: 'before', note: 'w: majority before the experiment' },
+  { _id: 'after', note: 'w: majority on the new primary' }
+]
+[11:57:58.339] $ scripts/mongo.sh shell 1 --quiet --norc
+rs0 [direct: secondary] test> use lab4x
+switched to db lab4x
+rs0 [direct: secondary] lab4x> db.rb.find().readPref("secondary")
+[
+  { _id: 'counter', likes: 110 },
+  { _id: 'before', note: 'w: majority before the experiment' },
+  { _id: 'after', note: 'w: majority on the new primary' }
+]
+rs0 [direct: secondary] lab4x> db.rb.countDocuments({ _id: /^lost-/ })
+0
+
+# 6. Застаріле читання: node2 перестає застосовувати oplog (rsSyncApplyStop), primary node3 отримує $inc з majority
+[11:58:00.736] $ scripts/mongo.sh shell 2 --quiet --norc
+rs0 [direct: secondary] test> db.adminCommand({ configureFailPoint: "rsSyncApplyStop", mode: "alwaysOn" }).ok
+1
+[11:58:01.583] $ scripts/mongo.sh shell --quiet --norc
+rs0 [primary] test> use lab4x
+switched to db lab4x
+rs0 [primary] lab4x> db.rb.updateOne({ _id: "counter" }, { $inc: { likes: 1 } }, { writeConcern: { w: "majority" } })
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+rs0 [primary] lab4x> db.rb.find({ _id: "counter" }).readConcern("linearizable")
+[ { _id: 'counter', likes: 111 } ]
+[11:58:04.128] $ scripts/mongo.sh shell 2 --quiet --norc
+rs0 [direct: secondary] test> use lab4x
+switched to db lab4x
+rs0 [direct: secondary] lab4x> db.rb.find({ _id: "counter" }).readPref("secondary").readConcern("local")
+[ { _id: 'counter', likes: 110 } ]
+rs0 [direct: secondary] lab4x> db.rb.find({ _id: "counter" }).readPref("secondary").readConcern("majority")
+[ { _id: 'counter', likes: 110 } ]
+rs0 [direct: secondary] lab4x> db.rb.find({ _id: "counter" }).readPref("secondary").readConcern("linearizable")
+Uncaught 
+MongoServerError[NotWritablePrimary]: cannot satisfy linearizable read concern on non-primary node
+[11:58:07.276] $ scripts/mongo.sh status
+rs0, term 2, seen from node3
+node1  127.0.0.1:21430  SECONDARY                 health 1  optime 1794311883:1  lag 0 s  sync node3  (pid 185808)
+node2  127.0.0.1:21431  SECONDARY                 health 1  optime 1794311881:1  lag 2 s  sync node3  (pid 185906)
+node3  127.0.0.1:21432  PRIMARY                   health 1  optime 1794311883:1  (pid 186003)
+
+# node2 знову застосовує oplog і наздоганяє primary
+[11:58:08.143] $ scripts/mongo.sh shell 2 --quiet --norc
+rs0 [direct: secondary] test> db.adminCommand({ configureFailPoint: "rsSyncApplyStop", mode: "off" }).ok
+1
+[11:58:08.985] $ scripts/mongo.sh wait-secondary 2
+node2 is SECONDARY and caught up with node3 after 0.3 s (optime 1794311883:1)
+[11:58:09.961] $ scripts/mongo.sh shell 2 --quiet --norc
+rs0 [direct: secondary] test> use lab4x
+switched to db lab4x
+rs0 [direct: secondary] lab4x> db.rb.find({ _id: "counter" }).readPref("secondary").readConcern("local")
+[ { _id: 'counter', likes: 111 } ]

@@ -72,6 +72,19 @@ struct MongoCommandFailureTests {
     }
 }
 
+@Suite("MongoCounterLocation")
+struct MongoCounterLocationTests {
+    @Test("one shard is the single document of the task")
+    func singleDocument() {
+        #expect(MongoCounterLocation(documentID: "post-1").documentIDs == ["post-1"])
+    }
+
+    @Test("a sharded counter numbers its documents")
+    func shardedDocuments() {
+        #expect(MongoCounterLocation(documentID: "post-1", shards: 3).documentIDs == ["post-1-0", "post-1-1", "post-1-2"])
+    }
+}
+
 @Suite("LeasePool")
 struct LeasePoolTests {
     @Test("never lends more resources than it has, and every caller gets one")
@@ -132,6 +145,19 @@ struct MongoCounterStoreTests {
         }
     }
 
+    @Test("a sharded counter is the sum of its documents")
+    func sharded() async throws {
+        var location = testLocation()
+        location.shards = 3
+        try await MongoCounterStore.withStore(url: url, clients: 4, location: location) { store in
+            try await store.reset()
+            try await hammer(store, tasks: 8, incrementsPerTask: 25)
+            #expect(try await store.value() == 200)
+            try await store.reset()
+            #expect(try await store.value() == 0)
+        }
+    }
+
     @Test("reset sets the counter back to zero")
     func reset() async throws {
         try await MongoCounterStore.withStore(url: url, clients: 1, location: testLocation()) { store in
@@ -177,6 +203,58 @@ struct MongoCounterStoreTests {
         // clients made the last increment.
         #expect(lastValues.max() == 600)
         for client in clients {
+            await client.close()
+        }
+    }
+
+    /// The primary steps down while clients increment: their next requests
+    /// reach a node that is no longer primary, which answers with an error
+    /// instead of closing the connection, so only `reconnect()` makes the
+    /// client find the new primary before MongoKitten's next heartbeat.
+    @Test("increments go on exactly through a step-down of the primary", arguments: MongoWriteConcern.allCases)
+    func stepDown(writeConcern: MongoWriteConcern) async throws {
+        let location = testLocation()
+        let retryKinds = Mutex<[String]>([])
+        var clients: [MongoCounterClient] = []
+        for _ in 0..<4 {
+            clients.append(
+                try await MongoCounterClient(url: url, location: location, writeConcern: writeConcern) { error in
+                    retryKinds.withLock { $0.append(MongoCommandFailure.kind(of: error)) }
+                }
+            )
+        }
+        let setup = try await MongoCounterClient(url: url, location: location)
+        try await setup.reset()
+        let steppedDown = Atomic<Bool>(false)
+        let acknowledged = try await withThrowingTaskGroup(of: Int.self) { group in
+            for client in clients {
+                group.addTask {
+                    // Until the step-down, then 20 more increments.
+                    var count = 0
+                    while !steppedDown.load(ordering: .relaxed) {
+                        try await client.increment()
+                        count += 1
+                    }
+                    for _ in 0..<20 {
+                        try await client.increment()
+                        count += 1
+                    }
+                    return count
+                }
+            }
+            group.addTask {
+                try await Task.sleep(for: .milliseconds(300))
+                _ = try await setup.adminCommandOnce(["replSetStepDown": Int32(10)])
+                steppedDown.store(true, ordering: .relaxed)
+                return 0
+            }
+            return try await group.reduce(0, +)
+        }
+        try await setup.awaitMajorityCommit()
+        #expect(try await setup.value() == acknowledged)
+        let kinds = retryKinds.withLock { $0 }
+        #expect(!kinds.isEmpty, "no increment met the step-down")
+        for client in clients + [setup] {
             await client.close()
         }
     }

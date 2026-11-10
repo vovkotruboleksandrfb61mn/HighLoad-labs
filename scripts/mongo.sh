@@ -6,6 +6,10 @@
 #   scripts/mongo.sh stop          stop every node (clean shutdown)
 #   scripts/mongo.sh stop-node N   clean shutdown of node N (SIGTERM)
 #   scripts/mongo.sh kill-node N   sudden failure of node N (SIGKILL)
+#   scripts/mongo.sh pause-node N  freeze node N (SIGSTOP): it keeps its
+#                                  connections but answers nothing, like a
+#                                  node cut off by a network partition
+#   scripts/mongo.sh resume-node N let a paused node N run again (SIGCONT)
 #   scripts/mongo.sh start-node N  start node N again (its log is appended to)
 #   scripts/mongo.sh wait-primary  wait until some node is PRIMARY
 #   scripts/mongo.sh wait-secondary N
@@ -31,6 +35,13 @@
 #
 # Overridable: MONGO_CACHE_GB (WiredTiger cache per node, 0.25),
 # MONGO_START_TIMEOUT seconds (60), MONGO_LOG_DIR ($HLS_LOG_DIR).
+# MONGO_TEST_COMMANDS=1 starts the nodes with enableTestCommands, which
+# allows configureFailPoint (scripts/task4x-rollback.sh uses it); never on by
+# default. MONGOD_ARGS: more mongod arguments for every node, split on spaces
+# (scripts/task4x-throughput.py uses it for startup-only settings).
+# MONGO_ELECTION_TIMEOUT_MS: `start` sets settings.electionTimeoutMillis of
+# the replica set config to it with rs.reconfig (unset: left as it is, 10000
+# in a new set); the set keeps it until changed again or its data is deleted.
 set -euo pipefail
 
 script_dir=$(cd "$(dirname "$0")" && pwd)
@@ -48,6 +59,9 @@ NODES=(1 2 3)
 MONGO_LOG_DIR=${MONGO_LOG_DIR:-$HLS_LOG_DIR}
 MONGO_CACHE_GB=${MONGO_CACHE_GB:-0.25}
 MONGO_START_TIMEOUT=${MONGO_START_TIMEOUT:-60}
+MONGO_TEST_COMMANDS=${MONGO_TEST_COMMANDS:-0}
+MONGOD_ARGS=${MONGOD_ARGS:-}
+MONGO_ELECTION_TIMEOUT_MS=${MONGO_ELECTION_TIMEOUT_MS:-}
 
 node_port() { printf '%s\n' $((MONGO_PORT + $1 - 1)); }
 node_host() { printf '127.0.0.1:%s\n' "$(node_port "$1")"; }
@@ -113,11 +127,16 @@ start_node() {
     if $truncate_log; then
         : >"$log"
     fi
-    local output
+    local output extra=()
+    if [ "$MONGO_TEST_COMMANDS" = 1 ]; then
+        extra=(--setParameter enableTestCommands=1)
+    fi
+    # shellcheck disable=SC2206 # split on spaces on purpose
+    extra+=($MONGOD_ARGS)
     if ! output=$(mongod --replSet "$MONGO_REPLSET" --port "$port" --bind_ip 127.0.0.1 \
         --dbpath "$dbpath" --logpath "$log" --logappend \
         --wiredTigerCacheSizeGB "$MONGO_CACHE_GB" --quiet --timeStampFormat iso8601-utc \
-        --fork --pidfilepath "$(pid_file "$n")" 2>&1); then
+        "${extra[@]}" --fork --pidfilepath "$(pid_file "$n")" 2>&1); then
         printf '%s\n' "$output" >&2
         echo "node $n failed to start; end of $log:" >&2
         tail -n 20 "$log" >&2 || true
@@ -136,6 +155,9 @@ stop_node() {
         return 0
     fi
     kill -s "$signal" "$pid"
+    local signalled=$EPOCHREALTIME
+    # A paused node (pause-node) handles SIGTERM only once it runs again.
+    [ "$signal" = KILL ] || kill -s CONT "$pid"
     while kill -0 "$pid" 2>/dev/null; do
         if [ "$SECONDS" -ge "$deadline" ]; then
             echo "node $n did not stop within 60s; killing it" >&2
@@ -147,8 +169,22 @@ stop_node() {
     local took
     took=$(awk -v b="$began" -v e="$EPOCHREALTIME" 'BEGIN { printf "%.1f", e - b }')
     case $signal in
-        KILL) echo "node $n killed (SIGKILL, pid $pid), gone after $took s" >&2 ;;
+        KILL) echo "node $n killed (SIGKILL at $(date -u -d "@$signalled" +%H:%M:%S.%3N) UTC, pid $pid), gone after $took s" >&2 ;;
         *) echo "node $n stopped (SIGTERM, pid $pid), exited after $took s" >&2 ;;
+    esac
+}
+
+# signal_node <n> STOP|CONT: freeze or thaw node n.
+signal_node() {
+    local pid
+    if ! pid=$(node_pid "$1") || ! kill -0 "$pid" 2>/dev/null; then
+        echo "node $1 is not running" >&2
+        return 1
+    fi
+    kill -s "$2" "$pid"
+    case $2 in
+        STOP) echo "node $1 paused (SIGSTOP, pid $pid)" >&2 ;;
+        CONT) echo "node $1 resumed (SIGCONT, pid $pid)" >&2 ;;
     esac
 }
 
@@ -282,6 +318,29 @@ start() {
     done
     initiate
     wait_primary
+    if [ -n "$MONGO_ELECTION_TIMEOUT_MS" ]; then
+        set_election_timeout "$MONGO_ELECTION_TIMEOUT_MS"
+    fi
+}
+
+# set_election_timeout <ms>: rs.reconfig with a new electionTimeoutMillis,
+# unless the config already has it. Prints the heartbeat settings too.
+set_election_timeout() {
+    if ! [[ "$1" =~ ^[1-9][0-9]*$ ]]; then
+        echo "MONGO_ELECTION_TIMEOUT_MS must be a positive number of milliseconds, not '$1'" >&2
+        return 2
+    fi
+    msh "$MONGO_URL" "
+        const config = rs.conf(), before = config.settings.electionTimeoutMillis;
+        if (before !== $1) {
+            config.settings.electionTimeoutMillis = $1;
+            const reply = rs.reconfig(config);
+            if (!reply.ok) { printjson(reply); quit(1); }
+        }
+        const s = rs.conf().settings;
+        print('electionTimeoutMillis ' + (before === $1 ? before + ' (unchanged)' : before + ' -> ' + s.electionTimeoutMillis)
+              + ', heartbeatIntervalMillis ' + s.heartbeatIntervalMillis
+              + ', heartbeatTimeoutSecs ' + s.heartbeatTimeoutSecs);" >&2
 }
 
 # All nodes at once: each spends up to 15 s in quiesce mode on SIGTERM.
@@ -349,6 +408,8 @@ case "${1:-}" in
     stop) stop ;;
     stop-node) check_node "${2:-}"; stop_node "$2" TERM ;;
     kill-node) check_node "${2:-}"; stop_node "$2" KILL ;;
+    pause-node) check_node "${2:-}"; signal_node "$2" STOP ;;
+    resume-node) check_node "${2:-}"; signal_node "$2" CONT ;;
     start-node) check_node "${2:-}"; start_node "$2" ;;
     wait-primary) wait_primary ;;
     wait-secondary) check_node "${2:-}"; wait_secondary "$2" ;;
@@ -367,7 +428,7 @@ case "${1:-}" in
         ;;
     reset) reset ;;
     *)
-        echo "usage: $0 start|stop|stop-node N|kill-node N|start-node N|wait-primary|wait-secondary N|wait-down N|primary|status|shell [N] [args]|reset" >&2
+        echo "usage: $0 start|stop|stop-node N|kill-node N|pause-node N|resume-node N|start-node N|wait-primary|wait-secondary N|wait-down N|primary|status|shell [N] [args]|reset" >&2
         exit 2
         ;;
 esac

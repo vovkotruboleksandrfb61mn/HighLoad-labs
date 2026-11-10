@@ -21,18 +21,37 @@ public enum MongoWriteConcern: String, Sendable, CaseIterable {
     }
 }
 
-/// Where the counter lives: one field of one document.
+/// Where the counter lives: one field of one document, or with `shards` > 1
+/// the same field of several documents whose sum is the counter.
 public struct MongoCounterLocation: Sendable, Equatable {
     public var database: String
     public var collection: String
     public var documentID: String
     public var field: String
+    /// How many documents the counter is split over (1: the task's single
+    /// document). Each client increments one of them, so concurrent clients
+    /// do not all update the same document.
+    public var shards: Int
 
-    public init(database: String = "hls", collection: String = "counters", documentID: String = "web-counter", field: String = "likes") {
+    public init(
+        database: String = "hls",
+        collection: String = "counters",
+        documentID: String = "web-counter",
+        field: String = "likes",
+        shards: Int = 1
+    ) {
+        precondition(shards > 0, "a counter needs at least one document")
         self.database = database
         self.collection = collection
         self.documentID = documentID
         self.field = field
+        self.shards = shards
+    }
+
+    /// The `_id` of every document of the counter: `documentID` itself for one
+    /// shard, `documentID-0` ... `documentID-<shards - 1>` otherwise.
+    public var documentIDs: [String] {
+        shards == 1 ? [documentID] : (0..<shards).map { "\(documentID)-\($0)" }
     }
 }
 
@@ -72,6 +91,8 @@ public final class MongoCounterClient: Sendable {
 
     private let cluster: MongoCluster
     private let location: MongoCounterLocation
+    /// The document `increment()` updates: this client's shard.
+    private let incrementedID: String
     private let writeConcern: MongoWriteConcern
     /// Whether writes carry `lsid` and `txnNumber`. Only for demonstrating
     /// what goes wrong without them: a write is then still resent after a
@@ -83,14 +104,17 @@ public final class MongoCounterClient: Sendable {
     private let lastTransactionNumber = Atomic<Int>(0)
 
     /// Connects to the replica set at `url` (`mongodb://h1,h2,h3/?replicaSet=…`)
-    /// and waits until it has found the primary.
+    /// and waits until it has found the primary. `shard` picks the document
+    /// of a sharded counter that `increment()` updates.
     public init(
         url: String,
         location: MongoCounterLocation = MongoCounterLocation(),
+        shard: Int = 0,
         writeConcern: MongoWriteConcern = .majority,
         retryableWrites: Bool = true,
         onRetry: @escaping @Sendable (any Error) -> Void = { _ in }
     ) async throws {
+        precondition(location.documentIDs.indices.contains(shard), "shard \(shard) is not one of the counter's \(location.shards)")
         let settings = try ConnectionSettings(url)
         // MongoKitten's default logger writes to standard output, where the
         // tools print their CSV rows.
@@ -99,6 +123,7 @@ public final class MongoCounterClient: Sendable {
         cluster = try await MongoCluster(connectingTo: settings, logger: logger, eventLoopGroup: MultiThreadedEventLoopGroup.singleton)
         hosts = settings.hosts.map { "\($0.hostname):\($0.port)" }
         self.location = location
+        incrementedID = location.documentIDs[shard]
         self.writeConcern = writeConcern
         self.retryableWrites = retryableWrites
         self.onRetry = onRetry
@@ -111,16 +136,19 @@ public final class MongoCounterClient: Sendable {
     }
 
     /// `findOneAndUpdate({ _id }, { $inc: { field: 1 } })` with the client's
-    /// write concern, as a retryable write. Returns the new value.
+    /// write concern, as a retryable write. Returns the new value of the
+    /// updated document (of this client's shard, for a sharded counter).
     @discardableResult
     public func increment() async throws -> MongoOutcome<Int> {
-        try await retryableWrite(update: ["$inc": [location.field: Int32(1)] as Document])
+        try await retryableWrite(documentID: incrementedID, update: ["$inc": [location.field: Int32(1)] as Document])
     }
 
-    /// Sets the counter to 0 (creating the document if needed), with
+    /// Sets the counter to 0 (creating its documents if needed), with
     /// `w: "majority"` whatever the client's write concern.
     public func reset() async throws {
-        _ = try await retryableWrite(update: ["$set": [location.field: 0] as Document], writeConcern: .majority)
+        for id in location.documentIDs {
+            _ = try await retryableWrite(documentID: id, update: ["$set": [location.field: 0] as Document], writeConcern: .majority)
+        }
     }
 
     /// Returns once everything the primary has applied so far is majority
@@ -138,12 +166,14 @@ public final class MongoCounterClient: Sendable {
 
     /// The counter as of the majority-committed data (`readConcern:
     /// "majority"`), read on the primary: writes that an election could still
-    /// roll back are not counted. A missing document counts as 0.
+    /// roll back are not counted. A missing document counts as 0; a sharded
+    /// counter is the sum of its documents, read in one `find`.
     public func value() async throws -> Int {
+        let ids = location.documentIDs
         let command: Document = [
             "find": location.collection,
-            "filter": ["_id": location.documentID] as Document,
-            "limit": Int32(1),
+            "filter": ["_id": ids.count == 1 ? ids[0] : ["$in": ids] as Document] as Document,
+            "limit": Int32(ids.count),
             "singleBatch": true,
             "readConcern": ["level": "majority"] as Document,
         ]
@@ -155,10 +185,11 @@ public final class MongoCounterClient: Sendable {
             else {
                 throw MongoCommandFailure(message: "find returned no cursor")
             }
-            guard let document = batch.values.first as? Document else {
-                return 0
+            var sum = 0
+            for case let document as Document in batch.values {
+                sum += try fieldValue(of: document)
             }
-            return try fieldValue(of: document)
+            return sum
         }.value
     }
 
@@ -166,6 +197,13 @@ public final class MongoCounterClient: Sendable {
     /// retrying through a failover like any read.
     public func adminCommand(_ command: Document) async throws -> Document {
         try await retrying { try await run(command, in: .administrativeCommand) }.value
+    }
+
+    /// Runs an admin command once on the node taken for the primary, without
+    /// retrying: for a command that must not reach a second node, such as
+    /// `replSetStepDown`.
+    public func adminCommandOnce(_ command: Document) async throws -> Document {
+        try await run(command, in: .administrativeCommand)
     }
 
     // MARK: - Retryable writes

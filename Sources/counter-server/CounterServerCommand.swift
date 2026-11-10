@@ -45,6 +45,9 @@ struct CounterServerCommand: AsyncParsableCommand {
     @Option(name: .customLong("mongo-clients"), help: "For --store mongo: MongoDB clients (each with its own connection and session) the requests share.")
     var mongoClients = 10
 
+    @Option(name: .customLong("mongo-shards"), help: "For --store mongo: documents the counter is split over (its value is their sum); 1 is the task's single document.")
+    var mongoShards = 1
+
     @Option(help: "How connections are served: async (NIOAsyncChannel + a task per connection) handler (a channel handler on the event loop) raw (our own byte-level HTTP parser, no NIOHTTP1) or uring (io_uring, no SwiftNIO; --store memory only).")
     var engine: ServerEngine = .async
 
@@ -62,6 +65,7 @@ struct CounterServerCommand: AsyncParsableCommand {
         guard pgPool > 0 else { throw ValidationError("--pg-pool must be positive") }
         guard pgShards > 0 else { throw ValidationError("--pg-shards must be positive") }
         guard mongoClients > 0 else { throw ValidationError("--mongo-clients must be positive") }
+        guard mongoShards > 0 else { throw ValidationError("--mongo-shards must be positive") }
         guard gatherDelayMicroseconds >= 0 else { throw ValidationError("--gather-delay-us must not be negative") }
         if let pinCPUs, pinnedCPUs(pinCPUs) == nil {
             throw ValidationError("--pin-cpus must be a comma-separated list of CPU ids, e.g. 0,1,2")
@@ -79,7 +83,8 @@ struct CounterServerCommand: AsyncParsableCommand {
             postgresShards: pgShards,
             hazelcastAddress: hzAddress,
             mongoURL: mongoURL,
-            mongoClients: mongoClients
+            mongoClients: mongoClients,
+            mongoShards: mongoShards
         )
         try await configuration.withStore { store in
             try await serve(store)

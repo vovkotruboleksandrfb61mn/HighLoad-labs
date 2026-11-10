@@ -1,0 +1,93 @@
+12:39:02 === experiment hotdoc, 3 interleaved repeats, 10 x 2000; db version v8.3.13
+12:39:02 == fresh replica set, mongod profile default: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000
+12:39:18   | node 1 started: 127.0.0.1:21430, pid 241357
+12:39:18   | node 2 started: 127.0.0.1:21431, pid 241461
+12:39:18   | node 3 started: 127.0.0.1:21432, pid 241559
+12:39:18   | replica set rs0 initiated with node1 node2 node3
+12:39:18   | primary: node1 (127.0.0.1:21430), term 1, found after 10.1 s
+12:39:18 warm-up: mongo-bench --variant majority
+12:39:29   | majority,true,10,1000,false,,,,10.1739,982.9,10000,10000,10000,0,0,0,0,0,0.092
+12:39:29 -- hotdoc / w1, run 1: mongod=default; mongo-bench --variant w1
+12:39:35   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:39:35   | w1,true,10,2000,false,,,,4.4204,4524.5,20000,20000,20000,0,0,0,0,0,0.099
+12:39:36    w1: 4.420 s, 4524.5 ops/s, final 20000 of 20000
+12:39:36    node1 PRIMARY   syncs 43 (0.002/op, 8.38 ms each), write conflicts 76014, wtime 7.50 ms, flow control 0 us, apply 0.00 ops/batch, cpu 12.36 s
+12:39:36    node2 SECONDARY syncs 433 (0.022/op, 9.84 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 12.64 ops/batch, cpu 6.00 s
+12:39:36    node3 SECONDARY syncs 442 (0.022/op, 9.63 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 12.26 ops/batch, cpu 6.09 s
+12:39:36 -- hotdoc / w1-shards10, run 1: mongod=default; mongo-bench --variant w1 --shards 10
+12:39:40   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:39:40   | w1,true,10,2000,false,,,,2.9098,6873.3,20000,20000,20000,0,0,0,0,0,0.043
+12:39:41    w1-shards10: 2.910 s, 6873.3 ops/s, final 20000 of 20000
+12:39:41    node1 PRIMARY   syncs 38 (0.002/op, 7.57 ms each), write conflicts 0, wtime 3.91 ms, flow control 0 us, apply 0.00 ops/batch, cpu 6.84 s
+12:39:41    node2 SECONDARY syncs 298 (0.015/op, 9.33 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 27.12 ops/batch, cpu 4.94 s
+12:39:41    node3 SECONDARY syncs 286 (0.014/op, 9.57 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 23.64 ops/batch, cpu 5.16 s
+12:39:41 -- hotdoc / majority, run 1: mongod=default; mongo-bench --variant majority
+12:40:04   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:40:04   | majority,true,10,2000,false,,,,21.0877,948.4,20000,20000,20000,0,0,0,0,0,0.046
+12:40:05    majority: 21.088 s, 948.4 ops/s, final 20000 of 20000
+12:40:05    node1 PRIMARY   syncs 3670 (0.183/op, 5.56 ms each), write conflicts 69638, wtime 8.58 ms, flow control 0 us, apply 0.00 ops/batch, cpu 27.62 s
+12:40:05    node2 SECONDARY syncs 4199 (0.210/op, 4.88 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.94 ops/batch, cpu 14.37 s
+12:40:05    node3 SECONDARY syncs 4135 (0.207/op, 4.96 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.93 ops/batch, cpu 14.27 s
+12:40:05 -- hotdoc / majority-shards10, run 1: mongod=default; mongo-bench --variant majority --shards 10
+12:40:26   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:40:26   | majority,true,10,2000,false,,,,19.7070,1014.9,20000,20000,20000,0,0,0,0,0,0.033
+12:40:27    majority-shards10: 19.707 s, 1014.9 ops/s, final 20000 of 20000
+12:40:27    node1 PRIMARY   syncs 2841 (0.142/op, 6.76 ms each), write conflicts 0, wtime 8.40 ms, flow control 0 us, apply 0.00 ops/batch, cpu 19.17 s
+12:40:27    node2 SECONDARY syncs 4170 (0.208/op, 4.46 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 5.18 ops/batch, cpu 12.23 s
+12:40:27    node3 SECONDARY syncs 4103 (0.205/op, 4.52 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 5.19 ops/batch, cpu 12.31 s
+12:40:27 -- hotdoc / w1, run 2: mongod=default; mongo-bench --variant w1
+12:40:33   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:40:33   | w1,true,10,2000,false,,,,4.1022,4875.4,20000,20000,20000,0,0,0,0,0,0.125
+12:40:34    w1: 4.102 s, 4875.4 ops/s, final 20000 of 20000
+12:40:34    node1 PRIMARY   syncs 40 (0.002/op, 8.60 ms each), write conflicts 79622, wtime 9.50 ms, flow control 0 us, apply 0.00 ops/batch, cpu 12.82 s
+12:40:34    node2 SECONDARY syncs 381 (0.019/op, 10.57 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 10.27 ops/batch, cpu 6.42 s
+12:40:34    node3 SECONDARY syncs 379 (0.019/op, 10.62 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 10.79 ops/batch, cpu 6.34 s
+12:40:34 -- hotdoc / w1-shards10, run 2: mongod=default; mongo-bench --variant w1 --shards 10
+12:40:38   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:40:38   | w1,true,10,2000,false,,,,2.9329,6819.2,20000,20000,20000,0,0,0,0,0,0.057
+12:40:39    w1-shards10: 2.933 s, 6819.2 ops/s, final 20000 of 20000
+12:40:39    node1 PRIMARY   syncs 38 (0.002/op, 6.68 ms each), write conflicts 0, wtime 3.64 ms, flow control 0 us, apply 0.00 ops/batch, cpu 6.98 s
+12:40:39    node2 SECONDARY syncs 290 (0.015/op, 9.57 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 26.36 ops/batch, cpu 5.04 s
+12:40:39    node3 SECONDARY syncs 287 (0.014/op, 9.77 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 25.72 ops/batch, cpu 5.07 s
+12:40:39 -- hotdoc / majority, run 2: mongod=default; mongo-bench --variant majority
+12:41:04   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:41:04   | majority,true,10,2000,false,,,,22.6672,882.3,20000,20000,20000,0,0,0,0,0,0.064
+12:41:05    majority: 22.667 s, 882.3 ops/s, final 20000 of 20000
+12:41:05    node1 PRIMARY   syncs 3135 (0.157/op, 7.04 ms each), write conflicts 71484, wtime 9.35 ms, flow control 0 us, apply 0.00 ops/batch, cpu 21.87 s
+12:41:05    node2 SECONDARY syncs 4424 (0.221/op, 4.94 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.94 ops/batch, cpu 14.45 s
+12:41:05    node3 SECONDARY syncs 4405 (0.220/op, 4.97 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.92 ops/batch, cpu 14.42 s
+12:41:05 -- hotdoc / majority-shards10, run 2: mongod=default; mongo-bench --variant majority --shards 10
+12:41:25   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:41:25   | majority,true,10,2000,false,,,,19.0425,1050.3,20000,20000,20000,0,0,0,0,0,0.031
+12:41:26    majority-shards10: 19.043 s, 1050.3 ops/s, final 20000 of 20000
+12:41:26    node1 PRIMARY   syncs 2804 (0.140/op, 6.63 ms each), write conflicts 0, wtime 8.16 ms, flow control 0 us, apply 0.00 ops/batch, cpu 14.98 s
+12:41:26    node2 SECONDARY syncs 4054 (0.203/op, 4.46 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 5.39 ops/batch, cpu 11.73 s
+12:41:26    node3 SECONDARY syncs 4060 (0.203/op, 4.44 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 5.33 ops/batch, cpu 11.88 s
+12:41:26 -- hotdoc / w1, run 3: mongod=default; mongo-bench --variant w1
+12:41:32   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:41:32   | w1,true,10,2000,false,,,,4.2766,4676.6,20000,20000,20000,0,0,0,0,0,0.105
+12:41:33    w1: 4.277 s, 4676.6 ops/s, final 20000 of 20000
+12:41:33    node1 PRIMARY   syncs 41 (0.002/op, 9.31 ms each), write conflicts 77750, wtime 7.50 ms, flow control 0 us, apply 0.00 ops/batch, cpu 12.58 s
+12:41:33    node2 SECONDARY syncs 401 (0.020/op, 10.38 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 11.65 ops/batch, cpu 6.33 s
+12:41:33    node3 SECONDARY syncs 412 (0.021/op, 10.11 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 11.79 ops/batch, cpu 6.25 s
+12:41:33 -- hotdoc / w1-shards10, run 3: mongod=default; mongo-bench --variant w1 --shards 10
+12:41:37   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:41:37   | w1,true,10,2000,false,,,,2.6898,7435.5,20000,20000,20000,0,0,0,0,0,0.055
+12:41:38    w1-shards10: 2.690 s, 7435.5 ops/s, final 20000 of 20000
+12:41:38    node1 PRIMARY   syncs 36 (0.002/op, 6.59 ms each), write conflicts 0, wtime 4.36 ms, flow control 0 us, apply 0.00 ops/batch, cpu 6.83 s
+12:41:38    node2 SECONDARY syncs 259 (0.013/op, 9.90 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 26.09 ops/batch, cpu 4.99 s
+12:41:38    node3 SECONDARY syncs 265 (0.013/op, 9.71 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 24.66 ops/batch, cpu 5.16 s
+12:41:38 -- hotdoc / majority, run 3: mongod=default; mongo-bench --variant majority
+12:42:02   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:42:02   | majority,true,10,2000,false,,,,22.7172,880.4,20000,20000,20000,0,0,0,0,0,0.060
+12:42:04    majority: 22.717 s, 880.4 ops/s, final 20000 of 20000
+12:42:04    node1 PRIMARY   syncs 3137 (0.157/op, 7.05 ms each), write conflicts 71542, wtime 9.38 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.11 s
+12:42:04    node2 SECONDARY syncs 4395 (0.220/op, 5.02 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.90 ops/batch, cpu 16.12 s
+12:42:04    node3 SECONDARY syncs 4430 (0.222/op, 4.95 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.89 ops/batch, cpu 14.42 s
+12:42:04 -- hotdoc / majority-shards10, run 3: mongod=default; mongo-bench --variant majority --shards 10
+12:42:24   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:42:24   | majority,true,10,2000,false,,,,19.1689,1043.4,20000,20000,20000,0,0,0,0,0,0.035
+12:42:26    majority-shards10: 19.169 s, 1043.4 ops/s, final 20000 of 20000
+12:42:26    node1 PRIMARY   syncs 2795 (0.140/op, 6.68 ms each), write conflicts 0, wtime 8.18 ms, flow control 0 us, apply 0.00 ops/batch, cpu 15.03 s
+12:42:26    node2 SECONDARY syncs 4060 (0.203/op, 4.45 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 5.44 ops/batch, cpu 11.90 s
+12:42:26    node3 SECONDARY syncs 4099 (0.205/op, 4.40 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 5.39 ops/batch, cpu 11.98 s

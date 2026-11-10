@@ -1,0 +1,49 @@
+12:46:56 === experiment unsafe-journal, 3 interleaved repeats, 10 x 2000; db version v8.3.13
+12:46:56 -- unsafe-journal / majority, run 1: mongod=default; mongo-bench --variant majority
+12:47:20   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:47:20   | majority,true,10,2000,false,,,,22.6155,884.3,20000,20000,20000,0,0,0,0,0,0.045
+12:47:21    majority: 22.616 s, 884.3 ops/s, final 20000 of 20000
+12:47:21    node1 PRIMARY   syncs 3089 (0.154/op, 7.15 ms each), write conflicts 73320, wtime 9.35 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.36 s
+12:47:21    node2 SECONDARY syncs 4433 (0.222/op, 4.94 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.87 ops/batch, cpu 14.65 s
+12:47:21    node3 SECONDARY syncs 4429 (0.221/op, 4.96 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.88 ops/batch, cpu 14.51 s
+12:47:23 writeConcernMajorityJournalDefault is now false
+12:47:23 -- unsafe-journal / majority-nojournal-UNSAFE, run 1: mongod=default; writeConcernMajorityJournalDefault=false (UNSAFE); mongo-bench --variant majority
+12:47:30   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:47:30   | majority,true,10,2000,false,,,,5.9398,3367.1,20000,20000,20000,0,0,0,0,0,0.051
+12:47:34 writeConcernMajorityJournalDefault is now true
+12:47:34    majority-nojournal-UNSAFE: 5.940 s, 3367.1 ops/s, final 20000 of 20000
+12:47:34    node1 PRIMARY   syncs 56 (0.003/op, 8.77 ms each), write conflicts 65400, wtime 0.65 ms, flow control 0 us, apply 0.00 ops/batch, cpu 14.74 s
+12:47:34    node2 SECONDARY syncs 590 (0.029/op, 9.88 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 7.91 ops/batch, cpu 8.35 s
+12:47:34    node3 SECONDARY syncs 601 (0.030/op, 9.71 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 7.83 ops/batch, cpu 8.41 s
+12:47:34 -- unsafe-journal / majority, run 2: mongod=default; mongo-bench --variant majority
+12:47:58   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:47:58   | majority,true,10,2000,false,,,,22.6038,884.8,20000,20000,20000,0,0,0,0,0,0.059
+12:47:59    majority: 22.604 s, 884.8 ops/s, final 20000 of 20000
+12:47:59    node1 PRIMARY   syncs 3143 (0.157/op, 7.01 ms each), write conflicts 73410, wtime 9.35 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.41 s
+12:47:59    node2 SECONDARY syncs 4390 (0.220/op, 4.98 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.85 ops/batch, cpu 14.71 s
+12:47:59    node3 SECONDARY syncs 4427 (0.221/op, 4.95 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.85 ops/batch, cpu 14.78 s
+12:48:02 writeConcernMajorityJournalDefault is now false
+12:48:02 -- unsafe-journal / majority-nojournal-UNSAFE, run 2: mongod=default; writeConcernMajorityJournalDefault=false (UNSAFE); mongo-bench --variant majority
+12:48:09   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:48:09   | majority,true,10,2000,false,,,,5.8264,3432.6,20000,20000,20000,0,0,0,0,0,0.083
+12:48:12 writeConcernMajorityJournalDefault is now true
+12:48:12    majority-nojournal-UNSAFE: 5.826 s, 3432.6 ops/s, final 20000 of 20000
+12:48:12    node1 PRIMARY   syncs 58 (0.003/op, 8.77 ms each), write conflicts 66646, wtime 0.64 ms, flow control 0 us, apply 0.00 ops/batch, cpu 14.81 s
+12:48:12    node2 SECONDARY syncs 565 (0.028/op, 10.13 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 7.90 ops/batch, cpu 8.36 s
+12:48:12    node3 SECONDARY syncs 566 (0.028/op, 10.11 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 8.04 ops/batch, cpu 8.25 s
+12:48:12 -- unsafe-journal / majority, run 3: mongod=default; mongo-bench --variant majority
+12:48:36   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:48:36   | majority,true,10,2000,false,,,,22.6583,882.7,20000,20000,20000,0,0,0,0,0,0.071
+12:48:37    majority: 22.658 s, 882.7 ops/s, final 20000 of 20000
+12:48:37    node1 PRIMARY   syncs 3143 (0.157/op, 7.02 ms each), write conflicts 72250, wtime 9.34 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.28 s
+12:48:37    node2 SECONDARY syncs 4434 (0.222/op, 4.95 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.91 ops/batch, cpu 14.64 s
+12:48:37    node3 SECONDARY syncs 4418 (0.221/op, 4.96 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.91 ops/batch, cpu 14.58 s
+12:48:40 writeConcernMajorityJournalDefault is now false
+12:48:40 -- unsafe-journal / majority-nojournal-UNSAFE, run 3: mongod=default; writeConcernMajorityJournalDefault=false (UNSAFE); mongo-bench --variant majority
+12:48:47   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:48:47   | majority,true,10,2000,false,,,,5.9874,3340.3,20000,20000,20000,0,0,0,0,0,0.060
+12:48:51 writeConcernMajorityJournalDefault is now true
+12:48:51    majority-nojournal-UNSAFE: 5.987 s, 3340.3 ops/s, final 20000 of 20000
+12:48:51    node1 PRIMARY   syncs 56 (0.003/op, 8.91 ms each), write conflicts 64810, wtime 0.64 ms, flow control 0 us, apply 0.00 ops/batch, cpu 14.70 s
+12:48:51    node2 SECONDARY syncs 592 (0.030/op, 9.92 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 7.78 ops/batch, cpu 8.45 s
+12:48:51    node3 SECONDARY syncs 592 (0.030/op, 9.94 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 7.79 ops/batch, cpu 8.64 s

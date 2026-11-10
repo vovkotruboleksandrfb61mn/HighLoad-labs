@@ -1,0 +1,151 @@
+12:54:53 === experiment zero-fill, 3 interleaved repeats, 10 x 2000; db version v8.3.13
+12:54:53 == fresh replica set, mongod profile default: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000
+12:54:54   | node 1 stopped (SIGTERM, pid 255662), exited after 1.0 s
+12:54:54   | node 3 stopped (SIGTERM, pid 255856), exited after 1.0 s
+12:54:54   | node 2 stopped (SIGTERM, pid 255759), exited after 1.0 s
+12:55:09   | node 1 started: 127.0.0.1:21430, pid 257152
+12:55:09   | node 2 started: 127.0.0.1:21431, pid 257249
+12:55:09   | node 3 started: 127.0.0.1:21432, pid 257346
+12:55:09   | replica set rs0 initiated with node1 node2 node3
+12:55:09   | primary: node1 (127.0.0.1:21430), term 1, found after 9.5 s
+12:55:09 warm-up: mongo-bench --variant majority
+12:55:19   | majority,true,10,1000,false,,,,10.0049,999.5,10000,10000,10000,0,0,0,0,0,0.080
+12:55:19 -- zero-fill / majority, run 1: mongod=default; mongo-bench --variant majority
+12:55:40   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:55:40   | majority,true,10,2000,false,,,,20.0761,996.2,20000,20000,20000,0,0,0,0,0,0.072
+12:55:41    majority: 20.076 s, 996.2 ops/s, final 20000 of 20000
+12:55:41    node1 PRIMARY   syncs 3402 (0.170/op, 5.74 ms each), write conflicts 75288, wtime 8.19 ms, flow control 0 us, apply 0.00 ops/batch, cpu 21.01 s
+12:55:41    node2 SECONDARY syncs 4274 (0.214/op, 4.58 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.81 ops/batch, cpu 13.50 s
+12:55:41    node3 SECONDARY syncs 4272 (0.214/op, 4.58 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.81 ops/batch, cpu 13.24 s
+12:55:41 -- zero-fill / w1, run 1: mongod=default; mongo-bench --variant w1
+12:55:46   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:55:46   | w1,true,10,2000,false,,,,4.1086,4867.8,20000,20000,20000,0,0,0,0,0,0.091
+12:55:48    w1: 4.109 s, 4867.8 ops/s, final 20000 of 20000
+12:55:48    node1 PRIMARY   syncs 40 (0.002/op, 8.23 ms each), write conflicts 78590, wtime 7.50 ms, flow control 0 us, apply 0.00 ops/batch, cpu 12.42 s
+12:55:48    node2 SECONDARY syncs 393 (0.020/op, 10.29 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 11.36 ops/batch, cpu 6.19 s
+12:55:48    node3 SECONDARY syncs 395 (0.020/op, 10.23 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 10.98 ops/batch, cpu 6.21 s
+12:55:48 == fresh replica set, mongod profile zero-fill: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000 --wiredTigerEngineConfigString=log=(zero_fill=true)
+12:55:49   | node 3 stopped (SIGTERM, pid 257346), exited after 1.0 s
+12:55:49   | node 1 stopped (SIGTERM, pid 257152), exited after 1.0 s
+12:55:49   | node 2 stopped (SIGTERM, pid 257249), exited after 1.0 s
+12:56:05   | node 1 started: 127.0.0.1:21430, pid 258721
+12:56:05   | node 2 started: 127.0.0.1:21431, pid 258819
+12:56:05   | node 3 started: 127.0.0.1:21432, pid 258916
+12:56:05   | replica set rs0 initiated with node1 node2 node3
+12:56:05   | primary: node1 (127.0.0.1:21430), term 1, found after 9.8 s
+12:56:05 warm-up: mongo-bench --variant majority
+12:56:12   | majority,true,10,1000,false,,,,7.0217,1424.2,10000,10000,10000,0,0,0,0,0,0.067
+12:56:12 -- zero-fill / majority-zero-fill, run 1: mongod=zero-fill; mongo-bench --variant majority
+12:56:28   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:56:28   | majority,true,10,2000,false,,,,13.9842,1430.2,20000,20000,20000,0,0,0,0,0,0.084
+12:56:29    majority-zero-fill: 13.984 s, 1430.2 ops/s, final 20000 of 20000
+12:56:29    node1 PRIMARY   syncs 3982 (0.199/op, 3.34 ms each), write conflicts 56492, wtime 5.24 ms, flow control 0 us, apply 0.00 ops/batch, cpu 20.94 s
+12:56:29    node2 SECONDARY syncs 4032 (0.202/op, 3.33 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.95 ops/batch, cpu 13.59 s
+12:56:29    node3 SECONDARY syncs 4082 (0.204/op, 3.29 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.99 ops/batch, cpu 13.67 s
+12:56:29 -- zero-fill / w1-zero-fill, run 1: mongod=zero-fill; mongo-bench --variant w1
+12:56:35   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:56:35   | w1,true,10,2000,false,,,,4.3585,4588.8,20000,20000,20000,0,0,0,0,0,0.135
+12:56:36    w1-zero-fill: 4.359 s, 4588.8 ops/s, final 20000 of 20000
+12:56:36    node1 PRIMARY   syncs 44 (0.002/op, 2.83 ms each), write conflicts 77632, wtime 3.00 ms, flow control 0 us, apply 0.00 ops/batch, cpu 12.79 s
+12:56:36    node2 SECONDARY syncs 1862 (0.093/op, 1.99 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 12.67 ops/batch, cpu 6.62 s
+12:56:36    node3 SECONDARY syncs 1884 (0.094/op, 1.98 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 12.25 ops/batch, cpu 6.48 s
+12:56:36 == fresh replica set, mongod profile default: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000
+12:56:37   | node 3 stopped (SIGTERM, pid 258916), exited after 1.0 s
+12:56:37   | node 2 stopped (SIGTERM, pid 258819), exited after 1.0 s
+12:56:37   | node 1 stopped (SIGTERM, pid 258721), exited after 1.0 s
+12:56:53   | node 1 started: 127.0.0.1:21430, pid 260248
+12:56:53   | node 2 started: 127.0.0.1:21431, pid 260346
+12:56:53   | node 3 started: 127.0.0.1:21432, pid 260443
+12:56:53   | replica set rs0 initiated with node1 node2 node3
+12:56:53   | primary: node1 (127.0.0.1:21430), term 1, found after 9.5 s
+12:56:53 warm-up: mongo-bench --variant majority
+12:57:03   | majority,true,10,1000,false,,,,10.3306,968.0,10000,10000,10000,0,0,0,0,0,0.062
+12:57:03 -- zero-fill / majority, run 2: mongod=default; mongo-bench --variant majority
+12:57:25   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:57:25   | majority,true,10,2000,false,,,,20.3375,983.4,20000,20000,20000,0,0,0,0,0,0.080
+12:57:26    majority: 20.337 s, 983.4 ops/s, final 20000 of 20000
+12:57:26    node1 PRIMARY   syncs 3468 (0.173/op, 5.68 ms each), write conflicts 72176, wtime 8.25 ms, flow control 0 us, apply 0.00 ops/batch, cpu 21.53 s
+12:57:26    node2 SECONDARY syncs 4321 (0.216/op, 4.57 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.87 ops/batch, cpu 13.98 s
+12:57:26    node3 SECONDARY syncs 4267 (0.213/op, 4.64 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.87 ops/batch, cpu 13.75 s
+12:57:26 -- zero-fill / w1, run 2: mongod=default; mongo-bench --variant w1
+12:57:32   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:57:32   | w1,true,10,2000,false,,,,4.4222,4522.6,20000,20000,20000,0,0,0,0,0,0.122
+12:57:33    w1: 4.422 s, 4522.6 ops/s, final 20000 of 20000
+12:57:33    node1 PRIMARY   syncs 42 (0.002/op, 8.76 ms each), write conflicts 81734, wtime 7.00 ms, flow control 0 us, apply 0.00 ops/batch, cpu 13.07 s
+12:57:33    node2 SECONDARY syncs 422 (0.021/op, 10.23 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 10.99 ops/batch, cpu 6.49 s
+12:57:33    node3 SECONDARY syncs 423 (0.021/op, 10.23 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 10.68 ops/batch, cpu 6.38 s
+12:57:33 == fresh replica set, mongod profile zero-fill: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000 --wiredTigerEngineConfigString=log=(zero_fill=true)
+12:57:35   | node 2 stopped (SIGTERM, pid 260346), exited after 2.0 s
+12:57:35   | node 3 stopped (SIGTERM, pid 260443), exited after 2.0 s
+12:57:35   | node 1 stopped (SIGTERM, pid 260248), exited after 2.0 s
+12:57:50   | node 1 started: 127.0.0.1:21430, pid 261798
+12:57:50   | node 2 started: 127.0.0.1:21431, pid 261895
+12:57:50   | node 3 started: 127.0.0.1:21432, pid 261999
+12:57:50   | replica set rs0 initiated with node1 node2 node3
+12:57:50   | primary: node1 (127.0.0.1:21430), term 1, found after 9.3 s
+12:57:50 warm-up: mongo-bench --variant majority
+12:57:57   | majority,true,10,1000,false,,,,7.0807,1412.3,10000,10000,10000,0,0,0,0,0,0.062
+12:57:57 -- zero-fill / majority-zero-fill, run 2: mongod=zero-fill; mongo-bench --variant majority
+12:58:13   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:58:13   | majority,true,10,2000,false,,,,14.2435,1404.2,20000,20000,20000,0,0,0,0,0,0.071
+12:58:14    majority-zero-fill: 14.243 s, 1404.2 ops/s, final 20000 of 20000
+12:58:14    node1 PRIMARY   syncs 3991 (0.200/op, 3.36 ms each), write conflicts 54402, wtime 5.29 ms, flow control 0 us, apply 0.00 ops/batch, cpu 20.86 s
+12:58:14    node2 SECONDARY syncs 4203 (0.210/op, 3.21 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 3.10 ops/batch, cpu 13.77 s
+12:58:14    node3 SECONDARY syncs 4136 (0.207/op, 3.25 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 3.08 ops/batch, cpu 13.82 s
+12:58:14 -- zero-fill / w1-zero-fill, run 2: mongod=zero-fill; mongo-bench --variant w1
+12:58:21   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:58:21   | w1,true,10,2000,false,,,,4.8334,4137.9,20000,20000,20000,0,0,0,0,0,0.090
+12:58:22    w1-zero-fill: 4.833 s, 4137.9 ops/s, final 20000 of 20000
+12:58:22    node1 PRIMARY   syncs 49 (0.002/op, 2.67 ms each), write conflicts 70612, wtime 3.00 ms, flow control 0 us, apply 0.00 ops/batch, cpu 12.14 s
+12:58:22    node2 SECONDARY syncs 1857 (0.093/op, 2.04 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 15.50 ops/batch, cpu 6.28 s
+12:58:22    node3 SECONDARY syncs 1826 (0.091/op, 2.06 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 15.96 ops/batch, cpu 6.23 s
+12:58:22 == fresh replica set, mongod profile default: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000
+12:58:24   | node 1 stopped (SIGTERM, pid 261798), exited after 2.0 s
+12:58:24   | node 2 stopped (SIGTERM, pid 261895), exited after 2.0 s
+12:58:24   | node 3 stopped (SIGTERM, pid 261999), exited after 2.0 s
+12:58:39   | node 1 started: 127.0.0.1:21430, pid 263330
+12:58:39   | node 2 started: 127.0.0.1:21431, pid 263427
+12:58:39   | node 3 started: 127.0.0.1:21432, pid 263525
+12:58:39   | replica set rs0 initiated with node1 node2 node3
+12:58:39   | primary: node1 (127.0.0.1:21430), term 1, found after 9.4 s
+12:58:39 warm-up: mongo-bench --variant majority
+12:58:50   | majority,true,10,1000,false,,,,10.0988,990.2,10000,10000,10000,0,0,0,0,0,0.093
+12:58:50 -- zero-fill / majority, run 3: mongod=default; mongo-bench --variant majority
+12:59:11   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:59:11   | majority,true,10,2000,false,,,,20.0667,996.7,20000,20000,20000,0,0,0,0,0,0.055
+12:59:12    majority: 20.067 s, 996.7 ops/s, final 20000 of 20000
+12:59:12    node1 PRIMARY   syncs 3468 (0.173/op, 5.60 ms each), write conflicts 69456, wtime 8.15 ms, flow control 0 us, apply 0.00 ops/batch, cpu 21.46 s
+12:59:12    node2 SECONDARY syncs 4283 (0.214/op, 4.55 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.94 ops/batch, cpu 13.96 s
+12:59:12    node3 SECONDARY syncs 4267 (0.213/op, 4.57 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.97 ops/batch, cpu 14.09 s
+12:59:12 -- zero-fill / w1, run 3: mongod=default; mongo-bench --variant w1
+12:59:18   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:59:18   | w1,true,10,2000,false,,,,4.4166,4528.3,20000,20000,20000,0,0,0,0,0,0.113
+12:59:19    w1: 4.417 s, 4528.3 ops/s, final 20000 of 20000
+12:59:19    node1 PRIMARY   syncs 42 (0.002/op, 8.44 ms each), write conflicts 77886, wtime 7.50 ms, flow control 0 us, apply 0.00 ops/batch, cpu 12.57 s
+12:59:19    node2 SECONDARY syncs 436 (0.022/op, 9.84 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 11.97 ops/batch, cpu 6.20 s
+12:59:19    node3 SECONDARY syncs 429 (0.021/op, 9.98 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 11.59 ops/batch, cpu 6.31 s
+12:59:19 == fresh replica set, mongod profile zero-fill: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000 --wiredTigerEngineConfigString=log=(zero_fill=true)
+12:59:21   | node 1 stopped (SIGTERM, pid 263330), exited after 1.0 s
+12:59:21   | node 3 stopped (SIGTERM, pid 263525), exited after 1.0 s
+12:59:21   | node 2 stopped (SIGTERM, pid 263427), exited after 2.0 s
+12:59:37   | node 1 started: 127.0.0.1:21430, pid 264865
+12:59:37   | node 2 started: 127.0.0.1:21431, pid 264962
+12:59:37   | node 3 started: 127.0.0.1:21432, pid 265060
+12:59:37   | replica set rs0 initiated with node1 node2 node3
+12:59:37   | primary: node1 (127.0.0.1:21430), term 1, found after 10.3 s
+12:59:37 warm-up: mongo-bench --variant majority
+12:59:44   | majority,true,10,1000,false,,,,6.9932,1430.0,10000,10000,10000,0,0,0,0,0,0.080
+12:59:44 -- zero-fill / majority-zero-fill, run 3: mongod=zero-fill; mongo-bench --variant majority
+12:59:59   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:59:59   | majority,true,10,2000,false,,,,13.9860,1430.0,20000,20000,20000,0,0,0,0,0,0.088
+13:00:01    majority-zero-fill: 13.986 s, 1430.0 ops/s, final 20000 of 20000
+13:00:01    node1 PRIMARY   syncs 3902 (0.195/op, 3.41 ms each), write conflicts 56138, wtime 5.25 ms, flow control 0 us, apply 0.00 ops/batch, cpu 20.67 s
+13:00:01    node2 SECONDARY syncs 4080 (0.204/op, 3.28 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 3.02 ops/batch, cpu 13.80 s
+13:00:01    node3 SECONDARY syncs 4101 (0.205/op, 3.27 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 3.04 ops/batch, cpu 13.69 s
+13:00:01 -- zero-fill / w1-zero-fill, run 3: mongod=zero-fill; mongo-bench --variant w1
+13:00:07   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+13:00:07   | w1,true,10,2000,false,,,,4.3603,4586.9,20000,20000,20000,0,0,0,0,0,0.098
+13:00:08    w1-zero-fill: 4.360 s, 4586.9 ops/s, final 20000 of 20000
+13:00:08    node1 PRIMARY   syncs 44 (0.002/op, 3.30 ms each), write conflicts 76198, wtime 2.50 ms, flow control 0 us, apply 0.00 ops/batch, cpu 12.74 s
+13:00:08    node2 SECONDARY syncs 1821 (0.091/op, 2.07 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 12.82 ops/batch, cpu 6.54 s
+13:00:08    node3 SECONDARY syncs 1853 (0.093/op, 2.05 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 11.88 ops/batch, cpu 6.51 s

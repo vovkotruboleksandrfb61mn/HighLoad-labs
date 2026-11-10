@@ -1,0 +1,147 @@
+Task 4x, failover: stepdown-noreconnect; mongod v8.3.13, 2026-11-10 15:05 UTC
+primary: node1 (127.0.0.1:21430), term 1, found after 9.7 s
+node 1 started: 127.0.0.1:21430, pid 369158
+node 2 started: 127.0.0.1:21431, pid 369255
+node 3 started: 127.0.0.1:21432, pid 369352
+replica set rs0 initiated with node1 node2 node3
+{"chainingAllowed":true,"heartbeatIntervalMillis":2000,"heartbeatTimeoutSecs":10,"electionTimeoutMillis":10000,"catchUpTimeoutMillis":-1,"catchUpTakeoverDelayMillis":30000,"getLastErrorModes":{},"getLastErrorDefaults":{"w":1,"wtimeout":0},"replicaSetId":"6af332b77b7b8a90aea6273c"}
+primary: node1 (127.0.0.1:21430), term 1, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== stepdown w1-noreconnect run 1: electionTimeoutMillis 10000, primary node1, term 1, load 4.74, 2026-11-10 15:05:42 UTC
+$ mongo-bench --header --variant w1 --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --step-down-after 5
+  [15:05:47.699] mongo-bench: stepping down the primary, node 1 (127.0.0.1:21430)
+  [15:05:47.714] mongo-bench: node 1 stepped down, replSetStepDown replied after 0.015 s
+  [15:06:01.554] mongo-bench: retried 230x after NotWritablePrimary
+  [15:06:01.554] mongo-bench: retried 10x after InterruptedDueToReplStateChange
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+w1,true,10,10000,stepdown,1,5.000,5.072,18.8553,5303.6,100000,100000,100000,0,0,240,0,1,5.199
+mongod log events, times from the replSetStepDown at 15:05:47.699 UTC:
+  15:05:47.699   -0.000 s  node1  Attempting to step down in response to replSetStepDown command  {}
+  15:05:47.704   +0.005 s  node1  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  15:05:47.713   +0.014 s  node1  Handing off election  {"target":"127.0.0.1:21431","usingPriorityPort":false}
+  15:05:47.713   +0.014 s  node1  Stepdown succeeded  {"totalTimeMillis":14,"updateMemberStateTimeMillis":0,"yieldLocksTimeMillis":0}
+  15:05:47.713   +0.014 s  node2  Received replSetStepUp request  {}
+  15:05:47.714   +0.015 s  node2  Starting an election due to step up request  {}
+  15:05:47.717   +0.018 s  node2  Election succeeded, assuming primary role  {"term":2}
+  15:05:47.717   +0.018 s  node2  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  15:05:47.720   +0.021 s  node2  Transition to primary complete; database writes are now permitted  {"term":2}
+summary: failover_s 5.072, failure_to_ack_s 5.072, ack_gap_s 5.071, down_s , election_start_s 0.015, elected_s 0.018, writable_s 0.021, correct True, retries 240, elections 1
+(waiting 48 s until no node is in its 60 s step-down period)
+primary: node2 (127.0.0.1:21431), term 2, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== stepdown majority-noreconnect run 1: electionTimeoutMillis 10000, primary node2, term 2, load 3.34, 2026-11-10 15:06:53 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --step-down-after 30
+  [15:07:23.874] mongo-bench: stepping down the primary, node 2 (127.0.0.1:21431)
+  [15:07:23.890] mongo-bench: node 2 stepped down, replSetStepDown replied after 0.016 s
+  [15:08:38.408] mongo-bench: retried 132x after NotWritablePrimary
+  [15:08:38.408] mongo-bench: retried 10x after writeConcernError InterruptedDueToReplStateChange
+  [15:08:38.408] mongo-bench: retried 4x after MongoError.cannotConnect.noAvailableHosts
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,stepdown,2,30.000,0.033,104.5341,956.6,100000,100000,100000,0,0,146,0,1,10.088
+mongod log events, times from the replSetStepDown at 15:07:23.874 UTC:
+  15:07:23.874   -0.001 s  node2  Attempting to step down in response to replSetStepDown command  {}
+  15:07:23.875   +0.000 s  node2  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  15:07:23.890   +0.015 s  node1  Received replSetStepUp request  {}
+  15:07:23.890   +0.015 s  node1  Starting an election due to step up request  {}
+  15:07:23.890   +0.015 s  node2  Handing off election  {"target":"127.0.0.1:21430","usingPriorityPort":false}
+  15:07:23.890   +0.015 s  node2  Stepdown succeeded  {"totalTimeMillis":15,"updateMemberStateTimeMillis":0,"yieldLocksTimeMillis":0}
+  15:07:23.894   +0.019 s  node1  Election succeeded, assuming primary role  {"term":3}
+  15:07:23.894   +0.019 s  node1  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  15:07:23.897   +0.022 s  node1  Transition to primary complete; database writes are now permitted  {"term":3}
+summary: failover_s 0.033, failure_to_ack_s 0.033, ack_gap_s 0.033, down_s , election_start_s 0.015, elected_s 0.019, writable_s 0.022, correct True, retries 146, elections 1
+primary: node1 (127.0.0.1:21430), term 3, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== stepdown w1-noreconnect run 2: electionTimeoutMillis 10000, primary node1, term 3, load 8.47, 2026-11-10 15:08:42 UTC
+$ mongo-bench --header --variant w1 --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --step-down-after 5
+  [15:08:47.646] mongo-bench: stepping down the primary, node 1 (127.0.0.1:21430)
+  [15:08:47.663] mongo-bench: node 1 stepped down, replSetStepDown replied after 0.016 s
+  [15:09:03.231] mongo-bench: retried 230x after NotWritablePrimary
+  [15:09:03.231] mongo-bench: retried 10x after InterruptedDueToReplStateChange
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+w1,true,10,10000,stepdown,1,5.001,5.072,20.5862,4857.6,100000,100000,100000,0,0,240,0,1,5.129
+mongod log events, times from the replSetStepDown at 15:08:47.646 UTC:
+  15:08:47.646   -0.001 s  node1  Attempting to step down in response to replSetStepDown command  {}
+  15:08:47.655   +0.008 s  node1  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  15:08:47.662   +0.015 s  node1  Handing off election  {"target":"127.0.0.1:21431","usingPriorityPort":false}
+  15:08:47.662   +0.015 s  node1  Stepdown succeeded  {"totalTimeMillis":16,"updateMemberStateTimeMillis":0,"yieldLocksTimeMillis":1}
+  15:08:47.662   +0.015 s  node2  Received replSetStepUp request  {}
+  15:08:47.662   +0.015 s  node2  Starting an election due to step up request  {}
+  15:08:47.666   +0.019 s  node2  Election succeeded, assuming primary role  {"term":4}
+  15:08:47.666   +0.019 s  node2  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  15:08:47.670   +0.023 s  node2  Transition to primary complete; database writes are now permitted  {"term":4}
+summary: failover_s 5.072, failure_to_ack_s 5.072, ack_gap_s 5.072, down_s , election_start_s 0.015, elected_s 0.019, writable_s 0.023, correct True, retries 240, elections 1
+(waiting 46 s until no node is in its 60 s step-down period)
+primary: node2 (127.0.0.1:21431), term 4, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== stepdown majority-noreconnect run 2: electionTimeoutMillis 10000, primary node2, term 4, load 5.40, 2026-11-10 15:09:53 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --step-down-after 30
+  [15:10:23.669] mongo-bench: stepping down the primary, node 2 (127.0.0.1:21431)
+  [15:10:23.677] mongo-bench: node 2 stepped down, replSetStepDown replied after 0.008 s
+  [15:11:38.087] mongo-bench: retried 87x after NotWritablePrimary
+  [15:11:38.087] mongo-bench: retried 10x after writeConcernError InterruptedDueToReplStateChange
+  [15:11:38.087] mongo-bench: retried 7x after MongoError.cannotConnect.noAvailableHosts
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,stepdown,2,30.000,0.032,104.4182,957.7,100000,100000,100000,0,0,104,0,1,10.083
+mongod log events, times from the replSetStepDown at 15:10:23.669 UTC:
+  15:10:23.669   -0.000 s  node2  Attempting to step down in response to replSetStepDown command  {}
+  15:10:23.669   -0.000 s  node2  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  15:10:23.676   +0.007 s  node1  Received replSetStepUp request  {}
+  15:10:23.676   +0.007 s  node1  Starting an election due to step up request  {}
+  15:10:23.676   +0.007 s  node2  Handing off election  {"target":"127.0.0.1:21430","usingPriorityPort":false}
+  15:10:23.676   +0.007 s  node2  Stepdown succeeded  {"totalTimeMillis":7,"updateMemberStateTimeMillis":0,"yieldLocksTimeMillis":0}
+  15:10:23.680   +0.011 s  node1  Election succeeded, assuming primary role  {"term":5}
+  15:10:23.680   +0.011 s  node1  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  15:10:23.685   +0.016 s  node1  Transition to primary complete; database writes are now permitted  {"term":5}
+summary: failover_s 0.032, failure_to_ack_s 0.032, ack_gap_s 0.036, down_s , election_start_s 0.007, elected_s 0.011, writable_s 0.016, correct True, retries 104, elections 1
+primary: node1 (127.0.0.1:21430), term 5, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== stepdown w1-noreconnect run 3: electionTimeoutMillis 10000, primary node1, term 5, load 7.62, 2026-11-10 15:11:42 UTC
+$ mongo-bench --header --variant w1 --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --step-down-after 5
+  [15:11:47.387] mongo-bench: stepping down the primary, node 1 (127.0.0.1:21430)
+  [15:11:47.401] mongo-bench: node 1 stepped down, replSetStepDown replied after 0.014 s
+  [15:12:02.827] mongo-bench: retried 230x after NotWritablePrimary
+  [15:12:02.827] mongo-bench: retried 10x after InterruptedDueToReplStateChange
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+w1,true,10,10000,stepdown,1,5.001,5.075,20.4408,4892.2,100000,100000,100000,0,0,240,0,1,5.127
+mongod log events, times from the replSetStepDown at 15:11:47.387 UTC:
+  15:11:47.387   -0.000 s  node1  Attempting to step down in response to replSetStepDown command  {}
+  15:11:47.391   +0.004 s  node1  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  15:11:47.401   +0.014 s  node1  Handing off election  {"target":"127.0.0.1:21431","usingPriorityPort":false}
+  15:11:47.401   +0.014 s  node1  Stepdown succeeded  {"totalTimeMillis":13,"updateMemberStateTimeMillis":0,"yieldLocksTimeMillis":0}
+  15:11:47.401   +0.014 s  node2  Received replSetStepUp request  {}
+  15:11:47.401   +0.014 s  node2  Starting an election due to step up request  {}
+  15:11:47.410   +0.023 s  node2  Election succeeded, assuming primary role  {"term":6}
+  15:11:47.410   +0.023 s  node2  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  15:11:47.414   +0.027 s  node2  Transition to primary complete; database writes are now permitted  {"term":6}
+summary: failover_s 5.075, failure_to_ack_s 5.075, ack_gap_s 5.073, down_s , election_start_s 0.014, elected_s 0.023, writable_s 0.027, correct True, retries 240, elections 1
+(waiting 46 s until no node is in its 60 s step-down period)
+primary: node2 (127.0.0.1:21431), term 6, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== stepdown majority-noreconnect run 3: electionTimeoutMillis 10000, primary node2, term 6, load 6.22, 2026-11-10 15:12:53 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --step-down-after 30
+  [15:13:23.784] mongo-bench: stepping down the primary, node 2 (127.0.0.1:21431)
+  [15:13:23.789] mongo-bench: node 2 stepped down, replSetStepDown replied after 0.005 s
+  [15:14:33.653] mongo-bench: retried 10x after writeConcernError InterruptedDueToReplStateChange
+  [15:14:33.653] mongo-bench: retried 9x after MongoError.cannotConnect.noAvailableHosts
+  [15:14:33.653] mongo-bench: retried 1x after NotWritablePrimary
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,stepdown,2,30.000,0.032,99.8693,1001.3,100000,100000,100000,0,0,20,0,1,0.047
+mongod log events, times from the replSetStepDown at 15:13:23.784 UTC:
+  15:13:23.784   -0.001 s  node2  Attempting to step down in response to replSetStepDown command  {}
+  15:13:23.785   +0.000 s  node2  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  15:13:23.789   +0.004 s  node1  Received replSetStepUp request  {}
+  15:13:23.789   +0.004 s  node1  Starting an election due to step up request  {}
+  15:13:23.789   +0.004 s  node2  Handing off election  {"target":"127.0.0.1:21430","usingPriorityPort":false}
+  15:13:23.789   +0.004 s  node2  Stepdown succeeded  {"totalTimeMillis":5,"updateMemberStateTimeMillis":0,"yieldLocksTimeMillis":0}
+  15:13:23.793   +0.008 s  node1  Election succeeded, assuming primary role  {"term":7}
+  15:13:23.793   +0.008 s  node1  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  15:13:23.800   +0.015 s  node1  Transition to primary complete; database writes are now permitted  {"term":7}
+summary: failover_s 0.032, failure_to_ack_s 0.032, ack_gap_s 0.038, down_s , election_start_s 0.004, elected_s 0.008, writable_s 0.015, correct True, retries 20, elections 1
+primary: node1 (127.0.0.1:21430), term 7, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10

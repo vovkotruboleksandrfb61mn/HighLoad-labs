@@ -1,0 +1,45 @@
+perf record -e cpu-clock:u -F 999 -p <primary mongod> -- sleep 6
+while: mongo-bench --variant w1 --increments 10000
+mongo-bench row: w1,true,10,10000,false,,,,21.1643,4724.9,100000,100000,100000,0,0,0,0,0,0.110
+15244 samples: 2.54 cores of user CPU, 538 us of user CPU per increment
+
+samples by part of mongod:
+ 14.14%  C++ exception unwinding
+  6.08%  tcmalloc
+ 12.02%  WiredTiger
+  1.05%  snappy (journal compression)
+ 10.82%  libc
+ 55.20%  other mongod
+  1.69%  other
+
+top 30 symbols (perf report --no-children --sort dso,sym):
+  3.91%  libgcc_s.so.1  execute_cfa_program_specialized
+  3.06%  mongod         read_encoded_value_with_base(unsigned char, unsigned long, unsigned char const*, unsigned long*)
+  2.67%  mongod         tcmalloc::tcmalloc_internal::TCMallocPolicy<tcmalloc::tcmalloc_internal::CppOomPolicy, tcmalloc::tcmalloc_internal::DefaultAlignPolicy, tcmalloc::tcma
+  1.86%  libgcc_s.so.1  _Unwind_Find_FDE
+  1.50%  libc.so.6      __memcmp_avx2_movbe
+  1.45%  mongod         __gxx_personality_v0
+  1.38%  libc.so.6      __memmove_avx_unaligned_erms
+  1.38%  libgcc_s.so.1  uw_update_context_1
+  1.19%  mongod         mongo::ServiceEntryPointShardRole::handleRequest(mongo::OperationContext*, mongo::Message const&, mongo::Date_t)
+  1.17%  libc.so.6      __syscall_cancel_arch_end
+  1.04%  mongod         __wt_row_search
+  1.04%  mongod         __wt_btcur_search
+  0.91%  libc.so.6      pthread_mutex_lock@@GLIBC_2.2.5
+  0.77%  mongod         mongo::QueryKnobConfiguration::QueryKnobConfiguration(mongo::query_settings::QuerySettings const&)
+  0.72%  libc.so.6      __GI___pthread_mutex_unlock_usercnt
+  0.71%  mongod         tcmalloc::tcmalloc_internal::FreeWithHooksOrPerThread(void*, unsigned long)
+  0.70%  mongod         snappy::Compress(snappy::Source*, snappy::Sink*)
+  0.62%  libc.so.6      __strlen_avx2
+  0.61%  libc.so.6      pthread_mutex_trylock@@GLIBC_2.34
+  0.61%  mongod         mongo::Locker::_lockBegin(mongo::OperationContext*, mongo::ResourceId, mongo::LockMode)
+  0.58%  mongod         base_of_encoded_value(unsigned char, _Unwind_Context*)
+  0.57%  mongod         __wt_page_in_func
+  0.54%  libc.so.6      clock_gettime@@GLIBC_2.17
+  0.54%  mongod         operator new[](unsigned long)
+  0.53%  mongod         mongo::OperationContext::OperationContext(mongo::Client*, unsigned int)
+  0.52%  mongod         mongo::OperationContext::~OperationContext()
+  0.51%  mongod         __config_next.llvm.3014943100567483038
+  0.51%  mongod         mongo::(anonymous namespace)::bsonExtractFieldImpl(mongo::BSONObj const&, mongo::StringData, mongo::BSONElement*, bool) [clone .llvm.18066743126385461
+  0.49%  libc.so.6      __memchr_avx2
+  0.49%  libc.so.6      __memset_avx2_unaligned_erms

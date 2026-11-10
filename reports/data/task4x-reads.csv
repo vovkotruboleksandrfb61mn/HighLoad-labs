@@ -1,0 +1,16 @@
+scenario,step,node,node_state,read_concern,likes,lost_docs,error,rolled_back_later
+rollback,w1 written before failure,node1,PRIMARY,local,105,5,,yes
+rollback,w1 written before failure,node1,PRIMARY,majority,100,0,,no
+rollback,w1 written before failure,node1,PRIMARY,linearizable,,,MaxTimeMSExpired,n/a
+rollback,w1 written before failure,node2,SECONDARY,local,100,0,,no
+rollback,new primary elected,node3,PRIMARY,local,110,0,,no
+rollback,old primary is SECONDARY with rollback held,node1,SECONDARY,local,105,5,,yes
+rollback,old primary is SECONDARY with rollback held,node1,SECONDARY,majority,100,0,,no
+rollback,after rollback,node1,SECONDARY,local,110,0,,no
+rollback,after rollback,node3,PRIMARY,majority,110,0,,no
+stale,node lags after majority inc,node3,PRIMARY,linearizable,111,0,,no
+stale,node lags after majority inc,node3,PRIMARY,local,111,0,,no
+stale,node lags after majority inc,node2,SECONDARY,local,110,0,,no
+stale,node lags after majority inc,node2,SECONDARY,majority,110,0,,no
+stale,node lags after majority inc,node2,SECONDARY,linearizable,,,NotWritablePrimary,n/a
+stale,caught up,node2,SECONDARY,local,111,0,,no

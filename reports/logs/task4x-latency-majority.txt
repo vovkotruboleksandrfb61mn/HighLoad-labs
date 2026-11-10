@@ -1,0 +1,7 @@
+mongo-bench --variant majority --workers 10 --increments 10000 --latency-out ... 
+
+Рядок CSV mongo-bench:
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,false,,,,97.4887,1025.8,100000,100000,100000,0,0,0,0,0,0.049
+
+Вивід mongo-bench і scripts/mongo.sh (stderr):

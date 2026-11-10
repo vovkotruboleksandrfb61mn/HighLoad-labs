@@ -1,0 +1,39 @@
+Task 4x, failover: stepdown-kill; mongod v8.3.13, 2026-11-10 15:01 UTC
+primary: node1 (127.0.0.1:21430), term 27, found after 0.1 s
+{"chainingAllowed":true,"heartbeatIntervalMillis":2000,"heartbeatTimeoutSecs":10,"electionTimeoutMillis":10000,"catchUpTimeoutMillis":-1,"catchUpTakeoverDelayMillis":30000,"getLastErrorModes":{},"getLastErrorDefaults":{"w":1,"wtimeout":0},"replicaSetId":"6af329cff4eb346b9a54e889"}
+primary: node1 (127.0.0.1:21430), term 27, found after 0.1 s
+electionTimeoutMillis 10000 -> 2000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+$ db.adminCommand({ replSetStepDown: 60 }) on node1 (term 27) at 15:02:05.819 UTC
+primary: node2 (127.0.0.1:21431), term 28, found after 0.1 s
+
+$ db.adminCommand({ replSetStepDown: 60 }) on node2 (term 28) at 15:02:08.367 UTC
+primary: node3 (127.0.0.1:21432), term 29, found after 0.1 s
+primary: node3 (127.0.0.1:21432), term 29, found after 0.1 s
+electionTimeoutMillis 2000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== stepdown-kill timeout-2000 run 1: electionTimeoutMillis 2000, primary node3, term 29, load 3.64, 2026-11-10 15:02:14 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --kill-primary-after 3
+  [15:02:17.542] mongo-bench: killing the primary, node 3 (127.0.0.1:21432)
+  [15:02:17.687] node 3 killed (SIGKILL at 15:02:17.577 UTC, pid 356921), gone after 0.0 s
+  [15:04:38.386] mongo-bench: retried 1990x after MongoError.cannotConnect.noAvailableHosts
+  [15:04:38.386] mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+  [15:04:38.386] mongo-bench: starting node 3 again
+  [15:04:38.950] node 3 started: 127.0.0.1:21432, pid 367617
+  [15:04:44.730] node3 is SECONDARY and caught up with node1 after 5.0 s (optime 1794323078:1772)
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,true,3,3.152,49.246,143.8437,695.2,100000,100000,100000,0,0,2000,0,1,49.383
+mongod log events, times from the SIGKILL at 15:02:17.577 UTC:
+  15:02:17.608   +0.031 s  node2  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21432","heartbeatMessage":"Error connecting to 127.0.0.1:21432 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  15:02:18.578   +1.001 s  node1  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21432","heartbeatMessage":"Error connecting to 127.0.0.1:21432 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  15:02:19.712   +2.135 s  node2  Not starting an election, since we are not electable  {"reason":"Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T17:03:09.179+02:00 (mask 0x10)"}
+  15:02:19.862   +2.285 s  node1  Not starting an election, since we are not electable  {"reason":"Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T17:03:06.621+02:00 (mask 0x10)"}
+  15:03:06.680  +49.103 s  node1  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":2000}
+  15:03:06.680  +49.103 s  node1  Conducting a dry run election to see if we could be elected  {"currentTerm":29}
+  15:03:06.680  +49.103 s  node1  Dry election run succeeded, running for election  {"newTerm":30}
+  15:03:06.692  +49.115 s  node1  Election succeeded, assuming primary role  {"term":30}
+  15:03:06.692  +49.115 s  node1  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  15:03:06.695  +49.118 s  node1  Transition to primary complete; database writes are now permitted  {"term":30}
+summary: failover_s 49.246, failure_to_ack_s 49.356, ack_gap_s 49.363, down_s 0.031, election_start_s 49.103, elected_s 49.115, writable_s 49.118, correct True, retries 2000, elections 1
+primary: node1 (127.0.0.1:21430), term 30, found after 0.1 s
+electionTimeoutMillis 2000 -> 10000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10

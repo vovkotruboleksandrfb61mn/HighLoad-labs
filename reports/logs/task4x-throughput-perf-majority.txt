@@ -1,0 +1,45 @@
+perf record -e cpu-clock:u -F 999 -p <primary mongod> -- sleep 6
+while: mongo-bench --variant majority --increments 3000
+mongo-bench row: majority,true,10,3000,false,,,,30.4176,986.3,30000,30000,30000,0,0,0,0,0,0.057
+5210 samples: 0.87 cores of user CPU, 881 us of user CPU per increment
+
+samples by part of mongod:
+  7.59%  C++ exception unwinding
+  7.02%  tcmalloc
+ 12.24%  WiredTiger
+  2.01%  snappy (journal compression)
+ 11.51%  libc
+ 59.31%  other mongod
+  1.92%  other
+
+top 30 symbols (perf report --no-children --sort dso,sym):
+  3.22%  mongod         tcmalloc::tcmalloc_internal::TCMallocPolicy<tcmalloc::tcmalloc_internal::CppOomPolicy, tcmalloc::tcmalloc_internal::DefaultAlignPolicy, tcmalloc::tcma
+  2.30%  mongod         mongo::ServiceEntryPointShardRole::handleRequest(mongo::OperationContext*, mongo::Message const&, mongo::Date_t)
+  1.86%  mongod         read_encoded_value_with_base(unsigned char, unsigned long, unsigned char const*, unsigned long*)
+  1.73%  libgcc_s.so.1  execute_cfa_program_specialized
+  1.69%  libc.so.6      __syscall_cancel_arch_end
+  1.54%  mongod         __wt_row_search
+  1.46%  libc.so.6      __memmove_avx_unaligned_erms
+  1.23%  mongod         snappy::Compress(snappy::Source*, snappy::Sink*)
+  1.15%  mongod         mongo::(anonymous namespace)::bsonExtractFieldImpl(mongo::BSONObj const&, mongo::StringData, mongo::BSONElement*, bool) [clone .llvm.18066743126385461
+  1.02%  libc.so.6      __memcmp_avx2_movbe
+  0.94%  libc.so.6      pthread_mutex_lock@@GLIBC_2.2.5
+  0.84%  libgcc_s.so.1  uw_update_context_1
+  0.83%  mongod         __gxx_personality_v0
+  0.81%  libgcc_s.so.1  _Unwind_Find_FDE
+  0.79%  mongod         __wt_search_insert
+  0.77%  mongod         mongo::(anonymous namespace)::ValidateBuffer<false, mongo::(anonymous namespace)::DefaultValidator>::_validateIterative(mongo::(anonymous namespace)::
+  0.75%  mongod         tcmalloc::tcmalloc_internal::FreeWithHooksOrPerThread(void*, unsigned long)
+  0.73%  mongod         mongo::(anonymous namespace)::RunCommandImpl::run()
+  0.73%  mongod         mongo::OperationContext::~OperationContext()
+  0.69%  libc.so.6      __GI___pthread_mutex_unlock_usercnt
+  0.67%  mongod         __wt_btcur_search
+  0.63%  mongod         mongo::CurOp::completeAndLogOperation(mongo::logv2::LogOptions const&, std::shared_ptr<mongo::ProfileFilter const>, boost::optional<unsigned long>, bo
+  0.63%  mongod         mongo::OperationContext::OperationContext(mongo::Client*, unsigned int)
+  0.61%  libc.so.6      __memchr_avx2
+  0.60%  mongod         mongo::QueryKnobConfiguration::QueryKnobConfiguration(mongo::query_settings::QuerySettings const&)
+  0.58%  mongod         __curfile_cache.llvm.12479243031182149861
+  0.56%  libc.so.6      __sched_yield
+  0.56%  mongod         __config_next.llvm.3014943100567483038
+  0.56%  mongod         snappy::RawUncompress(snappy::Source*, char*)
+  0.54%  mongod         operator new[](unsigned long)

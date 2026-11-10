@@ -1,0 +1,94 @@
+experiment,label,settings,run,seconds,ops_per_s,final_value,correct,expected,clients,increments_per_client,loadavg_1m,started_utc
+hotdoc,w1,mongod=default; mongo-bench --variant w1,1,4.4204,4524.5,20000,true,20000,10,2000,12.34,2026-11-10T12:39:29Z
+hotdoc,w1-shards10,mongod=default; mongo-bench --variant w1 --shards 10,1,2.9098,6873.3,20000,true,20000,10,2000,14.88,2026-11-10T12:39:36Z
+hotdoc,majority,mongod=default; mongo-bench --variant majority,1,21.0877,948.4,20000,true,20000,10,2000,18.02,2026-11-10T12:39:41Z
+hotdoc,majority-shards10,mongod=default; mongo-bench --variant majority --shards 10,1,19.7070,1014.9,20000,true,20000,10,2000,15.60,2026-11-10T12:40:05Z
+hotdoc,w1,mongod=default; mongo-bench --variant w1,2,4.1022,4875.4,20000,true,20000,10,2000,15.67,2026-11-10T12:40:27Z
+hotdoc,w1-shards10,mongod=default; mongo-bench --variant w1 --shards 10,2,2.9329,6819.2,20000,true,20000,10,2000,16.50,2026-11-10T12:40:34Z
+hotdoc,majority,mongod=default; mongo-bench --variant majority,2,22.6672,882.3,20000,true,20000,10,2000,16.00,2026-11-10T12:40:39Z
+hotdoc,majority-shards10,mongod=default; mongo-bench --variant majority --shards 10,2,19.0425,1050.3,20000,true,20000,10,2000,17.54,2026-11-10T12:41:05Z
+hotdoc,w1,mongod=default; mongo-bench --variant w1,3,4.2766,4676.6,20000,true,20000,10,2000,17.80,2026-11-10T12:41:26Z
+hotdoc,w1-shards10,mongod=default; mongo-bench --variant w1 --shards 10,3,2.6898,7435.5,20000,true,20000,10,2000,18.13,2026-11-10T12:41:33Z
+hotdoc,majority,mongod=default; mongo-bench --variant majority,3,22.7172,880.4,20000,true,20000,10,2000,17.16,2026-11-10T12:41:38Z
+hotdoc,majority-shards10,mongod=default; mongo-bench --variant majority --shards 10,3,19.1689,1043.4,20000,true,20000,10,2000,16.58,2026-11-10T12:42:04Z
+journal-interval,majority-interval100,mongod=default; mongo-bench --variant majority,1,22.5531,886.8,20000,true,20000,10,2000,15.49,2026-11-10T12:42:26Z
+journal-interval,majority-interval1,mongod=default; journalCommitInterval=1; mongo-bench --variant majority,1,22.6982,881.1,20000,true,20000,10,2000,15.11,2026-11-10T12:42:54Z
+journal-interval,majority-interval500,mongod=default; journalCommitInterval=500; mongo-bench --variant majority,1,22.4276,891.8,20000,true,20000,10,2000,13.40,2026-11-10T12:43:27Z
+journal-interval,majority-interval100,mongod=default; mongo-bench --variant majority,2,22.8612,874.8,20000,true,20000,10,2000,13.56,2026-11-10T12:43:55Z
+journal-interval,majority-interval1,mongod=default; journalCommitInterval=1; mongo-bench --variant majority,2,22.5562,886.7,20000,true,20000,10,2000,13.79,2026-11-10T12:44:24Z
+journal-interval,majority-interval500,mongod=default; journalCommitInterval=500; mongo-bench --variant majority,2,22.6580,882.7,20000,true,20000,10,2000,14.59,2026-11-10T12:44:57Z
+journal-interval,majority-interval100,mongod=default; mongo-bench --variant majority,3,22.5175,888.2,20000,true,20000,10,2000,15.33,2026-11-10T12:45:25Z
+journal-interval,majority-interval1,mongod=default; journalCommitInterval=1; mongo-bench --variant majority,3,22.7056,880.8,20000,true,20000,10,2000,14.26,2026-11-10T12:45:54Z
+journal-interval,majority-interval500,mongod=default; journalCommitInterval=500; mongo-bench --variant majority,3,22.9408,871.8,20000,true,20000,10,2000,13.99,2026-11-10T12:46:26Z
+unsafe-journal,majority,mongod=default; mongo-bench --variant majority,1,22.6155,884.3,20000,true,20000,10,2000,15.08,2026-11-10T12:46:56Z
+unsafe-journal,majority-nojournal-UNSAFE,mongod=default; writeConcernMajorityJournalDefault=false (UNSAFE); mongo-bench --variant majority,1,5.9398,3367.1,20000,true,20000,10,2000,16.69,2026-11-10T12:47:23Z
+unsafe-journal,majority,mongod=default; mongo-bench --variant majority,2,22.6038,884.8,20000,true,20000,10,2000,18.33,2026-11-10T12:47:34Z
+unsafe-journal,majority-nojournal-UNSAFE,mongod=default; writeConcernMajorityJournalDefault=false (UNSAFE); mongo-bench --variant majority,2,5.8264,3432.6,20000,true,20000,10,2000,15.25,2026-11-10T12:48:02Z
+unsafe-journal,majority,mongod=default; mongo-bench --variant majority,3,22.6583,882.7,20000,true,20000,10,2000,16.87,2026-11-10T12:48:12Z
+unsafe-journal,majority-nojournal-UNSAFE,mongod=default; writeConcernMajorityJournalDefault=false (UNSAFE); mongo-bench --variant majority,3,5.9874,3340.3,20000,true,20000,10,2000,15.99,2026-11-10T12:48:40Z
+replication,majority,mongod=default; mongo-bench --variant majority,1,22.7944,877.4,20000,true,20000,10,2000,17.02,2026-11-10T12:48:51Z
+replication,majority-flowcontrol-off,mongod=default; enableFlowControl=False; mongo-bench --variant majority,1,22.7477,879.2,20000,true,20000,10,2000,16.86,2026-11-10T12:49:20Z
+replication,majority-writer1,mongod=writer1; mongo-bench --variant majority,1,20.2613,987.1,20000,true,20000,10,2000,12.73,2026-11-10T12:50:17Z
+replication,majority,mongod=default; mongo-bench --variant majority,2,20.0765,996.2,20000,true,20000,10,2000,12.97,2026-11-10T12:51:09Z
+replication,majority-flowcontrol-off,mongod=default; enableFlowControl=False; mongo-bench --variant majority,2,19.7320,1013.6,20000,true,20000,10,2000,11.84,2026-11-10T12:51:34Z
+replication,majority-writer1,mongod=writer1; mongo-bench --variant majority,2,19.9228,1003.9,20000,true,20000,10,2000,9.00,2026-11-10T12:52:25Z
+replication,majority,mongod=default; mongo-bench --variant majority,3,20.1531,992.4,20000,true,20000,10,2000,11.32,2026-11-10T12:53:14Z
+replication,majority-flowcontrol-off,mongod=default; enableFlowControl=False; mongo-bench --variant majority,3,19.9937,1000.3,20000,true,20000,10,2000,12.36,2026-11-10T12:53:39Z
+replication,majority-writer1,mongod=writer1; mongo-bench --variant majority,3,19.2814,1037.3,20000,true,20000,10,2000,9.74,2026-11-10T12:54:32Z
+zero-fill,majority,mongod=default; mongo-bench --variant majority,1,20.0761,996.2,20000,true,20000,10,2000,10.31,2026-11-10T12:55:19Z
+zero-fill,w1,mongod=default; mongo-bench --variant w1,1,4.1086,4867.8,20000,true,20000,10,2000,15.26,2026-11-10T12:55:41Z
+zero-fill,majority-zero-fill,mongod=zero-fill; mongo-bench --variant majority,1,13.9842,1430.2,20000,true,20000,10,2000,15.68,2026-11-10T12:56:12Z
+zero-fill,w1-zero-fill,mongod=zero-fill; mongo-bench --variant w1,1,4.3585,4588.8,20000,true,20000,10,2000,18.39,2026-11-10T12:56:29Z
+zero-fill,majority,mongod=default; mongo-bench --variant majority,2,20.3375,983.4,20000,true,20000,10,2000,15.94,2026-11-10T12:57:03Z
+zero-fill,w1,mongod=default; mongo-bench --variant w1,2,4.4222,4522.6,20000,true,20000,10,2000,15.95,2026-11-10T12:57:26Z
+zero-fill,majority-zero-fill,mongod=zero-fill; mongo-bench --variant majority,2,14.2435,1404.2,20000,true,20000,10,2000,15.79,2026-11-10T12:57:57Z
+zero-fill,w1-zero-fill,mongod=zero-fill; mongo-bench --variant w1,2,4.8334,4137.9,20000,true,20000,10,2000,17.18,2026-11-10T12:58:14Z
+zero-fill,majority,mongod=default; mongo-bench --variant majority,3,20.0667,996.7,20000,true,20000,10,2000,13.86,2026-11-10T12:58:50Z
+zero-fill,w1,mongod=default; mongo-bench --variant w1,3,4.4166,4528.3,20000,true,20000,10,2000,13.90,2026-11-10T12:59:12Z
+zero-fill,majority-zero-fill,mongod=zero-fill; mongo-bench --variant majority,3,13.9860,1430.0,20000,true,20000,10,2000,13.65,2026-11-10T12:59:44Z
+zero-fill,w1-zero-fill,mongod=zero-fill; mongo-bench --variant w1,3,4.3603,4586.9,20000,true,20000,10,2000,12.62,2026-11-10T13:00:01Z
+client,bench-majority,mongod=default; mongo-bench --variant majority,1,20.0230,998.9,20000,true,20000,10,2000,11.95,2026-11-10T13:00:36Z
+client,web-async-ahc,mongod=default; counter-server --engine async; loadgen --engine ahc,1,23.7112,843.5,20000,true,20000,10,2000,14.98,2026-11-10T13:00:59Z
+client,web-async-nio,mongod=default; counter-server --engine async; loadgen --engine nio,1,22.9704,870.7,20000,true,20000,10,2000,15.20,2026-11-10T13:01:25Z
+client,web-handler-nio,mongod=default; counter-server --engine handler; loadgen --engine nio,1,22.1189,904.2,20000,true,20000,10,2000,14.97,2026-11-10T13:01:51Z
+client,web-raw-nio,mongod=default; counter-server --engine raw; loadgen --engine nio,1,22.2243,899.9,20000,true,20000,10,2000,13.81,2026-11-10T13:02:16Z
+client,web-async-ahc-clients20,mongod=default; counter-server --engine async --mongo-clients 20; loadgen --engine ahc,1,22.5512,886.9,20000,true,20000,10,2000,14.19,2026-11-10T13:02:40Z
+client,bench-majority,mongod=default; mongo-bench --variant majority,2,20.2798,986.2,20000,true,20000,10,2000,15.26,2026-11-10T13:03:06Z
+client,web-async-ahc,mongod=default; counter-server --engine async; loadgen --engine ahc,2,22.7411,879.5,20000,true,20000,10,2000,16.27,2026-11-10T13:03:29Z
+client,web-async-nio,mongod=default; counter-server --engine async; loadgen --engine nio,2,22.4114,892.4,20000,true,20000,10,2000,16.19,2026-11-10T13:03:54Z
+client,web-handler-nio,mongod=default; counter-server --engine handler; loadgen --engine nio,2,22.7305,879.9,20000,true,20000,10,2000,15.12,2026-11-10T13:04:19Z
+client,web-raw-nio,mongod=default; counter-server --engine raw; loadgen --engine nio,2,22.3990,892.9,20000,true,20000,10,2000,17.01,2026-11-10T13:04:45Z
+client,web-async-ahc-clients20,mongod=default; counter-server --engine async --mongo-clients 20; loadgen --engine ahc,2,23.7186,843.2,20000,true,20000,10,2000,15.89,2026-11-10T13:05:10Z
+client,bench-majority,mongod=default; mongo-bench --variant majority,3,20.6005,970.8,20000,true,20000,10,2000,14.27,2026-11-10T13:05:36Z
+client,web-async-ahc,mongod=default; counter-server --engine async; loadgen --engine ahc,3,23.0521,867.6,20000,true,20000,10,2000,14.92,2026-11-10T13:05:59Z
+client,web-async-nio,mongod=default; counter-server --engine async; loadgen --engine nio,3,22.3340,895.5,20000,true,20000,10,2000,14.56,2026-11-10T13:06:25Z
+client,web-handler-nio,mongod=default; counter-server --engine handler; loadgen --engine nio,3,22.5718,886.1,20000,true,20000,10,2000,14.58,2026-11-10T13:06:50Z
+client,web-raw-nio,mongod=default; counter-server --engine raw; loadgen --engine nio,3,22.3366,895.4,20000,true,20000,10,2000,14.88,2026-11-10T13:07:15Z
+client,web-async-ahc-clients20,mongod=default; counter-server --engine async --mongo-clients 20; loadgen --engine ahc,3,23.2502,860.2,20000,true,20000,10,2000,13.21,2026-11-10T13:07:40Z
+final,majority,mongod=default; mongo-bench --variant majority,1,101.6263,984.0,100000,true,100000,10,10000,16.47,2026-11-10T13:14:38Z
+final,w1,mongod=default; mongo-bench --variant w1,1,22.4786,4448.7,100000,true,100000,10,10000,16.95,2026-11-10T13:16:22Z
+final,web,mongod=default; counter-server --engine async; loadgen --engine ahc,1,116.6977,856.9,100000,true,100000,10,10000,22.70,2026-11-10T13:16:47Z
+final,majority-zero-fill,mongod=zero-fill; mongo-bench --variant majority,1,70.4479,1419.5,100000,true,100000,10,10000,18.45,2026-11-10T13:19:41Z
+final,w1-zero-fill,mongod=zero-fill; mongo-bench --variant w1,1,21.4665,4658.4,100000,true,100000,10,10000,20.52,2026-11-10T13:20:54Z
+final,web-zero-fill,mongod=zero-fill; counter-server --engine async; loadgen --engine ahc,1,76.8806,1300.7,100000,true,100000,10,10000,21.00,2026-11-10T13:21:18Z
+final,majority-zero-fill-shards10,mongod=zero-fill; mongo-bench --variant majority --shards 10,1,61.1954,1634.1,100000,true,100000,10,10000,22.26,2026-11-10T13:22:38Z
+final,w1-zero-fill-shards10,mongod=zero-fill; mongo-bench --variant w1 --shards 10,1,12.7994,7812.8,100000,true,100000,10,10000,18.93,2026-11-10T13:23:41Z
+final,web-zero-fill-shards10,mongod=zero-fill; counter-server --engine async --mongo-shards 10; loadgen --engine ahc,1,62.6559,1596.0,100000,true,100000,10,10000,21.02,2026-11-10T13:23:56Z
+final,majority,mongod=default; mongo-bench --variant majority,2,100.2361,997.6,100000,true,100000,10,10000,12.38,2026-11-10T13:26:07Z
+final,w1,mongod=default; mongo-bench --variant w1,2,21.5468,4641.1,100000,true,100000,10,10000,14.77,2026-11-10T13:27:49Z
+final,web,mongod=default; counter-server --engine async; loadgen --engine ahc,2,114.8516,870.7,100000,true,100000,10,10000,15.62,2026-11-10T13:28:13Z
+final,majority-zero-fill,mongod=zero-fill; mongo-bench --variant majority,2,65.7885,1520.0,100000,true,100000,10,10000,13.00,2026-11-10T13:31:01Z
+final,w1-zero-fill,mongod=zero-fill; mongo-bench --variant w1,2,19.1274,5228.1,100000,true,100000,10,10000,13.15,2026-11-10T13:32:08Z
+final,web-zero-fill,mongod=zero-fill; counter-server --engine async; loadgen --engine ahc,2,67.8131,1474.6,100000,true,100000,10,10000,14.39,2026-11-10T13:32:29Z
+final,majority-zero-fill-shards10,mongod=zero-fill; mongo-bench --variant majority --shards 10,2,59.1464,1690.7,100000,true,100000,10,10000,11.89,2026-11-10T13:33:39Z
+final,w1-zero-fill-shards10,mongod=zero-fill; mongo-bench --variant w1 --shards 10,2,10.9584,9125.4,100000,true,100000,10,10000,11.21,2026-11-10T13:34:40Z
+final,web-zero-fill-shards10,mongod=zero-fill; counter-server --engine async --mongo-shards 10; loadgen --engine ahc,2,60.6875,1647.8,100000,true,100000,10,10000,15.65,2026-11-10T13:34:53Z
+final,majority,mongod=default; mongo-bench --variant majority,3,99.1370,1008.7,100000,true,100000,10,10000,11.51,2026-11-10T13:37:02Z
+final,w1,mongod=default; mongo-bench --variant w1,3,18.2948,5466.0,100000,true,100000,10,10000,11.10,2026-11-10T13:38:43Z
+final,web,mongod=default; counter-server --engine async; loadgen --engine ahc,3,111.7407,894.9,100000,true,100000,10,10000,13.43,2026-11-10T13:39:03Z
+final,majority-zero-fill,mongod=zero-fill; mongo-bench --variant majority,3,65.1172,1535.7,100000,true,100000,10,10000,11.29,2026-11-10T13:41:46Z
+final,w1-zero-fill,mongod=zero-fill; mongo-bench --variant w1,3,16.7799,5959.5,100000,true,100000,10,10000,10.99,2026-11-10T13:42:53Z
+final,web-zero-fill,mongod=zero-fill; counter-server --engine async; loadgen --engine ahc,3,65.5561,1525.4,100000,true,100000,10,10000,16.01,2026-11-10T13:43:11Z
+final,majority-zero-fill-shards10,mongod=zero-fill; mongo-bench --variant majority --shards 10,3,62.7925,1592.5,100000,true,100000,10,10000,12.58,2026-11-10T13:44:19Z
+final,w1-zero-fill-shards10,mongod=zero-fill; mongo-bench --variant w1 --shards 10,3,15.1470,6602.0,100000,true,100000,10,10000,16.04,2026-11-10T13:45:24Z
+final,web-zero-fill-shards10,mongod=zero-fill; counter-server --engine async --mongo-shards 10; loadgen --engine ahc,3,71.6204,1396.2,100000,true,100000,10,10000,20.89,2026-11-10T13:45:42Z

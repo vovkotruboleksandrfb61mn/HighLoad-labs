@@ -1,0 +1,7 @@
+file,record_bytes,processes,count,mean_ms,p50_ms,p99_ms,appends_per_second_per_process
+fallocate,2048,1,1500,3.435,3.771,5.694,291.1
+sparse,2048,1,1500,3.446,5.234,5.647,290.2
+zero-filled,2048,1,1500,1.468,1.460,1.598,681.3
+fallocate,2048,3,4500,4.051,4.326,9.254,246.8
+sparse,2048,3,4500,3.989,4.315,9.046,250.7
+zero-filled,2048,3,4500,2.650,2.931,4.464,377.3

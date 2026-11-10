@@ -1,0 +1,54 @@
+== mongod profile default: MONGOD_ARGS=--setParameter shutdownTimeoutMillisForSignaledShutdown=1000
+$ date -u; mongod --version | head -1
+вівторок, 10 листопада 2026 14:01:13 +0000
+db version v8.3.13
+$ filefrag -v node2/journal/WiredTigerLog.0000000001
+Filesystem type is: ef53
+File size of .mongodata/ff/node2/journal/WiredTigerLog.0000000001 is 104857600 (25600 blocks of 4096 bytes)
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:        0..       0:  152699114.. 152699114:      1:            
+   1:        1..     388:   18005984..  18006371:    388:  152699115:
+   2:      389..   12320:   18006372..  18018303:  11932:             unwritten
+   3:    12321..   21860:   18267488..  18277027:   9540:   18018304: unwritten
+   4:    21861..   25599:   39633039..  39636777:   3739:   18277028: last,unwritten,eof
+.mongodata/ff/node2/journal/WiredTigerLog.0000000001: 4 extents found
+$ filefrag -v node2/journal/WiredTigerPreplog.0000000001
+Filesystem type is: ef53
+File size of .mongodata/ff/node2/journal/WiredTigerPreplog.0000000001 is 104857600 (25600 blocks of 4096 bytes)
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:        0..       0:  154808684.. 154808684:      1:            
+   1:        1..   12545:   51818239..  51830783:  12545:  154808685: unwritten
+   2:    12546..   25599:   52415329..  52428382:  13054:   51830784: last,unwritten,eof
+.mongodata/ff/node2/journal/WiredTigerPreplog.0000000001: 3 extents found
+$ serverStatus().wiredTiger.log['log files manually zero-filled'] on node2
+0
+
+== mongod profile zero-fill: MONGOD_ARGS=--setParameter shutdownTimeoutMillisForSignaledShutdown=1000 --wiredTigerEngineConfigString=log=(zero_fill=true)
+$ date -u; mongod --version | head -1
+вівторок, 10 листопада 2026 14:01:37 +0000
+db version v8.3.13
+$ filefrag -v node2/journal/WiredTigerLog.0000000001
+Filesystem type is: ef53
+File size of .mongodata/ff/node2/journal/WiredTigerLog.0000000001 is 104857600 (25600 blocks of 4096 bytes)
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:        0..       0:  154823551.. 154823551:      1:            
+   1:        1..   25599:   10289152..  10314750:  25599:  154823552: last,eof
+.mongodata/ff/node2/journal/WiredTigerLog.0000000001: 2 extents found
+$ filefrag -v node2/journal/WiredTigerPreplog.0000000001
+Filesystem type is: ef53
+File size of .mongodata/ff/node2/journal/WiredTigerPreplog.0000000001 is 104857600 (25600 blocks of 4096 bytes)
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:        0..       0:  185174298.. 185174298:      1:            
+   1:        1..    6143:   10314751..  10320893:   6143:  185174299:
+   2:     6144..    8191:   46430208..  46432255:   2048:   10320894:
+   3:     8192..   10239:   47517696..  47519743:   2048:   46432256:
+   4:    10240..   12287:   47523840..  47525887:   2048:   47519744:
+   5:    12288..   16383:   47513600..  47517695:   4096:   47525888:
+   6:    16384..   18431:   47554560..  47556607:   2048:   47517696:
+   7:    18432..   20479:   47558656..  47560703:   2048:   47556608:
+   8:    20480..   22527:   47566848..  47568895:   2048:   47560704:
+   9:    22528..   25599:   47572992..  47576063:   3072:   47568896: last,eof
+.mongodata/ff/node2/journal/WiredTigerPreplog.0000000001: 10 extents found
+$ serverStatus().wiredTiger.log['log files manually zero-filled'] on node2
+2
+

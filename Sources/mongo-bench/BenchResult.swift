@@ -8,11 +8,14 @@ struct BenchResult: Sendable {
     let retryableWrites: Bool
     let workers: Int
     let incrementsPerWorker: Int
-    /// The primary that was killed during the run (node number, 1-based), if any.
-    let killedNode: Int?
-    /// When the kill was done, from the start of the run.
-    let killedAfter: Duration?
-    /// From the kill to the first increment acknowledged afterwards.
+    /// What was done to the primary during the run, if anything.
+    let failure: PrimaryFailure?
+    /// The primary that was killed or stepped down (node number, 1-based).
+    let failedNode: Int?
+    /// When that happened, from the start of the run.
+    let failedAfter: Duration?
+    /// From the kill or step-down to the first increment acknowledged
+    /// afterwards.
     let failover: Duration?
     let elapsed: Duration
     /// Read with `readConcern: "majority"` once the killed node is back and
@@ -28,6 +31,9 @@ struct BenchResult: Sendable {
     let elections: Int
     /// The slowest single increment, retries included.
     let longestOperation: Duration
+    /// Every acknowledged increment in completion order, when recorded
+    /// (--latency-out); empty otherwise.
+    let latencies: [LatencySample]
 
     var expected: Int { workers * incrementsPerWorker }
     /// Negative when increments were counted twice.
@@ -51,9 +57,12 @@ struct BenchResult: Sendable {
             String(retryableWrites),
             String(workers),
             String(incrementsPerWorker),
-            killedNode == nil ? "false" : "true",
-            killedNode.map { String($0) } ?? "",
-            killedAfter.map { decimalString($0.inSeconds, fractionDigits: 3) } ?? "",
+            // The kill column: true for a kill, as before; stepdown for a
+            // step-down (then killed_node and kill_at_seconds are its node
+            // and time).
+            failure.map { $0 == .kill ? "true" : $0.rawValue } ?? "false",
+            failedNode.map { String($0) } ?? "",
+            failedAfter.map { decimalString($0.inSeconds, fractionDigits: 3) } ?? "",
             failover.map { decimalString($0.inSeconds, fractionDigits: 3) } ?? "",
             decimalString(seconds, fractionDigits: 4),
             decimalString(incrementsPerSecond, fractionDigits: 1),

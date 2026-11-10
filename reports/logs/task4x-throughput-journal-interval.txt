@@ -1,0 +1,76 @@
+12:42:26 === experiment journal-interval, 3 interleaved repeats, 10 x 2000; db version v8.3.13
+12:42:26 -- journal-interval / majority-interval100, run 1: mongod=default; mongo-bench --variant majority
+12:42:49   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:42:49   | majority,true,10,2000,false,,,,22.5531,886.8,20000,20000,20000,0,0,0,0,0,0.065
+12:42:51    majority-interval100: 22.553 s, 886.8 ops/s, final 20000 of 20000
+12:42:51    node1 PRIMARY   syncs 3120 (0.156/op, 7.03 ms each), write conflicts 71842, wtime 9.32 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.25 s
+12:42:51    node2 SECONDARY syncs 4400 (0.220/op, 4.96 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.88 ops/batch, cpu 14.45 s
+12:42:51    node3 SECONDARY syncs 4374 (0.219/op, 4.99 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.89 ops/batch, cpu 14.52 s
+12:42:54 set journalCommitInterval=1 on every node
+12:42:54 -- journal-interval / majority-interval1, run 1: mongod=default; journalCommitInterval=1; mongo-bench --variant majority
+12:43:18   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:43:18   | majority,true,10,2000,false,,,,22.6982,881.1,20000,20000,20000,0,0,0,0,0,0.048
+12:43:23 reset journalCommitInterval=100 on every node
+12:43:23    majority-interval1: 22.698 s, 881.1 ops/s, final 20000 of 20000
+12:43:23    node1 PRIMARY   syncs 3142 (0.157/op, 7.05 ms each), write conflicts 73770, wtime 9.38 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.43 s
+12:43:23    node2 SECONDARY syncs 4405 (0.220/op, 5.01 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.83 ops/batch, cpu 14.64 s
+12:43:23    node3 SECONDARY syncs 4402 (0.220/op, 5.00 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.85 ops/batch, cpu 14.63 s
+12:43:27 set journalCommitInterval=500 on every node
+12:43:27 -- journal-interval / majority-interval500, run 1: mongod=default; journalCommitInterval=500; mongo-bench --variant majority
+12:43:50   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:43:50   | majority,true,10,2000,false,,,,22.4276,891.8,20000,20000,20000,0,0,0,0,0,0.066
+12:43:55 reset journalCommitInterval=100 on every node
+12:43:55    majority-interval500: 22.428 s, 891.8 ops/s, final 20000 of 20000
+12:43:55    node1 PRIMARY   syncs 3102 (0.155/op, 7.05 ms each), write conflicts 74950, wtime 9.25 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.27 s
+12:43:55    node2 SECONDARY syncs 4397 (0.220/op, 4.96 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.82 ops/batch, cpu 14.64 s
+12:43:55    node3 SECONDARY syncs 4368 (0.218/op, 4.98 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.83 ops/batch, cpu 14.57 s
+12:43:55 -- journal-interval / majority-interval100, run 2: mongod=default; mongo-bench --variant majority
+12:44:19   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:44:19   | majority,true,10,2000,false,,,,22.8612,874.8,20000,20000,20000,0,0,0,0,0,0.059
+12:44:20    majority-interval100: 22.861 s, 874.8 ops/s, final 20000 of 20000
+12:44:20    node1 PRIMARY   syncs 3173 (0.159/op, 7.01 ms each), write conflicts 72870, wtime 9.46 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.73 s
+12:44:20    node2 SECONDARY syncs 4383 (0.219/op, 5.04 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.94 ops/batch, cpu 14.78 s
+12:44:20    node3 SECONDARY syncs 4395 (0.220/op, 5.03 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.92 ops/batch, cpu 14.95 s
+12:44:24 set journalCommitInterval=1 on every node
+12:44:24 -- journal-interval / majority-interval1, run 2: mongod=default; journalCommitInterval=1; mongo-bench --variant majority
+12:44:48   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:44:48   | majority,true,10,2000,false,,,,22.5562,886.7,20000,20000,20000,0,0,0,0,0,0.060
+12:44:53 reset journalCommitInterval=100 on every node
+12:44:53    majority-interval1: 22.556 s, 886.7 ops/s, final 20000 of 20000
+12:44:53    node1 PRIMARY   syncs 3065 (0.153/op, 7.18 ms each), write conflicts 70038, wtime 9.33 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.19 s
+12:44:53    node2 SECONDARY syncs 4391 (0.220/op, 4.99 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.89 ops/batch, cpu 14.80 s
+12:44:53    node3 SECONDARY syncs 4424 (0.221/op, 4.94 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.90 ops/batch, cpu 14.69 s
+12:44:57 set journalCommitInterval=500 on every node
+12:44:57 -- journal-interval / majority-interval500, run 2: mongod=default; journalCommitInterval=500; mongo-bench --variant majority
+12:45:20   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:45:20   | majority,true,10,2000,false,,,,22.6580,882.7,20000,20000,20000,0,0,0,0,0,0.054
+12:45:25 reset journalCommitInterval=100 on every node
+12:45:25    majority-interval500: 22.658 s, 882.7 ops/s, final 20000 of 20000
+12:45:25    node1 PRIMARY   syncs 3150 (0.158/op, 7.01 ms each), write conflicts 74086, wtime 9.33 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.56 s
+12:45:25    node2 SECONDARY syncs 4430 (0.222/op, 4.97 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.87 ops/batch, cpu 14.92 s
+12:45:25    node3 SECONDARY syncs 4425 (0.221/op, 4.97 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.87 ops/batch, cpu 14.78 s
+12:45:25 -- journal-interval / majority-interval100, run 3: mongod=default; mongo-bench --variant majority
+12:45:49   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:45:49   | majority,true,10,2000,false,,,,22.5175,888.2,20000,20000,20000,0,0,0,0,0,0.059
+12:45:50    majority-interval100: 22.517 s, 888.2 ops/s, final 20000 of 20000
+12:45:50    node1 PRIMARY   syncs 3117 (0.156/op, 7.04 ms each), write conflicts 73660, wtime 9.28 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.39 s
+12:45:50    node2 SECONDARY syncs 4402 (0.220/op, 4.97 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.86 ops/batch, cpu 14.65 s
+12:45:50    node3 SECONDARY syncs 4374 (0.219/op, 5.00 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.87 ops/batch, cpu 14.69 s
+12:45:54 set journalCommitInterval=1 on every node
+12:45:54 -- journal-interval / majority-interval1, run 3: mongod=default; journalCommitInterval=1; mongo-bench --variant majority
+12:46:18   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:46:18   | majority,true,10,2000,false,,,,22.7056,880.8,20000,20000,20000,0,0,0,0,0,0.052
+12:46:23 reset journalCommitInterval=100 on every node
+12:46:23    majority-interval1: 22.706 s, 880.8 ops/s, final 20000 of 20000
+12:46:23    node1 PRIMARY   syncs 3144 (0.157/op, 7.04 ms each), write conflicts 71820, wtime 9.41 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.40 s
+12:46:23    node2 SECONDARY syncs 4326 (0.216/op, 5.09 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.90 ops/batch, cpu 14.84 s
+12:46:23    node3 SECONDARY syncs 4403 (0.220/op, 4.99 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.90 ops/batch, cpu 14.85 s
+12:46:26 set journalCommitInterval=500 on every node
+12:46:26 -- journal-interval / majority-interval500, run 3: mongod=default; journalCommitInterval=500; mongo-bench --variant majority
+12:46:51   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+12:46:51   | majority,true,10,2000,false,,,,22.9408,871.8,20000,20000,20000,0,0,0,0,0,0.054
+12:46:56 reset journalCommitInterval=100 on every node
+12:46:56    majority-interval500: 22.941 s, 871.8 ops/s, final 20000 of 20000
+12:46:56    node1 PRIMARY   syncs 3127 (0.156/op, 7.14 ms each), write conflicts 70680, wtime 9.48 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.35 s
+12:46:56    node2 SECONDARY syncs 4420 (0.221/op, 5.03 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.91 ops/batch, cpu 14.74 s
+12:46:56    node3 SECONDARY syncs 4406 (0.220/op, 5.04 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.92 ops/batch, cpu 14.59 s

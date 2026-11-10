@@ -1,0 +1,111 @@
+Task 4x, етап 3: перевірка заморожування primary з повними журналами, 2026-11-10, mongod 8.3.13.
+Команди (MONGO_DATA_DIR=.mongodata/task4x-failover, MONGO_LOG_DIR=.data/task4x-failover-probe):
+  MONGO_ELECTION_TIMEOUT_MS=1000 scripts/mongo.sh start; pause-node <primary>; sleep 3; resume-node <primary>
+  MONGO_ELECTION_TIMEOUT_MS=2000 scripts/mongo.sh start; pause-node <primary>; sleep 13; resume-node <primary>
+Навантаження немає. Час UTC з журналів mongod.
+
+1) electionTimeoutMillis 1000, SIGSTOP node1 о 15:15:42.361, SIGCONT о 15:15:45.428
+2) electionTimeoutMillis 2000, SIGSTOP node3 о 15:15:55.892, SIGCONT о 15:16:08.953
+
+15:15:42.456 node2 Conducting a dry run election to see if we could be elected {"currentTerm":1}
+15:15:42.456 node2 Dry election run succeeded, running for election {"newTerm":2}
+15:15:42.456 node2 Starting an election, since we've seen no PRIMARY in election timeout period {"electionTimeoutPeriodMillis":1000}
+15:15:42.456 node3 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: true, term: 1, candidateIndex: 1, configVersion: 2, configTerm: 1, lastWrittenOpTime: { ts: Timestamp(1794
+15:15:42.466 node3 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: false, term: 2, candidateIndex: 1, configVersion: 2, configTerm: 1, lastWrittenOpTime: { ts: Timestamp(179
+15:15:42.468 node2 Election succeeded, assuming primary role {"term":2}
+15:15:42.468 node2 Entering primary catch-up mode {}
+15:15:42.468 node2 Replica set state transition {"newState":"PRIMARY","oldState":"SECONDARY"}
+15:15:42.469 node3 Member is in new state {"hostAndPort":"127.0.0.1:21431","priorityPort":null,"newState":"PRIMARY"}
+15:15:43.468 node2 Can't see a majority of the set, relinquishing primary {}
+15:15:43.468 node2 Exited primary catch-up mode {}
+15:15:43.468 node2 Member is now in state DOWN {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"no response within election timeout period"}
+15:15:43.468 node2 Member is now in state DOWN {"hostAndPort":"127.0.0.1:21432","heartbeatMessage":"no response within election timeout period"}
+15:15:43.468 node2 Replica set state transition {"newState":"SECONDARY","oldState":"PRIMARY"}
+15:15:43.468 node2 Starting to kill user operations {}
+15:15:43.468 node2 Stepping down from primary in response to heartbeat {}
+15:15:43.569 node2 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: true, term: 2, candidateIndex: 2, configVersion: 2, configTerm: 1, lastWrittenOpTime: { ts: Timestamp(1794
+15:15:43.569 node3 Conducting a dry run election to see if we could be elected {"currentTerm":2}
+15:15:43.569 node3 Dry election run succeeded, running for election {"newTerm":3}
+15:15:43.569 node3 Starting an election, since we've seen no PRIMARY in election timeout period {"electionTimeoutPeriodMillis":1000}
+15:15:43.571 node2 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: false, term: 3, candidateIndex: 2, configVersion: 2, configTerm: 1, lastWrittenOpTime: { ts: Timestamp(179
+15:15:43.573 node3 Election succeeded, assuming primary role {"term":3}
+15:15:43.573 node3 Entering primary catch-up mode {}
+15:15:43.573 node3 Member is in new state {"hostAndPort":"127.0.0.1:21431","priorityPort":null,"newState":"SECONDARY"}
+15:15:43.573 node3 Replica set state transition {"newState":"PRIMARY","oldState":"SECONDARY"}
+15:15:43.574 node2 Member is in new state {"hostAndPort":"127.0.0.1:21432","priorityPort":null,"newState":"PRIMARY"}
+15:15:44.573 node3 Member is now in state DOWN {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"no response within election timeout period"}
+15:15:45.426 node1 Stepping down from primary, because a new term has begun {"term":2}
+15:15:45.427 node1 Can't see a majority of the set, relinquishing primary {}
+15:15:45.427 node1 Member is in new state {"hostAndPort":"127.0.0.1:21431","priorityPort":null,"newState":"SECONDARY"}
+15:15:45.427 node1 Member is in new state {"hostAndPort":"127.0.0.1:21432","priorityPort":null,"newState":"PRIMARY"}
+15:15:45.427 node1 Member is now in state DOWN {"hostAndPort":"127.0.0.1:21431","heartbeatMessage":"no response within election timeout period"}
+15:15:45.427 node1 Member is now in state DOWN {"hostAndPort":"127.0.0.1:21432","heartbeatMessage":"no response within election timeout period"}
+15:15:45.427 node1 Replica set state transition {"newState":"SECONDARY","oldState":"PRIMARY"}
+15:15:45.427 node1 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: false, term: 2, candidateIndex: 1, configVersion: 2, configTerm: 1, lastWrittenOpTime: { ts: Timestamp(179
+15:15:45.427 node1 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: true, term: 1, candidateIndex: 1, configVersion: 2, configTerm: 1, lastWrittenOpTime: { ts: Timestamp(1794
+15:15:45.427 node1 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: true, term: 2, candidateIndex: 2, configVersion: 2, configTerm: 1, lastWrittenOpTime: { ts: Timestamp(1794
+15:15:45.427 node1 Starting to kill user operations {}
+15:15:45.427 node2 Member is in new state {"hostAndPort":"127.0.0.1:21430","priorityPort":null,"newState":"SECONDARY"}
+15:15:45.427 node3 Caught up to the latest optime known via heartbeats after becoming primary {"targetOpTime":{"ts":{"$timestamp":{"t":1794323741,"i":1}},"t":1},"myLastApplied":{"ts":{"$timestamp":{"t":1794323741,"i":1}},"t":1}}
+15:15:45.427 node3 Exited primary catch-up mode {}
+15:15:45.427 node3 Member is in new state {"hostAndPort":"127.0.0.1:21430","priorityPort":null,"newState":"SECONDARY"}
+15:15:45.428 node3 Starting to kill user operations {}
+15:15:45.431 node3 Transition to primary complete; database writes are now permitted {"term":3}
+15:15:57.544 node1 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: true, term: 3, candidateIndex: 1, configVersion: 3, configTerm: 3, lastWrittenOpTime: { ts: Timestamp(1794
+15:15:57.544 node2 Conducting a dry run election to see if we could be elected {"currentTerm":3}
+15:15:57.544 node2 Dry election run succeeded, running for election {"newTerm":4}
+15:15:57.544 node2 Starting an election, since we've seen no PRIMARY in election timeout period {"electionTimeoutPeriodMillis":2000}
+15:15:57.546 node1 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: false, term: 4, candidateIndex: 1, configVersion: 3, configTerm: 3, lastWrittenOpTime: { ts: Timestamp(179
+15:15:57.548 node2 Election succeeded, assuming primary role {"term":4}
+15:15:57.548 node2 Entering primary catch-up mode {}
+15:15:57.548 node2 Replica set state transition {"newState":"PRIMARY","oldState":"SECONDARY"}
+15:15:57.549 node1 Member is in new state {"hostAndPort":"127.0.0.1:21431","priorityPort":null,"newState":"PRIMARY"}
+15:15:59.548 node2 Member is now in state DOWN {"hostAndPort":"127.0.0.1:21432","heartbeatMessage":"no response within election timeout period"}
+15:15:59.549 node2 Can't see a majority of the set, relinquishing primary {}
+15:15:59.549 node2 Caught up to the latest optime known via heartbeats after becoming primary {"targetOpTime":{"ts":{"$timestamp":{"t":1794323754,"i":1}},"t":3},"myLastApplied":{"ts":{"$timestamp":{"t":1794323754,"i":1}},"t":3}}
+15:15:59.549 node2 Exited primary catch-up mode {}
+15:15:59.549 node2 Member is in new state {"hostAndPort":"127.0.0.1:21430","priorityPort":null,"newState":"SECONDARY"}
+15:15:59.549 node2 Member is now in state DOWN {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"no response within election timeout period"}
+15:15:59.549 node2 Replica set state transition {"newState":"SECONDARY","oldState":"PRIMARY"}
+15:15:59.549 node2 Starting to kill user operations {}
+15:15:59.549 node2 Stepping down from primary in response to heartbeat {}
+15:16:01.549 node1 Member is in new state {"hostAndPort":"127.0.0.1:21431","priorityPort":null,"newState":"SECONDARY"}
+15:16:01.663 node1 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: true, term: 4, candidateIndex: 1, configVersion: 3, configTerm: 3, lastWrittenOpTime: { ts: Timestamp(1794
+15:16:01.663 node2 Conducting a dry run election to see if we could be elected {"currentTerm":4}
+15:16:01.663 node2 Dry election run succeeded, running for election {"newTerm":5}
+15:16:01.663 node2 Starting an election, since we've seen no PRIMARY in election timeout period {"electionTimeoutPeriodMillis":2000}
+15:16:01.673 node1 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: false, term: 5, candidateIndex: 1, configVersion: 3, configTerm: 3, lastWrittenOpTime: { ts: Timestamp(179
+15:16:01.675 node1 Member is in new state {"hostAndPort":"127.0.0.1:21431","priorityPort":null,"newState":"PRIMARY"}
+15:16:01.675 node2 Election succeeded, assuming primary role {"term":5}
+15:16:01.675 node2 Entering primary catch-up mode {}
+15:16:01.675 node2 Replica set state transition {"newState":"PRIMARY","oldState":"SECONDARY"}
+15:16:03.675 node2 Can't see a majority of the set, relinquishing primary {}
+15:16:03.675 node2 Exited primary catch-up mode {}
+15:16:03.675 node2 Member is in new state {"hostAndPort":"127.0.0.1:21430","priorityPort":null,"newState":"SECONDARY"}
+15:16:03.675 node2 Member is now in state DOWN {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"no response within election timeout period"}
+15:16:03.675 node2 Replica set state transition {"newState":"SECONDARY","oldState":"PRIMARY"}
+15:16:03.675 node2 Starting to kill user operations {}
+15:16:03.675 node2 Stepping down from primary in response to heartbeat {}
+15:16:05.675 node1 Member is in new state {"hostAndPort":"127.0.0.1:21431","priorityPort":null,"newState":"SECONDARY"}
+15:16:05.848 node1 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: true, term: 5, candidateIndex: 1, configVersion: 3, configTerm: 3, lastWrittenOpTime: { ts: Timestamp(1794
+15:16:05.848 node2 Conducting a dry run election to see if we could be elected {"currentTerm":5}
+15:16:05.848 node2 Dry election run succeeded, running for election {"newTerm":6}
+15:16:05.848 node2 Starting an election, since we've seen no PRIMARY in election timeout period {"electionTimeoutPeriodMillis":2000}
+15:16:05.850 node1 Responding to vote request {"request":"{ replSetRequestVotes: 1, setName: \"rs0\", dryRun: false, term: 6, candidateIndex: 1, configVersion: 3, configTerm: 3, lastWrittenOpTime: { ts: Timestamp(179
+15:16:05.852 node1 Member is in new state {"hostAndPort":"127.0.0.1:21431","priorityPort":null,"newState":"PRIMARY"}
+15:16:05.852 node2 Election succeeded, assuming primary role {"term":6}
+15:16:05.852 node2 Entering primary catch-up mode {}
+15:16:05.852 node2 Replica set state transition {"newState":"PRIMARY","oldState":"SECONDARY"}
+15:16:06.962 node2 Caught up to the latest optime known via heartbeats after becoming primary {"targetOpTime":{"ts":{"$timestamp":{"t":1794323754,"i":1}},"t":3},"myLastApplied":{"ts":{"$timestamp":{"t":1794323754,"i":1}},"t":3}}
+15:16:06.962 node2 Exited primary catch-up mode {}
+15:16:06.962 node2 Starting to kill user operations {}
+15:16:06.973 node2 Transition to primary complete; database writes are now permitted {"term":6}
+15:16:08.952 node2 Member is in new state {"hostAndPort":"127.0.0.1:21432","priorityPort":null,"newState":"PRIMARY"}
+15:16:08.952 node3 Stepping down from primary, because a new term has begun {"term":6}
+15:16:08.953 node3 Member is in new state {"hostAndPort":"127.0.0.1:21431","priorityPort":null,"newState":"PRIMARY"}
+15:16:08.953 node3 Replica set state transition {"newState":"SECONDARY","oldState":"PRIMARY"}
+15:16:08.953 node3 Starting to kill user operations {}
+15:16:08.963 node1 Member is in new state {"hostAndPort":"127.0.0.1:21432","priorityPort":null,"newState":"ROLLBACK"}
+15:16:08.963 node2 Member is in new state {"hostAndPort":"127.0.0.1:21432","priorityPort":null,"newState":"ROLLBACK"}
+15:16:08.963 node3 Replica set state transition {"newState":"ROLLBACK","oldState":"SECONDARY"}
+15:16:09.252 node3 Replica set state transition {"newState":"SECONDARY","oldState":"ROLLBACK"}

@@ -1,0 +1,62 @@
+Task 4x, етап 3: пробний прогін (smoke test), 2026-11-10, mongod 8.3.13.
+Перед ним були два пробні прогони з --step-down-after (node3 о 14:12:08.705 і node1 о 14:12:23.500 UTC отримали replSetStepDown з stepDownSecs 60).
+
+$ MONGO_ELECTION_TIMEOUT_MS=2000 scripts/mongo.sh start
+$ mongo-bench --header --variant majority --increments 1000 --kill-primary-after 2
+primary: node2 (127.0.0.1:21431), term 5, found after 0.1 s
+electionTimeoutMillis 10000 -> 2000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+mongo-bench: killing the primary, node 2 (127.0.0.1:21431)
+node 2 killed (SIGKILL at 14:12:47.239 UTC, pid 324774), gone after 0.0 s
+mongo-bench: retried 940x after MongoError.cannotConnect.noAvailableHosts
+mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+mongo-bench: starting node 2 again
+node 2 started: 127.0.0.1:21431, pid 328891
+node2 is SECONDARY and caught up with node3 after 0.5 s (optime 1794319998:4466)
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,1000,true,2,2.179,23.493,33.8126,295.7,10000,10000,10000,0,0,950,0,1,23.707
+
+Журнали вузлів (UTC; id 21343/21340/21358/21216/4615655/4615652/21450/21331):
+14:12:08.705 node3 21343 Starting to kill user operations {}
+14:12:08.706 node3 21358 Replica set state transition {"newState": "SECONDARY", "oldState": "PRIMARY"}
+14:12:08.718 node1 21358 Replica set state transition {"newState": "PRIMARY", "oldState": "SECONDARY"}
+14:12:08.718 node1 21450 Election succeeded, assuming primary role {"term": 4}
+14:12:08.721 node1 21343 Starting to kill user operations {}
+14:12:08.725 node1 21331 Transition to primary complete; database writes are now permitted {"term": 4}
+14:12:23.500 node1 21343 Starting to kill user operations {}
+14:12:23.520 node1 21343 Starting to kill user operations {}
+14:12:23.520 node1 21358 Replica set state transition {"newState": "SECONDARY", "oldState": "PRIMARY"}
+14:12:23.538 node2 21358 Replica set state transition {"newState": "PRIMARY", "oldState": "SECONDARY"}
+14:12:23.538 node2 21450 Election succeeded, assuming primary role {"term": 5}
+14:12:23.541 node2 21343 Starting to kill user operations {}
+14:12:23.564 node2 21331 Transition to primary complete; database writes are now permitted {"term": 5}
+14:12:47.273 node1 21216 Member is now in state DOWN {"hostAndPort": "127.0.0.1:21431", "heartbeatMessage": "Error connecting to 127.0.0.1:21431 :: caused by :: onInvoke :: caused by :: Connection refused"}
+14:12:48.960 node3 21216 Member is now in state DOWN {"hostAndPort": "127.0.0.1:21431", "heartbeatMessage": "Error connecting to 127.0.0.1:21431 :: caused by :: onInvoke :: caused by :: Connection refused"}
+14:12:49.363 node1 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:23.500+02:00 (mask 0x10)"}
+14:12:49.363 node3 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:08.705+02:00 (mask 0x10)"}
+14:12:51.488 node1 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:23.500+02:00 (mask 0x10)"}
+14:12:51.562 node3 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:08.705+02:00 (mask 0x10)"}
+14:12:53.631 node3 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:08.705+02:00 (mask 0x10)"}
+14:12:53.776 node1 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:23.500+02:00 (mask 0x10)"}
+14:12:55.666 node3 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:08.705+02:00 (mask 0x10)"}
+14:12:55.884 node1 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:23.500+02:00 (mask 0x10)"}
+14:12:57.920 node1 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:23.500+02:00 (mask 0x10)"}
+14:12:57.928 node3 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:08.705+02:00 (mask 0x10)"}
+14:13:00.133 node1 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:23.500+02:00 (mask 0x10)"}
+14:13:00.197 node3 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:08.705+02:00 (mask 0x10)"}
+14:13:02.254 node1 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:23.500+02:00 (mask 0x10)"}
+14:13:02.265 node3 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:08.705+02:00 (mask 0x10)"}
+14:13:04.394 node3 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:08.705+02:00 (mask 0x10)"}
+14:13:04.405 node1 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:23.500+02:00 (mask 0x10)"}
+14:13:06.425 node3 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:08.705+02:00 (mask 0x10)"}
+14:13:06.536 node1 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:23.500+02:00 (mask 0x10)"}
+14:13:08.603 node1 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:23.500+02:00 (mask 0x10)"}
+14:13:08.691 node3 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:08.705+02:00 (mask 0x10)"}
+14:13:10.619 node1 4615655 Not starting an election, since we are not electable {"reason": "Not standing for election because I am still waiting for stepdown period to end at 2026-11-10T16:13:23.500+02:00 (mask 0x10)"}
+14:13:10.740 node3 4615652 Starting an election, since we've seen no PRIMARY in election timeout period {"electionTimeoutPeriodMillis": 2000}
+14:13:10.744 node3 21358 Replica set state transition {"newState": "PRIMARY", "oldState": "SECONDARY"}
+14:13:10.744 node3 21450 Election succeeded, assuming primary role {"term": 6}
+14:13:10.746 node3 21343 Starting to kill user operations {}
+14:13:10.750 node3 21331 Transition to primary complete; database writes are now permitted {"term": 6}
+14:13:21.108 node2 21358 Replica set state transition {"newState": "STARTUP2", "oldState": "STARTUP"}
+14:13:21.109 node2 21358 Replica set state transition {"newState": "RECOVERING", "oldState": "STARTUP2"}
+14:13:21.111 node2 21358 Replica set state transition {"newState": "SECONDARY", "oldState": "RECOVERING"}

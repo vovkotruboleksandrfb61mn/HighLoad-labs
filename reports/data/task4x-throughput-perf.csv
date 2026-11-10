@@ -1,0 +1,29 @@
+label,ops_per_s,samples,user_cpu_cores,user_cpu_us_per_op,part,percent_of_user_samples
+w1,4724.9,15244,2.543,538,C++ exception unwinding,14.14
+w1,4724.9,15244,2.543,538,tcmalloc,6.08
+w1,4724.9,15244,2.543,538,WiredTiger,12.02
+w1,4724.9,15244,2.543,538,snappy (journal compression),1.05
+w1,4724.9,15244,2.543,538,libc,10.82
+w1,4724.9,15244,2.543,538,other mongod,55.20
+w1,4724.9,15244,2.543,538,other,1.69
+w1-shards10,7222.2,13050,2.177,301,C++ exception unwinding,0.01
+w1-shards10,7222.2,13050,2.177,301,tcmalloc,7.74
+w1-shards10,7222.2,13050,2.177,301,WiredTiger,15.61
+w1-shards10,7222.2,13050,2.177,301,snappy (journal compression),1.49
+w1-shards10,7222.2,13050,2.177,301,libc,11.56
+w1-shards10,7222.2,13050,2.177,301,other mongod,63.60
+w1-shards10,7222.2,13050,2.177,301,other,1.51
+majority,986.3,5210,0.869,881,C++ exception unwinding,7.59
+majority,986.3,5210,0.869,881,tcmalloc,7.02
+majority,986.3,5210,0.869,881,WiredTiger,12.24
+majority,986.3,5210,0.869,881,snappy (journal compression),2.01
+majority,986.3,5210,0.869,881,libc,11.51
+majority,986.3,5210,0.869,881,other mongod,59.31
+majority,986.3,5210,0.869,881,other,1.92
+majority-shards10,1112.9,3909,0.652,586,C++ exception unwinding,0.00
+majority-shards10,1112.9,3909,0.652,586,tcmalloc,8.34
+majority-shards10,1112.9,3909,0.652,586,WiredTiger,12.27
+majority-shards10,1112.9,3909,0.652,586,snappy (journal compression),1.69
+majority-shards10,1112.9,3909,0.652,586,libc,11.99
+majority-shards10,1112.9,3909,0.652,586,other mongod,66.15
+majority-shards10,1112.9,3909,0.652,586,other,1.40

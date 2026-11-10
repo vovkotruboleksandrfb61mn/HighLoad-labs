@@ -1,0 +1,284 @@
+Task 4x, failover: pause; mongod v8.3.13, 2026-11-10 14:53 UTC
+primary: node2 (127.0.0.1:21431), term 16, found after 0.1 s
+{"chainingAllowed":true,"heartbeatIntervalMillis":2000,"heartbeatTimeoutSecs":10,"electionTimeoutMillis":10000,"catchUpTimeoutMillis":-1,"catchUpTakeoverDelayMillis":30000,"getLastErrorModes":{},"getLastErrorDefaults":{"w":1,"wtimeout":0},"replicaSetId":"6af329cff4eb346b9a54e889"}
+primary: node2 (127.0.0.1:21431), term 16, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 1.5 s, electionTimeoutMillis 10000, run 1: primary node2, term 16, load 8.60
+node 2 paused (SIGSTOP, pid 355835)
+node 2 resumed (SIGCONT, pid 355835)
+primary: node2 (127.0.0.1:21431), term 16, found after 0.1 s
+node1 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322409:1)
+node3 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322425:1)
+summary: primary_after 2, elections 0, election_start_s 
+primary: node2 (127.0.0.1:21431), term 16, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 3.0 s, electionTimeoutMillis 10000, run 1: primary node2, term 16, load 7.62
+node 2 paused (SIGSTOP, pid 355835)
+node 2 resumed (SIGCONT, pid 355835)
+primary: node2 (127.0.0.1:21431), term 16, found after 0.1 s
+node1 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322435:1)
+node3 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322435:1)
+summary: primary_after 2, elections 0, election_start_s 
+primary: node2 (127.0.0.1:21431), term 16, found after 0.1 s
+electionTimeoutMillis 10000 -> 2000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 1.5 s, electionTimeoutMillis 2000, run 1: primary node2, term 16, load 7.59
+node 2 paused (SIGSTOP, pid 355835)
+node 2 resumed (SIGCONT, pid 355835)
+primary: node2 (127.0.0.1:21431), term 16, found after 0.1 s
+node1 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322449:1)
+node3 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322449:1)
+summary: primary_after 2, elections 0, election_start_s 
+primary: node2 (127.0.0.1:21431), term 16, found after 0.1 s
+electionTimeoutMillis 2000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 3.0 s, electionTimeoutMillis 2000, run 1: primary node2, term 16, load 7.63
+node 2 paused (SIGSTOP, pid 355835)
+node 2 resumed (SIGCONT, pid 355835)
+primary: node1 (127.0.0.1:21430), term 17, found after 0.1 s
+node2 is SECONDARY and caught up with node1 after 0.1 s (optime 1794322469:1)
+node3 is SECONDARY and caught up with node1 after 0.1 s (optime 1794322469:1)
+mongod log events, times from the SIGSTOP at 14:54:26.616 UTC:
+  14:54:28.537   +1.921 s  node1  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":2000}
+  14:54:28.537   +1.921 s  node1  Conducting a dry run election to see if we could be elected  {"currentTerm":16}
+  14:54:28.537   +1.921 s  node1  Dry election run succeeded, running for election  {"newTerm":17}
+  14:54:28.549   +1.933 s  node1  Election succeeded, assuming primary role  {"term":17}
+  14:54:28.549   +1.933 s  node1  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:54:29.645   +3.029 s  node2  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  14:54:29.657   +3.041 s  node1  Transition to primary complete; database writes are now permitted  {"term":17}
+summary: primary_after 1, elections 1, election_start_s 1.921
+primary: node1 (127.0.0.1:21430), term 17, found after 0.1 s
+electionTimeoutMillis 2000 -> 1000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 1.5 s, electionTimeoutMillis 1000, run 1: primary node1, term 17, load 6.45
+node 1 paused (SIGSTOP, pid 354805)
+node 1 resumed (SIGCONT, pid 354805)
+primary: node2 (127.0.0.1:21431), term 18, found after 0.1 s
+node1 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322486:161)
+node3 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322486:161)
+mongod log events, times from the SIGSTOP at 14:54:44.117 UTC:
+  14:54:44.199   +0.081 s  node2  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:54:44.199   +0.081 s  node2  Conducting a dry run election to see if we could be elected  {"currentTerm":17}
+  14:54:44.199   +0.081 s  node2  Dry election run succeeded, running for election  {"newTerm":18}
+  14:54:44.211   +0.093 s  node2  Election succeeded, assuming primary role  {"term":18}
+  14:54:44.211   +0.093 s  node2  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:54:45.648   +1.530 s  node1  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  14:54:45.658   +1.540 s  node2  Transition to primary complete; database writes are now permitted  {"term":18}
+summary: primary_after 2, elections 1, election_start_s 0.081
+primary: node2 (127.0.0.1:21431), term 18, found after 0.1 s
+electionTimeoutMillis 1000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 3.0 s, electionTimeoutMillis 1000, run 1: primary node2, term 18, load 5.65
+node 2 paused (SIGSTOP, pid 355835)
+node 2 resumed (SIGCONT, pid 355835)
+primary: node3 (127.0.0.1:21432), term 20, found after 0.1 s
+node1 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322503:1)
+node2 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322503:1)
+mongod log events, times from the SIGSTOP at 14:55:00.395 UTC:
+  14:55:01.165   +0.770 s  node1  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:55:01.165   +0.770 s  node1  Conducting a dry run election to see if we could be elected  {"currentTerm":18}
+  14:55:01.165   +0.770 s  node1  Dry election run succeeded, running for election  {"newTerm":19}
+  14:55:01.177   +0.782 s  node1  Election succeeded, assuming primary role  {"term":19}
+  14:55:01.177   +0.782 s  node1  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:55:02.177   +1.782 s  node1  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  14:55:02.324   +1.929 s  node3  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:55:02.324   +1.929 s  node3  Conducting a dry run election to see if we could be elected  {"currentTerm":19}
+  14:55:02.324   +1.929 s  node3  Dry election run succeeded, running for election  {"newTerm":20}
+  14:55:02.329   +1.934 s  node3  Election succeeded, assuming primary role  {"term":20}
+  14:55:02.329   +1.934 s  node3  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:55:03.430   +3.035 s  node2  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  14:55:03.442   +3.047 s  node3  Transition to primary complete; database writes are now permitted  {"term":20}
+summary: primary_after 3, elections 2, election_start_s 0.770
+primary: node3 (127.0.0.1:21432), term 20, found after 0.1 s
+electionTimeoutMillis 1000 -> 10000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 1.5 s, electionTimeoutMillis 10000, run 2: primary node3, term 20, load 4.89
+node 3 paused (SIGSTOP, pid 356921)
+node 3 resumed (SIGCONT, pid 356921)
+primary: node3 (127.0.0.1:21432), term 20, found after 0.1 s
+node1 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322517:1)
+node2 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322517:1)
+summary: primary_after 3, elections 0, election_start_s 
+primary: node3 (127.0.0.1:21432), term 20, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 3.0 s, electionTimeoutMillis 10000, run 2: primary node3, term 20, load 4.63
+node 3 paused (SIGSTOP, pid 356921)
+node 3 resumed (SIGCONT, pid 356921)
+primary: node3 (127.0.0.1:21432), term 20, found after 0.1 s
+node1 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322543:1)
+node2 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322543:1)
+summary: primary_after 3, elections 0, election_start_s 
+primary: node3 (127.0.0.1:21432), term 20, found after 0.1 s
+electionTimeoutMillis 10000 -> 2000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 1.5 s, electionTimeoutMillis 2000, run 2: primary node3, term 20, load 4.52
+node 3 paused (SIGSTOP, pid 356921)
+node 3 resumed (SIGCONT, pid 356921)
+primary: node3 (127.0.0.1:21432), term 20, found after 0.1 s
+node1 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322551:1)
+node2 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322551:1)
+summary: primary_after 3, elections 0, election_start_s 
+primary: node3 (127.0.0.1:21432), term 20, found after 0.1 s
+electionTimeoutMillis 2000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 3.0 s, electionTimeoutMillis 2000, run 2: primary node3, term 20, load 4.97
+node 3 paused (SIGSTOP, pid 356921)
+node 3 resumed (SIGCONT, pid 356921)
+primary: node1 (127.0.0.1:21430), term 21, found after 0.1 s
+node2 is SECONDARY and caught up with node1 after 0.1 s (optime 1794322571:1)
+node3 is SECONDARY and caught up with node1 after 0.1 s (optime 1794322571:1)
+mongod log events, times from the SIGSTOP at 14:56:08.683 UTC:
+  14:56:10.401   +1.717 s  node1  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":2000}
+  14:56:10.401   +1.717 s  node1  Conducting a dry run election to see if we could be elected  {"currentTerm":20}
+  14:56:10.401   +1.717 s  node1  Dry election run succeeded, running for election  {"newTerm":21}
+  14:56:10.405   +1.721 s  node1  Election succeeded, assuming primary role  {"term":21}
+  14:56:10.405   +1.721 s  node1  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:56:11.713   +3.029 s  node3  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  14:56:11.715   +3.031 s  node1  Transition to primary complete; database writes are now permitted  {"term":21}
+summary: primary_after 1, elections 1, election_start_s 1.717
+primary: node1 (127.0.0.1:21430), term 21, found after 0.1 s
+electionTimeoutMillis 2000 -> 1000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 1.5 s, electionTimeoutMillis 1000, run 2: primary node1, term 21, load 5.13
+node 1 paused (SIGSTOP, pid 354805)
+node 1 resumed (SIGCONT, pid 354805)
+primary: node3 (127.0.0.1:21432), term 22, found after 0.1 s
+node1 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322588:1)
+node2 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322595:147)
+mongod log events, times from the SIGSTOP at 14:56:26.562 UTC:
+  14:56:26.737   +0.174 s  node3  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:56:26.737   +0.174 s  node3  Conducting a dry run election to see if we could be elected  {"currentTerm":21}
+  14:56:26.737   +0.174 s  node3  Dry election run succeeded, running for election  {"newTerm":22}
+  14:56:26.749   +0.186 s  node3  Election succeeded, assuming primary role  {"term":22}
+  14:56:26.749   +0.186 s  node3  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:56:28.092   +1.529 s  node1  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  14:56:28.102   +1.539 s  node3  Transition to primary complete; database writes are now permitted  {"term":22}
+summary: primary_after 3, elections 1, election_start_s 0.174
+primary: node3 (127.0.0.1:21432), term 22, found after 0.1 s
+electionTimeoutMillis 1000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 3.0 s, electionTimeoutMillis 1000, run 2: primary node3, term 22, load 5.24
+node 3 paused (SIGSTOP, pid 356921)
+node 3 resumed (SIGCONT, pid 356921)
+primary: node2 (127.0.0.1:21431), term 23, found after 0.1 s
+node1 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322606:1)
+node3 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322606:1)
+mongod log events, times from the SIGSTOP at 14:56:43.101 UTC:
+  14:56:43.878   +0.776 s  node2  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:56:43.878   +0.776 s  node2  Conducting a dry run election to see if we could be elected  {"currentTerm":22}
+  14:56:43.878   +0.776 s  node2  Dry election run succeeded, running for election  {"newTerm":23}
+  14:56:43.890   +0.788 s  node2  Election succeeded, assuming primary role  {"term":23}
+  14:56:43.890   +0.788 s  node2  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:56:46.130   +3.028 s  node3  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  14:56:46.141   +3.039 s  node2  Transition to primary complete; database writes are now permitted  {"term":23}
+summary: primary_after 2, elections 1, election_start_s 0.776
+primary: node2 (127.0.0.1:21431), term 23, found after 0.1 s
+electionTimeoutMillis 1000 -> 10000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 1.5 s, electionTimeoutMillis 10000, run 3: primary node2, term 23, load 4.68
+node 2 paused (SIGSTOP, pid 355835)
+node 2 resumed (SIGCONT, pid 355835)
+primary: node2 (127.0.0.1:21431), term 23, found after 0.1 s
+node1 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322619:1)
+node3 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322619:1)
+summary: primary_after 2, elections 0, election_start_s 
+primary: node2 (127.0.0.1:21431), term 23, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 3.0 s, electionTimeoutMillis 10000, run 3: primary node2, term 23, load 4.37
+node 2 paused (SIGSTOP, pid 355835)
+node 2 resumed (SIGCONT, pid 355835)
+primary: node2 (127.0.0.1:21431), term 23, found after 0.1 s
+node1 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322646:1)
+node3 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322646:1)
+summary: primary_after 2, elections 0, election_start_s 
+primary: node2 (127.0.0.1:21431), term 23, found after 0.1 s
+electionTimeoutMillis 10000 -> 2000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 1.5 s, electionTimeoutMillis 2000, run 3: primary node2, term 23, load 3.76
+node 2 paused (SIGSTOP, pid 355835)
+node 2 resumed (SIGCONT, pid 355835)
+primary: node2 (127.0.0.1:21431), term 23, found after 0.1 s
+node1 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322653:1)
+node3 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322653:1)
+summary: primary_after 2, elections 0, election_start_s 
+primary: node2 (127.0.0.1:21431), term 23, found after 0.1 s
+electionTimeoutMillis 2000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 3.0 s, electionTimeoutMillis 2000, run 3: primary node2, term 23, load 3.52
+node 2 paused (SIGSTOP, pid 355835)
+node 2 resumed (SIGCONT, pid 355835)
+primary: node3 (127.0.0.1:21432), term 24, found after 0.1 s
+node1 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322674:1)
+node2 is SECONDARY and caught up with node3 after 0.1 s (optime 1794322674:1)
+mongod log events, times from the SIGSTOP at 14:57:51.151 UTC:
+  14:57:52.881   +1.729 s  node3  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":2000}
+  14:57:52.881   +1.729 s  node3  Conducting a dry run election to see if we could be elected  {"currentTerm":23}
+  14:57:52.881   +1.729 s  node3  Dry election run succeeded, running for election  {"newTerm":24}
+  14:57:52.893   +1.741 s  node3  Election succeeded, assuming primary role  {"term":24}
+  14:57:52.893   +1.741 s  node3  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:57:54.181   +3.029 s  node2  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  14:57:54.191   +3.039 s  node3  Transition to primary complete; database writes are now permitted  {"term":24}
+summary: primary_after 3, elections 1, election_start_s 1.729
+primary: node3 (127.0.0.1:21432), term 24, found after 0.1 s
+electionTimeoutMillis 2000 -> 1000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 1.5 s, electionTimeoutMillis 1000, run 3: primary node3, term 24, load 5.44
+node 3 paused (SIGSTOP, pid 356921)
+node 3 resumed (SIGCONT, pid 356921)
+primary: node2 (127.0.0.1:21431), term 25, found after 0.1 s
+node1 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322690:1)
+node3 is SECONDARY and caught up with node2 after 0.1 s (optime 1794322690:1)
+mongod log events, times from the SIGSTOP at 14:58:08.867 UTC:
+  14:58:08.968   +0.100 s  node2  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:58:08.968   +0.100 s  node2  Conducting a dry run election to see if we could be elected  {"currentTerm":24}
+  14:58:08.968   +0.100 s  node2  Dry election run succeeded, running for election  {"newTerm":25}
+  14:58:08.980   +0.112 s  node2  Election succeeded, assuming primary role  {"term":25}
+  14:58:08.980   +0.112 s  node2  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:58:10.398   +1.530 s  node3  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  14:58:10.413   +1.545 s  node2  Transition to primary complete; database writes are now permitted  {"term":25}
+summary: primary_after 2, elections 1, election_start_s 0.100
+primary: node2 (127.0.0.1:21431), term 25, found after 0.1 s
+electionTimeoutMillis 1000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== pause 3.0 s, electionTimeoutMillis 1000, run 3: primary node2, term 25, load 5.04
+node 2 paused (SIGSTOP, pid 355835)
+node 2 resumed (SIGCONT, pid 355835)
+primary: node1 (127.0.0.1:21430), term 27, found after 0.1 s
+node2 is SECONDARY and caught up with node1 after 0.1 s (optime 1794322708:1)
+node3 is SECONDARY and caught up with node1 after 0.1 s (optime 1794322708:1)
+mongod log events, times from the SIGSTOP at 14:58:25.083 UTC:
+  14:58:26.025   +0.941 s  node3  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:58:26.025   +0.941 s  node3  Conducting a dry run election to see if we could be elected  {"currentTerm":25}
+  14:58:26.025   +0.941 s  node3  Dry election run succeeded, running for election  {"newTerm":26}
+  14:58:26.041   +0.957 s  node3  Election succeeded, assuming primary role  {"term":26}
+  14:58:26.041   +0.957 s  node3  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:58:27.041   +1.957 s  node3  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  14:58:27.167   +2.083 s  node1  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:58:27.167   +2.083 s  node1  Conducting a dry run election to see if we could be elected  {"currentTerm":26}
+  14:58:27.167   +2.083 s  node1  Dry election run succeeded, running for election  {"newTerm":27}
+  14:58:27.171   +2.087 s  node1  Election succeeded, assuming primary role  {"term":27}
+  14:58:27.171   +2.087 s  node1  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:58:28.115   +3.031 s  node2  Replica set state transition  {"newState":"SECONDARY","oldState":"PRIMARY"}
+  14:58:28.127   +3.043 s  node1  Transition to primary complete; database writes are now permitted  {"term":27}
+summary: primary_after 1, elections 2, election_start_s 0.941
+primary: node1 (127.0.0.1:21430), term 27, found after 0.1 s
+electionTimeoutMillis 1000 -> 10000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== idle 60 s, electionTimeoutMillis 10000: primary node1, term 27, load 4.64
+summary: primary_after 1, elections 0
+primary: node1 (127.0.0.1:21430), term 27, found after 0.1 s
+electionTimeoutMillis 10000 -> 2000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== idle 60 s, electionTimeoutMillis 2000: primary node1, term 27, load 3.59
+summary: primary_after 1, elections 0
+primary: node1 (127.0.0.1:21430), term 27, found after 0.1 s
+electionTimeoutMillis 2000 -> 1000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== idle 60 s, electionTimeoutMillis 1000: primary node1, term 27, load 2.73
+summary: primary_after 1, elections 0
+primary: node1 (127.0.0.1:21430), term 27, found after 0.1 s
+electionTimeoutMillis 1000 -> 10000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10

@@ -1,0 +1,138 @@
+13:00:08 === experiment client, 3 interleaved repeats, 10 x 2000; db version v8.3.13
+13:00:08 == fresh replica set, mongod profile default: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000
+13:00:09   | node 1 stopped (SIGTERM, pid 264865), exited after 1.0 s
+13:00:09   | node 3 stopped (SIGTERM, pid 265060), exited after 1.0 s
+13:00:09   | node 2 stopped (SIGTERM, pid 264962), exited after 1.0 s
+13:00:26   | node 1 started: 127.0.0.1:21430, pid 266443
+13:00:26   | node 2 started: 127.0.0.1:21431, pid 266542
+13:00:26   | node 3 started: 127.0.0.1:21432, pid 266640
+13:00:26   | replica set rs0 initiated with node1 node2 node3
+13:00:26   | primary: node1 (127.0.0.1:21430), term 1, found after 10.2 s
+13:00:26 warm-up: mongo-bench --variant majority
+13:00:36   | majority,true,10,1000,false,,,,10.2112,979.3,10000,10000,10000,0,0,0,0,0,0.066
+13:00:36 -- client / bench-majority, run 1: mongod=default; mongo-bench --variant majority
+13:00:58   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+13:00:58   | majority,true,10,2000,false,,,,20.0230,998.9,20000,20000,20000,0,0,0,0,0,0.054
+13:00:59    bench-majority: 20.023 s, 998.9 ops/s, final 20000 of 20000
+13:00:59    node1 PRIMARY   syncs 3470 (0.173/op, 5.58 ms each), write conflicts 71764, wtime 8.12 ms, flow control 0 us, apply 0.00 ops/batch, cpu 21.14 s
+13:00:59    node2 SECONDARY syncs 4290 (0.214/op, 4.52 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.92 ops/batch, cpu 13.86 s
+13:00:59    node3 SECONDARY syncs 4232 (0.212/op, 4.59 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.92 ops/batch, cpu 13.67 s
+13:00:59 -- client / web-async-ahc, run 1: mongod=default; counter-server --engine async; loadgen --engine ahc
+13:01:24   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:01:24   | mongo,10,2000,20000,23.7112,843.5,20000,20000,true
+13:01:25    web-async-ahc: 23.711 s, 843.5 ops/s, final 20000 of 20000
+13:01:25    node1 PRIMARY   syncs 3347 (0.167/op, 6.89 ms each), write conflicts 69624, wtime 9.36 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.96 s
+13:01:25    node2 SECONDARY syncs 4587 (0.229/op, 4.98 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.86 ops/batch, cpu 14.92 s
+13:01:25    node3 SECONDARY syncs 4627 (0.231/op, 4.94 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.86 ops/batch, cpu 15.03 s
+13:01:25 -- client / web-async-nio, run 1: mongod=default; counter-server --engine async; loadgen --engine nio
+13:01:50   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:01:50   | mongo,10,2000,20000,22.9704,870.7,20000,20000,true
+13:01:51    web-async-nio: 22.970 s, 870.7 ops/s, final 20000 of 20000
+13:01:51    node1 PRIMARY   syncs 3184 (0.159/op, 7.05 ms each), write conflicts 74432, wtime 9.28 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.46 s
+13:01:51    node2 SECONDARY syncs 4514 (0.226/op, 4.94 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.82 ops/batch, cpu 14.53 s
+13:01:51    node3 SECONDARY syncs 4516 (0.226/op, 4.94 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.82 ops/batch, cpu 14.51 s
+13:01:51 -- client / web-handler-nio, run 1: mongod=default; counter-server --engine handler; loadgen --engine nio
+13:02:14   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:02:14   | mongo,10,2000,20000,22.1189,904.2,20000,20000,true
+13:02:16    web-handler-nio: 22.119 s, 904.2 ops/s, final 20000 of 20000
+13:02:16    node1 PRIMARY   syncs 3340 (0.167/op, 6.45 ms each), write conflicts 73342, wtime 8.89 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.10 s
+13:02:16    node2 SECONDARY syncs 4465 (0.223/op, 4.80 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.87 ops/batch, cpu 14.37 s
+13:02:16    node3 SECONDARY syncs 4425 (0.221/op, 4.85 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.85 ops/batch, cpu 14.37 s
+13:02:16 -- client / web-raw-nio, run 1: mongod=default; counter-server --engine raw; loadgen --engine nio
+13:02:39   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:02:39   | mongo,10,2000,20000,22.2243,899.9,20000,20000,true
+13:02:40    web-raw-nio: 22.224 s, 899.9 ops/s, final 20000 of 20000
+13:02:40    node1 PRIMARY   syncs 3312 (0.166/op, 6.54 ms each), write conflicts 72916, wtime 8.97 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.16 s
+13:02:40    node2 SECONDARY syncs 4403 (0.220/op, 4.90 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.85 ops/batch, cpu 14.53 s
+13:02:40    node3 SECONDARY syncs 4413 (0.221/op, 4.88 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.85 ops/batch, cpu 14.53 s
+13:02:40 -- client / web-async-ahc-clients20, run 1: mongod=default; counter-server --engine async --mongo-clients 20; loadgen --engine ahc
+13:03:04   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:03:04   | mongo,10,2000,20000,22.5512,886.9,20000,20000,true
+13:03:06    web-async-ahc-clients20: 22.551 s, 886.9 ops/s, final 20000 of 20000
+13:03:06    node1 PRIMARY   syncs 3393 (0.170/op, 6.46 ms each), write conflicts 71368, wtime 8.85 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.34 s
+13:03:06    node2 SECONDARY syncs 4519 (0.226/op, 4.82 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.87 ops/batch, cpu 14.59 s
+13:03:06    node3 SECONDARY syncs 4541 (0.227/op, 4.80 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.87 ops/batch, cpu 14.53 s
+13:03:06 -- client / bench-majority, run 2: mongod=default; mongo-bench --variant majority
+13:03:27   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+13:03:27   | majority,true,10,2000,false,,,,20.2798,986.2,20000,20000,20000,0,0,0,0,0,0.054
+13:03:29    bench-majority: 20.280 s, 986.2 ops/s, final 20000 of 20000
+13:03:29    node1 PRIMARY   syncs 3466 (0.173/op, 5.67 ms each), write conflicts 70384, wtime 8.22 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.21 s
+13:03:29    node2 SECONDARY syncs 4309 (0.215/op, 4.57 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.89 ops/batch, cpu 14.40 s
+13:03:29    node3 SECONDARY syncs 4286 (0.214/op, 4.60 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.91 ops/batch, cpu 14.36 s
+13:03:29 -- client / web-async-ahc, run 2: mongod=default; counter-server --engine async; loadgen --engine ahc
+13:03:53   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:03:53   | mongo,10,2000,20000,22.7411,879.5,20000,20000,true
+13:03:54    web-async-ahc: 22.741 s, 879.5 ops/s, final 20000 of 20000
+13:03:54    node1 PRIMARY   syncs 3484 (0.174/op, 6.34 ms each), write conflicts 71486, wtime 8.90 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.59 s
+13:03:54    node2 SECONDARY syncs 4578 (0.229/op, 4.79 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.86 ops/batch, cpu 14.63 s
+13:03:54    node3 SECONDARY syncs 4526 (0.226/op, 4.85 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.83 ops/batch, cpu 14.84 s
+13:03:54 -- client / web-async-nio, run 2: mongod=default; counter-server --engine async; loadgen --engine nio
+13:04:18   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:04:18   | mongo,10,2000,20000,22.4114,892.4,20000,20000,true
+13:04:19    web-async-nio: 22.411 s, 892.4 ops/s, final 20000 of 20000
+13:04:19    node1 PRIMARY   syncs 3373 (0.169/op, 6.46 ms each), write conflicts 68224, wtime 8.95 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.38 s
+13:04:19    node2 SECONDARY syncs 4473 (0.224/op, 4.83 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.94 ops/batch, cpu 14.70 s
+13:04:19    node3 SECONDARY syncs 4461 (0.223/op, 4.84 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.97 ops/batch, cpu 14.89 s
+13:04:19 -- client / web-handler-nio, run 2: mongod=default; counter-server --engine handler; loadgen --engine nio
+13:04:43   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:04:43   | mongo,10,2000,20000,22.7305,879.9,20000,20000,true
+13:04:45    web-handler-nio: 22.730 s, 879.9 ops/s, final 20000 of 20000
+13:04:45    node1 PRIMARY   syncs 3360 (0.168/op, 6.56 ms each), write conflicts 68878, wtime 9.06 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.29 s
+13:04:45    node2 SECONDARY syncs 4491 (0.225/op, 4.87 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.90 ops/batch, cpu 14.61 s
+13:04:45    node3 SECONDARY syncs 4472 (0.224/op, 4.89 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.92 ops/batch, cpu 14.62 s
+13:04:45 -- client / web-raw-nio, run 2: mongod=default; counter-server --engine raw; loadgen --engine nio
+13:05:08   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:05:08   | mongo,10,2000,20000,22.3990,892.9,20000,20000,true
+13:05:10    web-raw-nio: 22.399 s, 892.9 ops/s, final 20000 of 20000
+13:05:10    node1 PRIMARY   syncs 3327 (0.166/op, 6.55 ms each), write conflicts 68080, wtime 9.07 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.32 s
+13:05:10    node2 SECONDARY syncs 4463 (0.223/op, 4.86 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.91 ops/batch, cpu 14.71 s
+13:05:10    node3 SECONDARY syncs 4456 (0.223/op, 4.87 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.90 ops/batch, cpu 14.78 s
+13:05:10 -- client / web-async-ahc-clients20, run 2: mongod=default; counter-server --engine async --mongo-clients 20; loadgen --engine ahc
+13:05:35   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:05:35   | mongo,10,2000,20000,23.7186,843.2,20000,20000,true
+13:05:36    web-async-ahc-clients20: 23.719 s, 843.2 ops/s, final 20000 of 20000
+13:05:36    node1 PRIMARY   syncs 3466 (0.173/op, 6.66 ms each), write conflicts 73098, wtime 9.37 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.91 s
+13:05:36    node2 SECONDARY syncs 4525 (0.226/op, 5.08 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.82 ops/batch, cpu 15.00 s
+13:05:36    node3 SECONDARY syncs 4545 (0.227/op, 5.05 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.82 ops/batch, cpu 15.17 s
+13:05:36 -- client / bench-majority, run 3: mongod=default; mongo-bench --variant majority
+13:05:58   | variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+13:05:58   | majority,true,10,2000,false,,,,20.6005,970.8,20000,20000,20000,0,0,0,0,0,0.053
+13:05:59    bench-majority: 20.601 s, 970.8 ops/s, final 20000 of 20000
+13:05:59    node1 PRIMARY   syncs 3510 (0.175/op, 5.68 ms each), write conflicts 70360, wtime 8.40 ms, flow control 0 us, apply 0.00 ops/batch, cpu 21.99 s
+13:05:59    node2 SECONDARY syncs 4231 (0.212/op, 4.73 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.91 ops/batch, cpu 14.39 s
+13:05:59    node3 SECONDARY syncs 4291 (0.215/op, 4.66 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.91 ops/batch, cpu 14.58 s
+13:05:59 -- client / web-async-ahc, run 3: mongod=default; counter-server --engine async; loadgen --engine ahc
+13:06:24   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:06:24   | mongo,10,2000,20000,23.0521,867.6,20000,20000,true
+13:06:25    web-async-ahc: 23.052 s, 867.6 ops/s, final 20000 of 20000
+13:06:25    node1 PRIMARY   syncs 3504 (0.175/op, 6.40 ms each), write conflicts 69004, wtime 9.03 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.82 s
+13:06:25    node2 SECONDARY syncs 4521 (0.226/op, 4.92 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.88 ops/batch, cpu 15.00 s
+13:06:25    node3 SECONDARY syncs 4539 (0.227/op, 4.91 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.87 ops/batch, cpu 15.10 s
+13:06:25 -- client / web-async-nio, run 3: mongod=default; counter-server --engine async; loadgen --engine nio
+13:06:49   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:06:49   | mongo,10,2000,20000,22.3340,895.5,20000,20000,true
+13:06:50    web-async-nio: 22.334 s, 895.5 ops/s, final 20000 of 20000
+13:06:50    node1 PRIMARY   syncs 3392 (0.170/op, 6.39 ms each), write conflicts 68610, wtime 8.88 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.40 s
+13:06:50    node2 SECONDARY syncs 4451 (0.223/op, 4.83 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.91 ops/batch, cpu 14.73 s
+13:06:50    node3 SECONDARY syncs 4475 (0.224/op, 4.81 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.93 ops/batch, cpu 14.95 s
+13:06:50 -- client / web-handler-nio, run 3: mongod=default; counter-server --engine handler; loadgen --engine nio
+13:07:14   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:07:14   | mongo,10,2000,20000,22.5718,886.1,20000,20000,true
+13:07:15    web-handler-nio: 22.572 s, 886.1 ops/s, final 20000 of 20000
+13:07:15    node1 PRIMARY   syncs 3287 (0.164/op, 6.69 ms each), write conflicts 71172, wtime 9.09 ms, flow control 0 us, apply 0.00 ops/batch, cpu 22.81 s
+13:07:15    node2 SECONDARY syncs 4489 (0.224/op, 4.88 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.90 ops/batch, cpu 14.81 s
+13:07:15    node3 SECONDARY syncs 4474 (0.224/op, 4.89 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.91 ops/batch, cpu 14.76 s
+13:07:15 -- client / web-raw-nio, run 3: mongod=default; counter-server --engine raw; loadgen --engine nio
+13:07:39   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:07:39   | mongo,10,2000,20000,22.3366,895.4,20000,20000,true
+13:07:40    web-raw-nio: 22.337 s, 895.4 ops/s, final 20000 of 20000
+13:07:40    node1 PRIMARY   syncs 3295 (0.165/op, 6.62 ms each), write conflicts 78854, wtime 9.05 ms, flow control 0 us, apply 0.00 ops/batch, cpu 21.87 s
+13:07:40    node2 SECONDARY syncs 4403 (0.220/op, 4.94 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.74 ops/batch, cpu 14.31 s
+13:07:40    node3 SECONDARY syncs 4400 (0.220/op, 4.93 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.74 ops/batch, cpu 14.51 s
+13:07:40 -- client / web-async-ahc-clients20, run 3: mongod=default; counter-server --engine async --mongo-clients 20; loadgen --engine ahc
+13:08:05   | store,clients,requests_per_client,total_requests,seconds,rps,final_value,expected,correct
+13:08:05   | mongo,10,2000,20000,23.2502,860.2,20000,20000,true
+13:08:06    web-async-ahc-clients20: 23.250 s, 860.2 ops/s, final 20000 of 20000
+13:08:06    node1 PRIMARY   syncs 3566 (0.178/op, 6.32 ms each), write conflicts 67788, wtime 9.03 ms, flow control 0 us, apply 0.00 ops/batch, cpu 23.18 s
+13:08:06    node2 SECONDARY syncs 4560 (0.228/op, 4.89 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.88 ops/batch, cpu 15.22 s
+13:08:06    node3 SECONDARY syncs 4546 (0.227/op, 4.91 ms each), write conflicts 0, wtime 0.00 ms, flow control 0 us, apply 2.87 ops/batch, cpu 15.18 s

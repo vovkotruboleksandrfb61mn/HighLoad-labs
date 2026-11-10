@@ -1,0 +1,74 @@
+13:08:06 === experiment probe, 3 interleaved repeats, 10 x 2000; db version v8.3.13
+13:08:17    probe default w1: mean 1.268 ms, p50 1.147, p99 3.441
+13:08:17    probe default w1-j: mean 4.068 ms, p50 3.492, p99 9.281
+13:08:17    probe default majority: mean 4.232 ms, p50 3.628, p99 8.243
+13:08:17 == fresh replica set, mongod profile zero-fill: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000 --wiredTigerEngineConfigString=log=(zero_fill=true)
+13:08:18   | node 1 stopped (SIGTERM, pid 266443), exited after 1.0 s
+13:08:18   | node 2 stopped (SIGTERM, pid 266542), exited after 1.0 s
+13:08:18   | node 3 stopped (SIGTERM, pid 266640), exited after 1.0 s
+13:08:35   | node 1 started: 127.0.0.1:21430, pid 272307
+13:08:35   | node 2 started: 127.0.0.1:21431, pid 272405
+13:08:35   | node 3 started: 127.0.0.1:21432, pid 272502
+13:08:35   | replica set rs0 initiated with node1 node2 node3
+13:08:35   | primary: node1 (127.0.0.1:21430), term 1, found after 9.7 s
+13:08:35 warm-up: mongo-bench --variant majority
+13:08:43   | majority,true,10,1000,false,,,,7.0375,1421.0,10000,10000,10000,0,0,0,0,0,0.098
+13:08:52    probe zero-fill w1: mean 1.081 ms, p50 1.020, p99 2.427
+13:08:52    probe zero-fill w1-j: mean 3.382 ms, p50 3.219, p99 6.663
+13:08:52    probe zero-fill majority: mean 3.658 ms, p50 3.463, p99 6.062
+13:08:52 == fresh replica set, mongod profile default: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000
+13:08:54   | node 1 stopped (SIGTERM, pid 272307), exited after 2.0 s
+13:08:54   | node 3 stopped (SIGTERM, pid 272502), exited after 2.0 s
+13:08:54   | node 2 stopped (SIGTERM, pid 272405), exited after 2.0 s
+13:09:11   | node 1 started: 127.0.0.1:21430, pid 273600
+13:09:11   | node 2 started: 127.0.0.1:21431, pid 273698
+13:09:11   | node 3 started: 127.0.0.1:21432, pid 273795
+13:09:11   | replica set rs0 initiated with node1 node2 node3
+13:09:11   | primary: node1 (127.0.0.1:21430), term 1, found after 10.6 s
+13:09:11 warm-up: mongo-bench --variant majority
+13:09:22   | majority,true,10,1000,false,,,,10.8075,925.3,10000,10000,10000,0,0,0,0,0,0.062
+13:09:32    probe default w1: mean 1.150 ms, p50 1.077, p99 2.421
+13:09:32    probe default w1-j: mean 3.873 ms, p50 3.279, p99 9.218
+13:09:32    probe default majority: mean 4.104 ms, p50 3.478, p99 8.472
+13:09:32 == fresh replica set, mongod profile zero-fill: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000 --wiredTigerEngineConfigString=log=(zero_fill=true)
+13:09:34   | node 1 stopped (SIGTERM, pid 273600), exited after 2.0 s
+13:09:34   | node 2 stopped (SIGTERM, pid 273698), exited after 2.0 s
+13:09:34   | node 3 stopped (SIGTERM, pid 273795), exited after 2.0 s
+13:09:50   | node 1 started: 127.0.0.1:21430, pid 274967
+13:09:50   | node 2 started: 127.0.0.1:21431, pid 275081
+13:09:50   | node 3 started: 127.0.0.1:21432, pid 275178
+13:09:50   | replica set rs0 initiated with node1 node2 node3
+13:09:50   | primary: node1 (127.0.0.1:21430), term 1, found after 9.4 s
+13:09:50 warm-up: mongo-bench --variant majority
+13:09:57   | majority,true,10,1000,false,,,,7.1028,1407.9,10000,10000,10000,0,0,0,0,0,0.066
+13:10:07    probe zero-fill w1: mean 1.112 ms, p50 1.047, p99 2.281
+13:10:07    probe zero-fill w1-j: mean 3.455 ms, p50 3.289, p99 7.757
+13:10:07    probe zero-fill majority: mean 3.660 ms, p50 3.458, p99 5.972
+13:10:07 == fresh replica set, mongod profile default: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000
+13:10:08   | node 1 stopped (SIGTERM, pid 274967), exited after 1.0 s
+13:10:08   | node 2 stopped (SIGTERM, pid 275081), exited after 1.0 s
+13:10:08   | node 3 stopped (SIGTERM, pid 275178), exited after 1.0 s
+13:10:25   | node 1 started: 127.0.0.1:21430, pid 276269
+13:10:25   | node 2 started: 127.0.0.1:21431, pid 276367
+13:10:25   | node 3 started: 127.0.0.1:21432, pid 276471
+13:10:25   | replica set rs0 initiated with node1 node2 node3
+13:10:25   | primary: node1 (127.0.0.1:21430), term 1, found after 9.9 s
+13:10:25 warm-up: mongo-bench --variant majority
+13:10:36   | majority,true,10,1000,false,,,,10.2471,975.9,10000,10000,10000,0,0,0,0,0,0.099
+13:10:46    probe default w1: mean 1.111 ms, p50 1.038, p99 2.643
+13:10:46    probe default w1-j: mean 3.917 ms, p50 3.387, p99 8.560
+13:10:46    probe default majority: mean 4.236 ms, p50 3.624, p99 8.162
+13:10:46 == fresh replica set, mongod profile zero-fill: --setParameter shutdownTimeoutMillisForSignaledShutdown=1000 --wiredTigerEngineConfigString=log=(zero_fill=true)
+13:10:48   | node 3 stopped (SIGTERM, pid 276471), exited after 1.0 s
+13:10:48   | node 1 stopped (SIGTERM, pid 276269), exited after 1.0 s
+13:10:48   | node 2 stopped (SIGTERM, pid 276367), exited after 1.0 s
+13:11:04   | node 1 started: 127.0.0.1:21430, pid 277647
+13:11:04   | node 2 started: 127.0.0.1:21431, pid 277744
+13:11:04   | node 3 started: 127.0.0.1:21432, pid 277841
+13:11:04   | replica set rs0 initiated with node1 node2 node3
+13:11:04   | primary: node1 (127.0.0.1:21430), term 1, found after 9.4 s
+13:11:04 warm-up: mongo-bench --variant majority
+13:11:11   | majority,true,10,1000,false,,,,7.1088,1406.7,10000,10000,10000,0,0,0,0,0,0.055
+13:11:21    probe zero-fill w1: mean 1.155 ms, p50 1.069, p99 2.773
+13:11:21    probe zero-fill w1-j: mean 3.442 ms, p50 3.316, p99 5.696
+13:11:21    probe zero-fill majority: mean 3.865 ms, p50 3.550, p99 8.248

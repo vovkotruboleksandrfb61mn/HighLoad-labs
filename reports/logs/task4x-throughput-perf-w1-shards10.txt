@@ -1,0 +1,45 @@
+perf record -e cpu-clock:u -F 999 -p <primary mongod> -- sleep 6
+while: mongo-bench --variant w1 --shards 10 --increments 10000
+mongo-bench row: w1,true,10,10000,false,,,,13.8461,7222.2,100000,100000,100000,0,0,0,0,0,0.054
+13050 samples: 2.18 cores of user CPU, 301 us of user CPU per increment
+
+samples by part of mongod:
+  0.01%  C++ exception unwinding
+  7.74%  tcmalloc
+ 15.61%  WiredTiger
+  1.49%  snappy (journal compression)
+ 11.56%  libc
+ 63.60%  other mongod
+  1.51%  other
+
+top 30 symbols (perf report --no-children --sort dso,sym):
+  3.61%  mongod         tcmalloc::tcmalloc_internal::TCMallocPolicy<tcmalloc::tcmalloc_internal::CppOomPolicy, tcmalloc::tcmalloc_internal::DefaultAlignPolicy, tcmalloc::tcma
+  2.08%  libc.so.6      __memcmp_avx2_movbe
+  1.86%  libc.so.6      __memmove_avx_unaligned_erms
+  1.65%  mongod         __wt_row_search
+  1.43%  mongod         mongo::ServiceEntryPointShardRole::handleRequest(mongo::OperationContext*, mongo::Message const&, mongo::Date_t)
+  1.17%  mongod         mongo::QueryKnobConfiguration::QueryKnobConfiguration(mongo::query_settings::QuerySettings const&)
+  1.07%  mongod         snappy::Compress(snappy::Source*, snappy::Sink*)
+  1.07%  libc.so.6      __syscall_cancel_arch_end
+  1.06%  mongod         __wt_update_obsolete_check
+  0.97%  libc.so.6      pthread_mutex_lock@@GLIBC_2.2.5
+  0.93%  mongod         __wt_btcur_search
+  0.83%  mongod         tcmalloc::tcmalloc_internal::FreeWithHooksOrPerThread(void*, unsigned long)
+  0.74%  mongod         mongo::Locker::_lockBegin(mongo::OperationContext*, mongo::ResourceId, mongo::LockMode)
+  0.71%  mongod         operator new[](unsigned long)
+  0.70%  mongod         mongo::OperationContext::~OperationContext()
+  0.69%  libc.so.6      __sched_yield
+  0.69%  mongod         __wt_btcur_next
+  0.69%  mongod         __wt_page_in_func
+  0.65%  libc.so.6      pthread_mutex_trylock@@GLIBC_2.34
+  0.65%  mongod         __wt_row_modify
+  0.64%  libc.so.6      __GI___pthread_mutex_unlock_usercnt
+  0.63%  libc.so.6      __memset_avx2_unaligned_erms
+  0.62%  mongod         mongo::BSONObj::getField(mongo::StringData) const
+  0.60%  mongod         mongo::(anonymous namespace)::acquireResolvedCollectionsOrViewsWithoutTakingLocks(mongo::OperationContext*, mongo::CollectionCatalog const&, absl::lts
+  0.59%  libc.so.6      __memchr_avx2
+  0.59%  mongod         mongo::OperationContext::OperationContext(mongo::Client*, unsigned int)
+  0.58%  mongod         __curfile_reopen.llvm.12479243031182149861
+  0.56%  mongod         __wt_scr_alloc_func
+  0.54%  [vdso]         0x0000000000000b1e
+  0.54%  mongod         __curfile_cache.llvm.12479243031182149861

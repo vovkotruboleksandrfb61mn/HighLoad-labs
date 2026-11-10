@@ -1,0 +1,223 @@
+Task 4x, failover: election; mongod v8.3.13, 2026-11-10 14:36 UTC
+primary: node1 (127.0.0.1:21430), term 7, found after 0.1 s
+{"chainingAllowed":true,"heartbeatIntervalMillis":2000,"heartbeatTimeoutSecs":10,"electionTimeoutMillis":10000,"catchUpTimeoutMillis":-1,"catchUpTakeoverDelayMillis":30000,"getLastErrorModes":{},"getLastErrorDefaults":{"w":1,"wtimeout":0},"replicaSetId":"6af329cff4eb346b9a54e889"}
+primary: node1 (127.0.0.1:21430), term 7, found after 0.1 s
+electionTimeoutMillis 10000 (unchanged), heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== election timeout-10000 run 1: electionTimeoutMillis 10000, primary node1, term 7, load 11.20, 2026-11-10 14:36:34 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --kill-primary-after 30
+  [14:37:04.656] mongo-bench: killing the primary, node 1 (127.0.0.1:21430)
+  [14:37:04.806] node 1 killed (SIGKILL at 14:37:04.696 UTC, pid 342605), gone after 0.0 s
+  [14:38:22.092] mongo-bench: retried 460x after MongoError.cannotConnect.noAvailableHosts
+  [14:38:22.092] mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+  [14:38:22.092] mongo-bench: starting node 1 again
+  [14:38:23.986] node 1 started: 127.0.0.1:21430, pid 348584
+  [14:38:28.053] node1 is SECONDARY and caught up with node2 after 3.1 s (optime 1794321502:128)
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,true,1,30.151,10.799,107.4360,930.8,100000,100000,100000,0,0,470,0,1,10.926
+mongod log events, times from the SIGKILL at 14:37:04.696 UTC:
+  14:37:04.738   +0.042 s  node2  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"Error connecting to 127.0.0.1:21430 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:37:04.739   +0.043 s  node3  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"Error connecting to 127.0.0.1:21430 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:37:15.501  +10.805 s  node2  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":10000}
+  14:37:15.501  +10.805 s  node2  Conducting a dry run election to see if we could be elected  {"currentTerm":7}
+  14:37:15.501  +10.805 s  node2  Dry election run succeeded, running for election  {"newTerm":8}
+  14:37:15.513  +10.817 s  node2  Election succeeded, assuming primary role  {"term":8}
+  14:37:15.513  +10.817 s  node2  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:37:15.516  +10.820 s  node2  Transition to primary complete; database writes are now permitted  {"term":8}
+summary: failover_s 10.799, failure_to_ack_s 10.910, ack_gap_s 10.917, down_s 0.042, election_start_s 10.805, elected_s 10.817, writable_s 10.820, correct True, retries 470, elections 1
+primary: node2 (127.0.0.1:21431), term 8, found after 0.1 s
+electionTimeoutMillis 10000 -> 2000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== election timeout-2000 run 1: electionTimeoutMillis 2000, primary node2, term 8, load 14.64, 2026-11-10 14:38:32 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --kill-primary-after 30
+  [14:39:02.803] mongo-bench: killing the primary, node 2 (127.0.0.1:21431)
+  [14:39:02.950] node 2 killed (SIGKILL at 14:39:02.839 UTC, pid 342703), gone after 0.0 s
+  [14:40:11.282] mongo-bench: retried 110x after MongoError.cannotConnect.noAvailableHosts
+  [14:40:11.282] mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+  [14:40:11.282] mongo-bench: starting node 2 again
+  [14:40:13.319] node 2 started: 127.0.0.1:21431, pid 349614
+  [14:40:16.905] node2 is SECONDARY and caught up with node1 after 2.8 s (optime 1794321611:796)
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,true,2,30.151,2.001,98.4788,1015.4,100000,100000,100000,0,0,120,0,1,2.131
+mongod log events, times from the SIGKILL at 14:39:02.839 UTC:
+  14:39:02.883   +0.044 s  node1  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21431","heartbeatMessage":"Error connecting to 127.0.0.1:21431 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:39:02.883   +0.044 s  node3  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21431","heartbeatMessage":"Error connecting to 127.0.0.1:21431 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:39:04.854   +2.015 s  node1  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":2000}
+  14:39:04.854   +2.015 s  node1  Conducting a dry run election to see if we could be elected  {"currentTerm":8}
+  14:39:04.854   +2.015 s  node1  Dry election run succeeded, running for election  {"newTerm":9}
+  14:39:04.866   +2.027 s  node1  Election succeeded, assuming primary role  {"term":9}
+  14:39:04.866   +2.027 s  node1  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:39:04.869   +2.030 s  node1  Transition to primary complete; database writes are now permitted  {"term":9}
+summary: failover_s 2.001, failure_to_ack_s 2.112, ack_gap_s 2.116, down_s 0.044, election_start_s 2.015, elected_s 2.027, writable_s 2.030, correct True, retries 120, elections 1
+primary: node1 (127.0.0.1:21430), term 9, found after 0.1 s
+electionTimeoutMillis 2000 -> 1000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== election timeout-1000 run 1: electionTimeoutMillis 1000, primary node1, term 9, load 10.18, 2026-11-10 14:40:21 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --kill-primary-after 30
+  [14:40:51.570] mongo-bench: killing the primary, node 1 (127.0.0.1:21430)
+  [14:40:51.720] node 1 killed (SIGKILL at 14:40:51.609 UTC, pid 348584), gone after 0.0 s
+  [14:41:59.690] mongo-bench: retried 70x after MongoError.cannotConnect.noAvailableHosts
+  [14:41:59.690] mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+  [14:41:59.690] mongo-bench: starting node 1 again
+  [14:42:01.276] node 1 started: 127.0.0.1:21430, pid 350593
+  [14:42:05.290] node1 is SECONDARY and caught up with node2 after 3.2 s (optime 1794321719:3288)
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,true,1,30.151,0.989,98.1204,1019.2,100000,100000,100000,0,0,80,0,1,1.111
+mongod log events, times from the SIGKILL at 14:40:51.609 UTC:
+  14:40:51.644   +0.035 s  node2  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"Error connecting to 127.0.0.1:21430 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:40:51.644   +0.035 s  node3  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"Error connecting to 127.0.0.1:21430 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:40:52.638   +1.029 s  node2  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:40:52.638   +1.029 s  node2  Conducting a dry run election to see if we could be elected  {"currentTerm":9}
+  14:40:52.638   +1.029 s  node2  Dry election run succeeded, running for election  {"newTerm":10}
+  14:40:52.650   +1.041 s  node2  Election succeeded, assuming primary role  {"term":10}
+  14:40:52.650   +1.041 s  node2  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:40:52.657   +1.048 s  node2  Transition to primary complete; database writes are now permitted  {"term":10}
+summary: failover_s 0.989, failure_to_ack_s 1.101, ack_gap_s 1.102, down_s 0.035, election_start_s 1.029, elected_s 1.041, writable_s 1.048, correct True, retries 80, elections 1
+primary: node2 (127.0.0.1:21431), term 10, found after 0.1 s
+electionTimeoutMillis 1000 -> 10000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== election timeout-10000 run 2: electionTimeoutMillis 10000, primary node2, term 10, load 8.11, 2026-11-10 14:42:09 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --kill-primary-after 30
+  [14:42:39.915] mongo-bench: killing the primary, node 2 (127.0.0.1:21431)
+  [14:42:40.061] node 2 killed (SIGKILL at 14:42:39.950 UTC, pid 349614), gone after 1.0 s
+  [14:43:56.843] mongo-bench: retried 430x after MongoError.cannotConnect.noAvailableHosts
+  [14:43:56.843] mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+  [14:43:56.843] mongo-bench: starting node 2 again
+  [14:43:58.407] node 2 started: 127.0.0.1:21431, pid 351647
+  [14:44:02.018] node2 is SECONDARY and caught up with node1 after 2.8 s (optime 1794321836:3890)
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,true,2,30.152,10.032,106.9280,935.2,100000,100000,100000,0,0,440,0,1,10.156
+mongod log events, times from the SIGKILL at 14:42:39.950 UTC:
+  14:42:39.985   +0.035 s  node1  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21431","heartbeatMessage":"Error connecting to 127.0.0.1:21431 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:42:39.985   +0.035 s  node3  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21431","heartbeatMessage":"Error connecting to 127.0.0.1:21431 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:42:50.003  +10.053 s  node1  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":10000}
+  14:42:50.003  +10.053 s  node1  Conducting a dry run election to see if we could be elected  {"currentTerm":10}
+  14:42:50.003  +10.053 s  node1  Dry election run succeeded, running for election  {"newTerm":11}
+  14:42:50.009  +10.059 s  node1  Election succeeded, assuming primary role  {"term":11}
+  14:42:50.009  +10.059 s  node1  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:42:50.012  +10.062 s  node1  Transition to primary complete; database writes are now permitted  {"term":11}
+summary: failover_s 10.032, failure_to_ack_s 10.144, ack_gap_s 10.151, down_s 0.035, election_start_s 10.053, elected_s 10.059, writable_s 10.062, correct True, retries 440, elections 1
+primary: node1 (127.0.0.1:21430), term 11, found after 0.1 s
+electionTimeoutMillis 10000 -> 2000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== election timeout-2000 run 2: electionTimeoutMillis 2000, primary node1, term 11, load 8.44, 2026-11-10 14:44:06 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --kill-primary-after 30
+  [14:44:36.816] mongo-bench: killing the primary, node 1 (127.0.0.1:21430)
+  [14:44:36.969] node 1 killed (SIGKILL at 14:44:36.859 UTC, pid 350593), gone after 0.0 s
+  [14:45:57.815] mongo-bench: retried 110x after MongoError.cannotConnect.noAvailableHosts
+  [14:45:57.815] mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+  [14:45:57.815] mongo-bench: starting node 1 again
+  [14:45:59.545] node 1 started: 127.0.0.1:21430, pid 352686
+  [14:46:03.661] node1 is SECONDARY and caught up with node2 after 3.3 s (optime 1794321957:3324)
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,true,1,30.162,1.986,110.9992,900.9,100000,100000,100000,0,0,120,0,1,2.112
+mongod log events, times from the SIGKILL at 14:44:36.859 UTC:
+  14:44:36.892   +0.033 s  node2  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"Error connecting to 127.0.0.1:21430 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:44:36.892   +0.033 s  node3  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"Error connecting to 127.0.0.1:21430 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:44:38.938   +2.079 s  node2  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":2000}
+  14:44:38.938   +2.079 s  node2  Conducting a dry run election to see if we could be elected  {"currentTerm":11}
+  14:44:38.938   +2.079 s  node2  Dry election run succeeded, running for election  {"newTerm":12}
+  14:44:38.947   +2.088 s  node2  Election succeeded, assuming primary role  {"term":12}
+  14:44:38.947   +2.088 s  node2  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:44:38.954   +2.095 s  node2  Transition to primary complete; database writes are now permitted  {"term":12}
+summary: failover_s 1.986, failure_to_ack_s 2.096, ack_gap_s 2.107, down_s 0.033, election_start_s 2.079, elected_s 2.088, writable_s 2.095, correct True, retries 120, elections 1
+primary: node2 (127.0.0.1:21431), term 12, found after 0.1 s
+electionTimeoutMillis 2000 -> 1000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== election timeout-1000 run 2: electionTimeoutMillis 1000, primary node2, term 12, load 10.40, 2026-11-10 14:46:08 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --kill-primary-after 30
+  [14:46:38.494] mongo-bench: killing the primary, node 2 (127.0.0.1:21431)
+  [14:46:38.647] node 2 killed (SIGKILL at 14:46:38.535 UTC, pid 351647), gone after 0.0 s
+  [14:47:48.532] mongo-bench: retried 80x after MongoError.cannotConnect.noAvailableHosts
+  [14:47:48.532] mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+  [14:47:48.532] mongo-bench: starting node 2 again
+  [14:47:50.158] node 2 started: 127.0.0.1:21431, pid 353805
+  [14:47:54.207] node2 is SECONDARY and caught up with node1 after 3.3 s (optime 1794322068:2258)
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,true,2,30.161,1.227,100.0390,999.6,100000,100000,100000,0,0,90,0,1,1.358
+mongod log events, times from the SIGKILL at 14:46:38.535 UTC:
+  14:46:38.567   +0.032 s  node1  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21431","heartbeatMessage":"Error connecting to 127.0.0.1:21431 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:46:38.567   +0.032 s  node3  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21431","heartbeatMessage":"Error connecting to 127.0.0.1:21431 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:46:39.666   +1.131 s  node1  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:46:39.666   +1.131 s  node1  Conducting a dry run election to see if we could be elected  {"currentTerm":12}
+  14:46:39.666   +1.131 s  node1  Dry election run succeeded, running for election  {"newTerm":13}
+  14:46:39.672   +1.137 s  node3  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:46:39.672   +1.137 s  node3  Conducting a dry run election to see if we could be elected  {"currentTerm":12}
+  14:46:39.678   +1.143 s  node1  Election succeeded, assuming primary role  {"term":13}
+  14:46:39.678   +1.143 s  node1  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:46:39.681   +1.146 s  node1  Transition to primary complete; database writes are now permitted  {"term":13}
+summary: failover_s 1.227, failure_to_ack_s 1.339, ack_gap_s 1.347, down_s 0.032, election_start_s 1.131, elected_s 1.143, writable_s 1.146, correct True, retries 90, elections 1
+primary: node1 (127.0.0.1:21430), term 13, found after 0.1 s
+electionTimeoutMillis 1000 -> 10000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== election timeout-10000 run 3: electionTimeoutMillis 10000, primary node1, term 13, load 8.00, 2026-11-10 14:47:58 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --kill-primary-after 30
+  [14:48:28.908] mongo-bench: killing the primary, node 1 (127.0.0.1:21430)
+  [14:48:29.055] node 1 killed (SIGKILL at 14:48:28.944 UTC, pid 352686), gone after 1.0 s
+  [14:49:45.033] mongo-bench: retried 430x after MongoError.cannotConnect.noAvailableHosts
+  [14:49:45.033] mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+  [14:49:45.033] mongo-bench: starting node 1 again
+  [14:49:46.579] node 1 started: 127.0.0.1:21430, pid 354805
+  [14:49:50.690] node1 is SECONDARY and caught up with node2 after 3.3 s (optime 1794322185:28)
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,true,1,30.152,10.032,106.1251,942.3,100000,100000,100000,0,0,440,0,1,10.158
+mongod log events, times from the SIGKILL at 14:48:28.944 UTC:
+  14:48:28.979   +0.035 s  node2  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"Error connecting to 127.0.0.1:21430 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:48:28.979   +0.035 s  node3  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21430","heartbeatMessage":"Error connecting to 127.0.0.1:21430 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:48:39.069  +10.125 s  node2  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":10000}
+  14:48:39.069  +10.125 s  node2  Conducting a dry run election to see if we could be elected  {"currentTerm":13}
+  14:48:39.069  +10.125 s  node2  Dry election run succeeded, running for election  {"newTerm":14}
+  14:48:39.081  +10.137 s  node2  Election succeeded, assuming primary role  {"term":14}
+  14:48:39.081  +10.137 s  node2  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:48:39.085  +10.141 s  node2  Transition to primary complete; database writes are now permitted  {"term":14}
+summary: failover_s 10.032, failure_to_ack_s 10.144, ack_gap_s 10.155, down_s 0.035, election_start_s 10.125, elected_s 10.137, writable_s 10.141, correct True, retries 440, elections 1
+primary: node2 (127.0.0.1:21431), term 14, found after 0.1 s
+electionTimeoutMillis 10000 -> 2000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== election timeout-2000 run 3: electionTimeoutMillis 2000, primary node2, term 14, load 7.43, 2026-11-10 14:49:55 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --kill-primary-after 30
+  [14:50:25.441] mongo-bench: killing the primary, node 2 (127.0.0.1:21431)
+  [14:50:25.589] node 2 killed (SIGKILL at 14:50:25.479 UTC, pid 353805), gone after 0.0 s
+  [14:51:34.202] mongo-bench: retried 120x after MongoError.cannotConnect.noAvailableHosts
+  [14:51:34.202] mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+  [14:51:34.202] mongo-bench: starting node 2 again
+  [14:51:35.789] node 2 started: 127.0.0.1:21431, pid 355835
+  [14:51:39.633] node2 is SECONDARY and caught up with node3 after 3.0 s (optime 1794322294:360)
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,true,2,30.151,2.242,98.7618,1012.5,100000,100000,100000,0,0,130,0,1,2.379
+mongod log events, times from the SIGKILL at 14:50:25.479 UTC:
+  14:50:25.514   +0.035 s  node3  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21431","heartbeatMessage":"Error connecting to 127.0.0.1:21431 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:50:25.515   +0.036 s  node1  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21431","heartbeatMessage":"Error connecting to 127.0.0.1:21431 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:50:27.575   +2.096 s  node3  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":2000}
+  14:50:27.575   +2.096 s  node3  Conducting a dry run election to see if we could be elected  {"currentTerm":14}
+  14:50:27.575   +2.096 s  node3  Dry election run succeeded, running for election  {"newTerm":15}
+  14:50:27.578   +2.099 s  node3  Election succeeded, assuming primary role  {"term":15}
+  14:50:27.579   +2.100 s  node3  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:50:27.586   +2.107 s  node3  Transition to primary complete; database writes are now permitted  {"term":15}
+summary: failover_s 2.242, failure_to_ack_s 2.353, ack_gap_s 2.355, down_s 0.035, election_start_s 2.096, elected_s 2.099, writable_s 2.107, correct True, retries 130, elections 1
+primary: node3 (127.0.0.1:21432), term 15, found after 0.1 s
+electionTimeoutMillis 2000 -> 1000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10
+
+== election timeout-1000 run 3: electionTimeoutMillis 1000, primary node3, term 15, load 7.32, 2026-11-10 14:51:44 UTC
+$ mongo-bench --header --variant majority --workers 10 --increments 10000 --url mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0 --mongo-script scripts/mongo.sh --latency-out .data/task4x-failover-logs/latency.csv --kill-primary-after 30
+  [14:52:14.386] mongo-bench: killing the primary, node 3 (127.0.0.1:21432)
+  [14:52:14.540] node 3 killed (SIGKILL at 14:52:14.427 UTC, pid 342817), gone after 0.0 s
+  [14:53:20.249] mongo-bench: retried 70x after MongoError.cannotConnect.noAvailableHosts
+  [14:53:20.249] mongo-bench: retried 10x after MongoError.queryFailure.connectionClosed
+  [14:53:20.249] mongo-bench: starting node 3 again
+  [14:53:21.978] node 3 started: 127.0.0.1:21432, pid 356921
+  [14:53:25.561] node3 is SECONDARY and caught up with node2 after 2.7 s (optime 1794322400:182)
+variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+majority,true,10,10000,true,3,30.161,0.992,95.8640,1043.1,100000,100000,100000,0,0,80,0,1,1.120
+mongod log events, times from the SIGKILL at 14:52:14.427 UTC:
+  14:52:14.472   +0.045 s  node2  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21432","heartbeatMessage":"Error connecting to 127.0.0.1:21432 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:52:14.473   +0.046 s  node1  Member is now in state DOWN  {"hostAndPort":"127.0.0.1:21432","heartbeatMessage":"Error connecting to 127.0.0.1:21432 :: caused by :: onInvoke :: caused by :: Connection refused"}
+  14:52:15.433   +1.006 s  node2  Starting an election, since we've seen no PRIMARY in election timeout period  {"electionTimeoutPeriodMillis":1000}
+  14:52:15.433   +1.006 s  node2  Conducting a dry run election to see if we could be elected  {"currentTerm":15}
+  14:52:15.433   +1.006 s  node2  Dry election run succeeded, running for election  {"newTerm":16}
+  14:52:15.445   +1.018 s  node2  Election succeeded, assuming primary role  {"term":16}
+  14:52:15.445   +1.018 s  node2  Replica set state transition  {"newState":"PRIMARY","oldState":"SECONDARY"}
+  14:52:15.448   +1.021 s  node2  Transition to primary complete; database writes are now permitted  {"term":16}
+summary: failover_s 0.992, failure_to_ack_s 1.105, ack_gap_s 1.115, down_s 0.045, election_start_s 1.006, elected_s 1.018, writable_s 1.021, correct True, retries 80, elections 1
+primary: node2 (127.0.0.1:21431), term 16, found after 0.1 s
+electionTimeoutMillis 1000 -> 10000, heartbeatIntervalMillis 2000, heartbeatTimeoutSecs 10

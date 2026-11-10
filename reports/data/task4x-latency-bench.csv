@@ -1,0 +1,4 @@
+run,variant,retryable_writes,workers,increments_per_worker,kill,killed_node,kill_at_seconds,failover_seconds,seconds,ops_per_sec,final_value,expected,acknowledged,lost,lost_acknowledged,retries,errors,elections,longest_op_seconds
+w1,w1,true,10,10000,false,,,,12.7354,7852.1,100000,100000,100000,0,0,0,0,0,0.142
+majority,majority,true,10,10000,false,,,,97.4887,1025.8,100000,100000,100000,0,0,0,0,0,0.049
+majority-kill,majority,true,10,10000,true,1,34.242,10.285,107.6700,928.8,100000,100000,100000,0,0,450,0,1,10.412
