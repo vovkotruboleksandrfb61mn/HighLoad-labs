@@ -1,0 +1,71 @@
+[18:17:00.517] $ scripts/cassandra.sh cqlsh 1
+cqlsh> USE shop;
+
+# Усі телефони за зростанням ціни (порядок clustering column у партиції):
+cqlsh:shop> SELECT name, producer, price FROM items WHERE category = 'Телефони';
+ name          | producer | price
+---------------+----------+-------
+ Redmi Note 13 |   Xiaomi |  7499
+    Galaxy A55 |  Samsung | 12999
+    Galaxy S24 |  Samsung | 18999
+       Pixel 9 |   Google | 29999
+ iPhone 16 Pro |    Apple | 41999
+
+(5 rows)
+# Те саме, від найдорожчого:
+cqlsh:shop> SELECT name, producer, price FROM items WHERE category = 'Телефони' ORDER BY price DESC;
+ name          | producer | price
+---------------+----------+-------
+ iPhone 16 Pro |    Apple | 41999
+       Pixel 9 |   Google | 29999
+    Galaxy S24 |  Samsung | 18999
+    Galaxy A55 |  Samsung | 12999
+ Redmi Note 13 |   Xiaomi |  7499
+
+(5 rows)
+
+# За назвою в межах категорії, через view items_by_name:
+cqlsh:shop> SELECT category, name, producer, price FROM items_by_name WHERE category = 'Ноутбуки' AND name = 'ThinkPad T14';
+ category | name         | producer | price
+----------+--------------+----------+-------
+ Ноутбуки | ThinkPad T14 |   Lenovo | 47999
+
+(1 rows)
+
+# Ціна в проміжку в межах категорії: зріз за clustering column price:
+cqlsh:shop> SELECT name, producer, price FROM items WHERE category = 'Ноутбуки' AND price >= 35000 AND price <= 50000;
+ name            | producer | price
+-----------------+----------+-------
+ Zenbook 14 OLED |     ASUS | 39999
+    ThinkPad T14 |   Lenovo | 47999
+
+(2 rows)
+
+# Ціна та виробник, через view items_by_producer:
+cqlsh:shop> SELECT name, producer, price FROM items_by_producer WHERE category = 'Телефони' AND producer = 'Samsung' AND price < 15000;
+ name       | producer | price
+------------+----------+-------
+ Galaxy A55 |  Samsung | 12999
+
+(1 rows)
+
+# За вмістом map, через індекси на props (пари ключ-значення і ключі):
+cqlsh:shop> SELECT name, price, props FROM items WHERE category = 'Телефони' AND props['колір'] = 'чорний';
+ name          | price | props
+---------------+-------+-----------------------------------------------------------
+ Redmi Note 13 |  7499 | {'екран': '6.67', 'колір': 'чорний', 'памʼять': '128 ГБ'}
+    Galaxy S24 | 18999 |  {'екран': '6.2', 'колір': 'чорний', 'памʼять': '256 ГБ'}
+
+(2 rows)
+cqlsh:shop> SELECT name, price, props FROM items WHERE category = 'Телефони' AND props CONTAINS KEY 'eSIM';
+ name          | price | props
+---------------+-------+----------------------------------------------------------------------------
+       Pixel 9 | 29999 |     {'eSIM': 'так', 'екран': '6.3', 'колір': 'білий', 'памʼять': '128 ГБ'}
+ iPhone 16 Pro | 41999 | {'eSIM': 'так', 'екран': '6.3', 'колір': 'титановий', 'памʼять': '256 ГБ'}
+
+(2 rows)
+
+# Без ключа партиції запит мав би обійти весь кластер, тому Cassandra відмовляє:
+cqlsh:shop> SELECT name, price FROM items WHERE price > 40000;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Cannot execute this query as it might involve data filtering and thus may have unpredictable performance. If you want to execute this query despite the performance unpredictability, use ALLOW FILTERING"
+

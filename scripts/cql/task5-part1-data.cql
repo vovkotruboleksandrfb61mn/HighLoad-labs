@@ -1,0 +1,21 @@
+USE shop;
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Телефони', 18999, c9cf93dd-5c31-4ee5-b4ee-227a238c5ceb, 'Galaxy S24', 'Samsung', {'екран': '6.2', 'памʼять': '256 ГБ', 'колір': 'чорний'});
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Телефони', 41999, 70631c97-4099-47af-8fd5-fde813c759d0, 'iPhone 16 Pro', 'Apple', {'екран': '6.3', 'памʼять': '256 ГБ', 'колір': 'титановий', 'eSIM': 'так'});
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Телефони', 7499, ab409b3f-06e4-43be-9cc3-f8891d3d9998, 'Redmi Note 13', 'Xiaomi', {'екран': '6.67', 'памʼять': '128 ГБ', 'колір': 'чорний'});
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Телефони', 12999, e1a6df67-aba0-4498-96c2-6b1036311ea9, 'Galaxy A55', 'Samsung', {'екран': '6.6', 'памʼять': '128 ГБ', 'колір': 'синій'});
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Телефони', 29999, 90dfc0d9-cb9c-4fea-8096-22c9d0a9ef0e, 'Pixel 9', 'Google', {'екран': '6.3', 'памʼять': '128 ГБ', 'колір': 'білий', 'eSIM': 'так'});
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Ноутбуки', 54999, b66f92e3-3295-484f-a331-f2a244d7fd67, 'MacBook Air 13 M3', 'Apple', {'процесор': 'M3', 'ОЗП': '16 ГБ', 'SSD': '512 ГБ'});
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Ноутбуки', 32999, 279ea84b-2726-4042-8251-4b66a29c6ec5, 'IdeaPad Slim 5', 'Lenovo', {'процесор': 'Ryzen 7 8845HS', 'ОЗП': '16 ГБ', 'SSD': '1 ТБ'});
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Ноутбуки', 47999, c59dc2c2-22fe-4ae0-9315-8a034bef2b61, 'ThinkPad T14', 'Lenovo', {'процесор': 'Core Ultra 7', 'ОЗП': '32 ГБ', 'SSD': '1 ТБ', 'ОС': 'Windows 11 Pro'});
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Ноутбуки', 39999, b8a17e9b-47ac-45df-bbe2-defd8d5f1d41, 'Zenbook 14 OLED', 'ASUS', {'процесор': 'Core Ultra 5', 'ОЗП': '16 ГБ', 'SSD': '512 ГБ'});
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Телевізори', 27999, 5acbec9e-457e-4b09-a3d0-0ce5aa29c906, 'OLED55C4', 'LG', {'діагональ': '55', 'роздільність': '4K', 'Smart TV': 'webOS'});
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Телевізори', 15999, 448aac36-0187-4aff-bb37-c1df6abb1b7a, 'UE50DU7100', 'Samsung', {'діагональ': '50', 'роздільність': '4K', 'Smart TV': 'Tizen'});
+INSERT INTO items (category, price, id, name, producer, props) VALUES ('Телевізори', 64999, 422bcf80-f056-4e26-baa3-9ce30e5e667b, 'QE65S95D', 'Samsung', {'діагональ': '65', 'роздільність': '4K', 'Smart TV': 'Tizen', 'HDMI 2.1': '4'});
+
+INSERT INTO orders (customer, order_date, order_id, item_ids, total, delivery) VALUES ('Олена Коваль', '2026-09-03 10:15:00+0000', uuid(), [c9cf93dd-5c31-4ee5-b4ee-227a238c5ceb], 18999, 'Нова пошта');
+INSERT INTO orders (customer, order_date, order_id, item_ids, total, delivery) VALUES ('Олена Коваль', '2026-10-21 18:40:00+0000', uuid(), [b66f92e3-3295-484f-a331-f2a244d7fd67, 448aac36-0187-4aff-bb37-c1df6abb1b7a], 70998, 'курʼєр');
+INSERT INTO orders (customer, order_date, order_id, item_ids, total, delivery) VALUES ('Олена Коваль', '2026-11-12 09:05:00+0000', uuid(), [ab409b3f-06e4-43be-9cc3-f8891d3d9998], 7499, 'самовивіз');
+INSERT INTO orders (customer, order_date, order_id, item_ids, total, delivery) VALUES ('Андрій Мельник', '2026-08-30 12:00:00+0000', uuid(), [70631c97-4099-47af-8fd5-fde813c759d0], 41999, 'Нова пошта');
+INSERT INTO orders (customer, order_date, order_id, item_ids, total, delivery) VALUES ('Андрій Мельник', '2026-11-02 20:30:00+0000', uuid(), [279ea84b-2726-4042-8251-4b66a29c6ec5, e1a6df67-aba0-4498-96c2-6b1036311ea9], 45998, 'Укрпошта');
+INSERT INTO orders (customer, order_date, order_id, item_ids, total, delivery) VALUES ('Ірина Бондар', '2026-10-05 14:20:00+0000', uuid(), [422bcf80-f056-4e26-baa3-9ce30e5e667b], 64999, 'курʼєр');
+INSERT INTO orders (customer, order_date, order_id, item_ids, total, delivery) VALUES ('Ірина Бондар', '2026-10-05 14:25:00+0000', uuid(), [90dfc0d9-cb9c-4fea-8096-22c9d0a9ef0e, c59dc2c2-22fe-4ae0-9315-8a034bef2b61], 77998, 'курʼєр');

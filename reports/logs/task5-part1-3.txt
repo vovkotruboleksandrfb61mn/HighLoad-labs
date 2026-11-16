@@ -1,0 +1,79 @@
+[18:17:05.699] $ scripts/cassandra.sh cqlsh 1
+cqlsh> USE shop;
+cqlsh:shop> DESCRIBE TABLE orders
+CREATE TABLE shop.orders (
+    customer text,
+    order_date timestamp,
+    order_id uuid,
+    delivery text,
+    total decimal,
+    item_ids list<uuid>,
+    PRIMARY KEY (customer, order_date, order_id)
+) WITH CLUSTERING ORDER BY (order_date DESC, order_id ASC)
+    AND additional_write_policy = '99p'
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND cdc = false
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '16', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND memtable = 'default'
+    AND crc_check_chance = 1.0
+    AND default_time_to_live = 0
+    AND extensions = {}
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair = 'BLOCKING'
+    AND speculative_retry = '99p';
+
+# Усі замовлення замовника, від найновішого (порядок clustering column):
+cqlsh:shop> SELECT order_date, total, delivery, item_ids FROM orders WHERE customer = 'Олена Коваль';
+ order_date                      | total | delivery   | item_ids
+---------------------------------+-------+------------+------------------------------------------------------------------------------
+ 2026-11-12 09:05:00.000000+0000 |  7499 |  самовивіз |                                       [ab409b3f-06e4-43be-9cc3-f8891d3d9998]
+ 2026-10-21 18:40:00.000000+0000 | 70998 |     курʼєр | [b66f92e3-3295-484f-a331-f2a244d7fd67, 448aac36-0187-4aff-bb37-c1df6abb1b7a]
+ 2026-09-03 10:15:00.000000+0000 | 18999 | Нова пошта |                                       [c9cf93dd-5c31-4ee5-b4ee-227a238c5ceb]
+
+(3 rows)
+# Від найстарішого:
+cqlsh:shop> SELECT order_date, total, delivery FROM orders WHERE customer = 'Олена Коваль' ORDER BY order_date ASC;
+ order_date                      | total | delivery
+---------------------------------+-------+------------
+ 2026-09-03 10:15:00.000000+0000 | 18999 | Нова пошта
+ 2026-10-21 18:40:00.000000+0000 | 70998 |     курʼєр
+ 2026-11-12 09:05:00.000000+0000 |  7499 |  самовивіз
+
+(3 rows)
+
+# Загальна сума замовлень кожного замовника (GROUP BY за ключем партиції):
+cqlsh:shop> SELECT customer, COUNT(*) AS orders, SUM(total) AS spent FROM orders GROUP BY customer;
+ customer       | orders | spent
+----------------+--------+--------
+ Андрій Мельник |      2 |  87997
+   Олена Коваль |      3 |  97496
+   Ірина Бондар |      2 | 142997
+
+(3 rows)
+
+Warnings :
+Aggregation query used without partition key
+
+# Пізніше ціну одного замовлення виправляють:
+cqlsh:shop> UPDATE orders SET total = 69998 WHERE customer = 'Олена Коваль' AND order_date = '2026-10-21 18:40:00+0000' AND order_id = 3898b88c-87bb-47ff-b676-45f115d9142b;
+
+# Коли записано ціну кожного замовлення (мікросекунди від 1970-01-01 UTC):
+cqlsh:shop> SELECT customer, order_date, total, WRITETIME(total) AS total_written FROM orders;
+ customer       | order_date                      | total | total_written
+----------------+---------------------------------+-------+------------------
+ Андрій Мельник | 2026-11-02 20:30:00.000000+0000 | 45998 | 1794853020415442
+ Андрій Мельник | 2026-08-30 12:00:00.000000+0000 | 41999 | 1794853020412480
+   Олена Коваль | 2026-11-12 09:05:00.000000+0000 |  7499 | 1794853020409319
+   Олена Коваль | 2026-10-21 18:40:00.000000+0000 | 69998 | 1794853027250773
+   Олена Коваль | 2026-09-03 10:15:00.000000+0000 | 18999 | 1794853020401827
+   Ірина Бондар | 2026-10-05 14:25:00.000000+0000 | 77998 | 1794853020423437
+   Ірина Бондар | 2026-10-05 14:20:00.000000+0000 | 64999 | 1794853020419644
+
+(7 rows)
+

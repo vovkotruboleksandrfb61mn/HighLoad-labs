@@ -1,0 +1,104 @@
+# Вимикаємо node3 (штатна зупинка), решта вузлів має побачити його як DN.
+[20:58:43.639] $ scripts/cassandra.sh stop-node 3
+[20:59:05.269] $ scripts/cassandra.sh status
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address     Load        Tokens  Owns  Host ID                               Rack 
+UN  127.0.0.11  397,89 KiB  16      ?     ac88ba70-e3a0-4649-af2d-5b3262f7a499  rack1
+DN  127.0.0.13  341,03 KiB  16      ?     5b8125d3-3e66-4a85-afcd-7d990a7b4768  rack1
+UN  127.0.0.12  391,43 KiB  16      ?     92d7826b-d7dc-4e21-973f-0caaf7510a8c  rack1
+
+Note: Non-system keyspaces don't have the same replication settings, effective ownership information is meaningless
+
+# ks_rf1, id = 4: репліки на вузлах 3, серед них вимкнений node3.
+[20:59:37.937] $ scripts/cassandra.sh cqlsh 1
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> INSERT INTO ks_rf1.kv (id, value) VALUES (4, 'CL ONE');
+NoHostAvailable: ('Unable to complete the operation against any hosts', {<Host: 127.0.0.11:21440 datacenter1>: Unavailable('Error from server: code=1000 [Unavailable exception] message="Cannot achieve consistency level ONE" info={\'consistency\': \'ONE\', \'required_replicas\': 1, \'alive_replicas\': 0}')})
+cqlsh> SELECT * FROM ks_rf1.kv WHERE id = 4;
+NoHostAvailable: ('Unable to complete the operation against any hosts', {<Host: 127.0.0.11:21440 datacenter1>: Unavailable('Error from server: code=1000 [Unavailable exception] message="Cannot achieve consistency level ONE" info={\'consistency\': \'ONE\', \'required_replicas\': 1, \'alive_replicas\': 0}')})
+
+# ks_rf1, id = 1: репліки на вузлах 1, node3 серед них немає.
+[20:59:50.202] $ scripts/cassandra.sh cqlsh 1
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> INSERT INTO ks_rf1.kv (id, value) VALUES (1, 'CL ONE');
+cqlsh> SELECT * FROM ks_rf1.kv WHERE id = 1;
+ id | value
+----+--------
+  1 | CL ONE
+
+(1 rows)
+
+# ks_rf2, id = 1: репліки на вузлах 1, 3, серед них вимкнений node3.
+[21:00:02.158] $ scripts/cassandra.sh cqlsh 1
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> INSERT INTO ks_rf2.kv (id, value) VALUES (1, 'CL ONE');
+cqlsh> SELECT * FROM ks_rf2.kv WHERE id = 1;
+ id | value
+----+--------
+  1 | CL ONE
+
+(1 rows)
+cqlsh> CONSISTENCY TWO
+Consistency level set to TWO.
+cqlsh> INSERT INTO ks_rf2.kv (id, value) VALUES (1, 'CL TWO');
+NoHostAvailable: ('Unable to complete the operation against any hosts', {<Host: 127.0.0.11:21440 datacenter1>: Unavailable('Error from server: code=1000 [Unavailable exception] message="Cannot achieve consistency level TWO" info={\'consistency\': \'TWO\', \'required_replicas\': 2, \'alive_replicas\': 1}')})
+cqlsh> SELECT * FROM ks_rf2.kv WHERE id = 1;
+NoHostAvailable: ('Unable to complete the operation against any hosts', {<Host: 127.0.0.11:21440 datacenter1>: Unavailable('Error from server: code=1000 [Unavailable exception] message="Cannot achieve consistency level TWO" info={\'consistency\': \'TWO\', \'required_replicas\': 2, \'alive_replicas\': 1}')})
+
+# ks_rf2, id = 6: репліки на вузлах 1, 2, node3 серед них немає.
+[21:00:41.110] $ scripts/cassandra.sh cqlsh 1
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> INSERT INTO ks_rf2.kv (id, value) VALUES (6, 'CL ONE');
+cqlsh> SELECT * FROM ks_rf2.kv WHERE id = 6;
+ id | value
+----+--------
+  6 | CL ONE
+
+(1 rows)
+cqlsh> CONSISTENCY TWO
+Consistency level set to TWO.
+cqlsh> INSERT INTO ks_rf2.kv (id, value) VALUES (6, 'CL TWO');
+cqlsh> SELECT * FROM ks_rf2.kv WHERE id = 6;
+ id | value
+----+--------
+  6 | CL TWO
+
+(1 rows)
+
+# ks_rf3, id = 1: репліки на вузлах 1, 2, 3, серед них вимкнений node3.
+[21:00:53.952] $ scripts/cassandra.sh cqlsh 1
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> INSERT INTO ks_rf3.kv (id, value) VALUES (1, 'CL ONE');
+cqlsh> SELECT * FROM ks_rf3.kv WHERE id = 1;
+ id | value
+----+--------
+  1 | CL ONE
+
+(1 rows)
+cqlsh> CONSISTENCY TWO
+Consistency level set to TWO.
+cqlsh> INSERT INTO ks_rf3.kv (id, value) VALUES (1, 'CL TWO');
+cqlsh> SELECT * FROM ks_rf3.kv WHERE id = 1;
+ id | value
+----+--------
+  1 | CL TWO
+
+(1 rows)
+cqlsh> CONSISTENCY THREE
+Consistency level set to THREE.
+cqlsh> INSERT INTO ks_rf3.kv (id, value) VALUES (1, 'CL THREE');
+NoHostAvailable: ('Unable to complete the operation against any hosts', {<Host: 127.0.0.11:21440 datacenter1>: Unavailable('Error from server: code=1000 [Unavailable exception] message="Cannot achieve consistency level THREE" info={\'consistency\': \'THREE\', \'required_replicas\': 3, \'alive_replicas\': 2}')})
+cqlsh> SELECT * FROM ks_rf3.kv WHERE id = 1;
+NoHostAvailable: ('Unable to complete the operation against any hosts', {<Host: 127.0.0.11:21440 datacenter1>: Unavailable('Error from server: code=1000 [Unavailable exception] message="Cannot achieve consistency level THREE" info={\'consistency\': \'THREE\', \'required_replicas\': 3, \'alive_replicas\': 2}')})
+
+# Повертаємо node3.
+[21:00:55.337] $ scripts/cassandra.sh start-node 3
+starting node 3 (127.0.0.13)

@@ -1,0 +1,61 @@
+# Кластер із трьох вузлів: стан кожного (U = up, N = normal), частка кільця, Host ID.
+[20:56:15.047] $ scripts/cassandra.sh status
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address     Load        Tokens  Owns (effective)  Host ID                               Rack 
+UN  127.0.0.11  346,83 KiB  16      100,0%            ac88ba70-e3a0-4649-af2d-5b3262f7a499  rack1
+UN  127.0.0.13  349,14 KiB  16      100,0%            5b8125d3-3e66-4a85-afcd-7d990a7b4768  rack1
+UN  127.0.0.12  368,58 KiB  16      100,0%            92d7826b-d7dc-4e21-973f-0caaf7510a8c  rack1
+
+
+[20:56:21.028] $ scripts/cassandra.sh cqlsh 1
+# Три keyspace з SimpleStrategy і коефіцієнтом реплікації 1, 2 і 3, у кожному проста таблиця.
+cqlsh> CREATE KEYSPACE ks_rf1 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+cqlsh> CREATE KEYSPACE ks_rf2 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 2};
+cqlsh> CREATE KEYSPACE ks_rf3 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 3};
+cqlsh> CREATE TABLE ks_rf1.kv (id int PRIMARY KEY, value text);
+cqlsh> CREATE TABLE ks_rf2.kv (id int PRIMARY KEY, value text);
+cqlsh> CREATE TABLE ks_rf3.kv (id int PRIMARY KEY, value text);
+cqlsh> DESCRIBE KEYSPACES
+ks_rf1  shop         system_distributed  system_views         
+ks_rf2  system       system_schema       system_virtual_schema
+ks_rf3  system_auth  system_traces     
+
+# Пишемо через node1, читаємо через node2 і node3, і навпаки.
+
+[20:56:29.985] $ scripts/cassandra.sh cqlsh 1
+cqlsh> INSERT INTO ks_rf1.kv (id, value) VALUES (0, 'записано через node1');
+cqlsh> INSERT INTO ks_rf2.kv (id, value) VALUES (0, 'записано через node1');
+cqlsh> INSERT INTO ks_rf3.kv (id, value) VALUES (0, 'записано через node1');
+
+[20:56:31.332] $ scripts/cassandra.sh cqlsh 2
+cqlsh> SELECT * FROM ks_rf1.kv WHERE id = 0;
+ id | value
+----+----------------------
+  0 | записано через node1
+
+(1 rows)
+cqlsh> SELECT * FROM ks_rf2.kv WHERE id = 0;
+ id | value
+----+----------------------
+  0 | записано через node1
+
+(1 rows)
+cqlsh> UPDATE ks_rf3.kv SET value = 'змінено через node2' WHERE id = 0;
+
+[20:56:32.555] $ scripts/cassandra.sh cqlsh 3
+cqlsh> SELECT * FROM ks_rf3.kv WHERE id = 0;
+ id | value
+----+---------------------
+  0 | змінено через node2
+
+(1 rows)
+cqlsh> SELECT * FROM ks_rf1.kv WHERE id = 0;
+ id | value
+----+----------------------
+  0 | записано через node1
+
+(1 rows)
+

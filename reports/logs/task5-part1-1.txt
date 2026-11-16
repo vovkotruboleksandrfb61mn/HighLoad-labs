@@ -1,0 +1,105 @@
+[18:16:45.859] $ scripts/cassandra.sh cqlsh 1
+# Keyspace з найпростішою стратегією реплікації: SimpleStrategy кладе копії
+# на наступні за кільцем вузли, не зважаючи на стійки й датацентри.
+cqlsh> CREATE KEYSPACE IF NOT EXISTS shop
+   ...   WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 3};
+cqlsh> USE shop;
+
+# category є ключем партиції: усі товари категорії лежать в одній партиції,
+# тож пошук за категорією читає одну партицію. Усередині рядки впорядковані
+# за ціною (clustering column), id розрізняє товари з однаковою ціною.
+cqlsh:shop> CREATE TABLE IF NOT EXISTS items (
+   ...   category text,
+   ...   price decimal,
+   ...   id uuid,
+   ...   name text,
+   ...   producer text,
+   ...   props map<text, text>,
+   ...   PRIMARY KEY ((category), price, id)
+   ... ) WITH CLUSTERING ORDER BY (price ASC, id ASC);
+
+# Індекси за вмістом map: за парами ключ-значення і за ключами.
+cqlsh:shop> CREATE INDEX IF NOT EXISTS items_props_entries ON items (ENTRIES(props));
+cqlsh:shop> CREATE INDEX IF NOT EXISTS items_props_keys ON items (KEYS(props));
+
+# Materialized views для пошуку за назвою і за виробником у межах категорії.
+cqlsh:shop> CREATE MATERIALIZED VIEW IF NOT EXISTS items_by_name AS
+   ...   SELECT * FROM items
+   ...   WHERE category IS NOT NULL AND name IS NOT NULL AND price IS NOT NULL AND id IS NOT NULL
+   ...   PRIMARY KEY ((category), name, price, id);
+Warnings :
+Materialized views are experimental and are not recommended for production use.
+cqlsh:shop> CREATE MATERIALIZED VIEW IF NOT EXISTS items_by_producer AS
+   ...   SELECT * FROM items
+   ...   WHERE category IS NOT NULL AND producer IS NOT NULL AND price IS NOT NULL AND id IS NOT NULL
+   ...   PRIMARY KEY ((category), producer, price, id);
+Warnings :
+Materialized views are experimental and are not recommended for production use.
+
+# Замовлення: ключ партиції це замовник, тож усі його замовлення лежать в
+# одній партиції, від найновішого.
+cqlsh:shop> CREATE TABLE IF NOT EXISTS orders (
+   ...   customer text,
+   ...   order_date timestamp,
+   ...   order_id uuid,
+   ...   item_ids list<uuid>,
+   ...   total decimal,
+   ...   delivery text,
+   ...   PRIMARY KEY ((customer), order_date, order_id)
+   ... ) WITH CLUSTERING ORDER BY (order_date DESC, order_id ASC);
+
+cqlsh:shop> DESCRIBE TABLE items
+CREATE TABLE shop.items (
+    category text,
+    price decimal,
+    id uuid,
+    name text,
+    producer text,
+    props map<text, text>,
+    PRIMARY KEY (category, price, id)
+) WITH CLUSTERING ORDER BY (price ASC, id ASC)
+    AND additional_write_policy = '99p'
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND cdc = false
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '16', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND memtable = 'default'
+    AND crc_check_chance = 1.0
+    AND default_time_to_live = 0
+    AND extensions = {}
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair = 'BLOCKING'
+    AND speculative_retry = '99p';
+
+CREATE INDEX items_props_entries ON shop.items (entries(props));
+
+CREATE INDEX items_props_keys ON shop.items (keys(props));
+cqlsh:shop> DESCRIBE MATERIALIZED VIEW items_by_producer
+CREATE MATERIALIZED VIEW shop.items_by_producer AS
+    SELECT *
+    FROM shop.items
+    WHERE category IS NOT NULL AND producer IS NOT NULL AND price IS NOT NULL AND id IS NOT NULL
+    PRIMARY KEY (category, producer, price, id)
+ WITH CLUSTERING ORDER BY (producer ASC, price ASC, id ASC)
+    AND additional_write_policy = '99p'
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND cdc = false
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '16', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND memtable = 'default'
+    AND crc_check_chance = 1.0
+    AND extensions = {}
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair = 'BLOCKING'
+    AND speculative_retry = '99p';
+

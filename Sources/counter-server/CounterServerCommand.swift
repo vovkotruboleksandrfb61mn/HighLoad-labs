@@ -48,6 +48,15 @@ struct CounterServerCommand: AsyncParsableCommand {
     @Option(name: .customLong("mongo-shards"), help: "For --store mongo: documents the counter is split over (its value is their sum); 1 is the task's single document.")
     var mongoShards = 1
 
+    @Option(name: .customLong("cassandra-hosts"), help: "For --store cassandra: comma-separated contact points (every node answers CQL on --cassandra-port).")
+    var cassandraHosts = "127.0.0.11,127.0.0.12,127.0.0.13"
+
+    @Option(name: .customLong("cassandra-port"), help: "For --store cassandra: the CQL port of the nodes.")
+    var cassandraPort = 21440
+
+    @Option(name: .customLong("cassandra-consistency"), help: "For --store cassandra: consistency level of the increments and reads: \(CassandraConsistency.allValueStrings.joined(separator: "|")).")
+    var cassandraConsistency = CassandraConsistency.one
+
     @Option(help: "How connections are served: async (NIOAsyncChannel + a task per connection) handler (a channel handler on the event loop) raw (our own byte-level HTTP parser, no NIOHTTP1) or uring (io_uring, no SwiftNIO; --store memory only).")
     var engine: ServerEngine = .async
 
@@ -84,7 +93,10 @@ struct CounterServerCommand: AsyncParsableCommand {
             hazelcastAddress: hzAddress,
             mongoURL: mongoURL,
             mongoClients: mongoClients,
-            mongoShards: mongoShards
+            mongoShards: mongoShards,
+            cassandraHosts: cassandraHosts.split(separator: ",").map(String.init),
+            cassandraPort: cassandraPort,
+            cassandraConsistency: cassandraConsistency
         )
         try await configuration.withStore { store in
             try await serve(store)

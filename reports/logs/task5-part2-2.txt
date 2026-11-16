@@ -1,0 +1,84 @@
+# Наповнюємо кожен keyspace 1000 рядками (COPY FROM з kv.csv: id,value).
+
+[20:56:38.961] $ scripts/cassandra.sh cqlsh 1 -e "COPY ks_rf1.kv (id, value) FROM 'kv.csv'"
+1000 rows imported from 1 files in 0 day, 0 hour, 0 minute, and 1.602 seconds (0 skipped).
+[20:56:41.938] $ scripts/cassandra.sh cqlsh 1 -e "COPY ks_rf2.kv (id, value) FROM 'kv.csv'"
+1000 rows imported from 1 files in 0 day, 0 hour, 0 minute, and 1.615 seconds (0 skipped).
+[20:56:44.771] $ scripts/cassandra.sh cqlsh 1 -e "COPY ks_rf3.kv (id, value) FROM 'kv.csv'"
+1000 rows imported from 1 files in 0 day, 0 hour, 0 minute, and 1.656 seconds (0 skipped).
+
+# Розподіл ks_rf1: Owns (effective) це частка даних keyspace на вузлі з урахуванням реплік.
+[20:57:08.252] $ scripts/cassandra.sh nodetool 1 status ks_rf1
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address     Load        Tokens  Owns (effective)  Host ID                               Rack 
+UN  127.0.0.11  397,89 KiB  16      32,7%             ac88ba70-e3a0-4649-af2d-5b3262f7a499  rack1
+UN  127.0.0.13  320,93 KiB  16      35,7%             5b8125d3-3e66-4a85-afcd-7d990a7b4768  rack1
+UN  127.0.0.12  350,99 KiB  16      31,6%             92d7826b-d7dc-4e21-973f-0caaf7510a8c  rack1
+
+
+# Скільки партицій (рядків) ks_rf1.kv лежить на кожному вузлі:
+[20:57:13.725] $ scripts/cassandra.sh nodetool 1 tablestats ks_rf1.kv | grep "partitions"
+Number of partitions (estimate): 320
+[20:57:19.046] $ scripts/cassandra.sh nodetool 2 tablestats ks_rf1.kv | grep "partitions"
+Number of partitions (estimate): 316
+[20:57:24.231] $ scripts/cassandra.sh nodetool 3 tablestats ks_rf1.kv | grep "partitions"
+Number of partitions (estimate): 365
+
+# Вузли, на яких зберігається рядок id = 7 з ks_rf1.kv:
+[20:57:29.580] $ scripts/cassandra.sh nodetool 1 getendpoints ks_rf1 kv 7
+127.0.0.13
+
+# Розподіл ks_rf2: Owns (effective) це частка даних keyspace на вузлі з урахуванням реплік.
+[20:57:34.993] $ scripts/cassandra.sh nodetool 1 status ks_rf2
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address     Load        Tokens  Owns (effective)  Host ID                               Rack 
+UN  127.0.0.11  397,89 KiB  16      64,7%             ac88ba70-e3a0-4649-af2d-5b3262f7a499  rack1
+UN  127.0.0.13  320,93 KiB  16      76,0%             5b8125d3-3e66-4a85-afcd-7d990a7b4768  rack1
+UN  127.0.0.12  391,43 KiB  16      59,3%             92d7826b-d7dc-4e21-973f-0caaf7510a8c  rack1
+
+
+# Скільки партицій (рядків) ks_rf2.kv лежить на кожному вузлі:
+[20:57:40.513] $ scripts/cassandra.sh nodetool 1 tablestats ks_rf2.kv | grep "partitions"
+Number of partitions (estimate): 653
+[20:57:46.146] $ scripts/cassandra.sh nodetool 2 tablestats ks_rf2.kv | grep "partitions"
+Number of partitions (estimate): 587
+[20:57:51.888] $ scripts/cassandra.sh nodetool 3 tablestats ks_rf2.kv | grep "partitions"
+Number of partitions (estimate): 762
+
+# Вузли, на яких зберігається рядок id = 7 з ks_rf2.kv:
+[20:57:57.685] $ scripts/cassandra.sh nodetool 1 getendpoints ks_rf2 kv 7
+127.0.0.13
+127.0.0.11
+
+# Розподіл ks_rf3: Owns (effective) це частка даних keyspace на вузлі з урахуванням реплік.
+[20:58:03.198] $ scripts/cassandra.sh nodetool 1 status ks_rf3
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address     Load        Tokens  Owns (effective)  Host ID                               Rack 
+UN  127.0.0.11  397,89 KiB  16      100,0%            ac88ba70-e3a0-4649-af2d-5b3262f7a499  rack1
+UN  127.0.0.13  341,03 KiB  16      100,0%            5b8125d3-3e66-4a85-afcd-7d990a7b4768  rack1
+UN  127.0.0.12  391,43 KiB  16      100,0%            92d7826b-d7dc-4e21-973f-0caaf7510a8c  rack1
+
+
+# Скільки партицій (рядків) ks_rf3.kv лежить на кожному вузлі:
+[20:58:08.837] $ scripts/cassandra.sh nodetool 1 tablestats ks_rf3.kv | grep "partitions"
+Number of partitions (estimate): 1001
+[20:58:14.626] $ scripts/cassandra.sh nodetool 2 tablestats ks_rf3.kv | grep "partitions"
+Number of partitions (estimate): 1001
+[20:58:20.424] $ scripts/cassandra.sh nodetool 3 tablestats ks_rf3.kv | grep "partitions"
+Number of partitions (estimate): 1001
+
+# Вузли, на яких зберігається рядок id = 7 з ks_rf3.kv:
+[20:58:26.444] $ scripts/cassandra.sh nodetool 1 getendpoints ks_rf3 kv 7
+127.0.0.13
+127.0.0.11
+127.0.0.12
+

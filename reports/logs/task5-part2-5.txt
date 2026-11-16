@@ -1,0 +1,80 @@
+# Відновлюємо мережу й чекаємо, поки всі вузли знову побачать один одного (UN).
+[21:03:58.554] $ scripts/cassandra.sh heal
+links up, 0 connections
+[21:04:52.144] $ scripts/cassandra.sh status
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address     Load        Tokens  Owns  Host ID                               Rack 
+UN  127.0.0.11  397,89 KiB  16      ?     ac88ba70-e3a0-4649-af2d-5b3262f7a499  rack1
+UN  127.0.0.13  344,31 KiB  16      ?     5b8125d3-3e66-4a85-afcd-7d990a7b4768  rack1
+UN  127.0.0.12  391,43 KiB  16      ?     92d7826b-d7dc-4e21-973f-0caaf7510a8c  rack1
+
+Note: Non-system keyspaces don't have the same replication settings, effective ownership information is meaningless
+
+# Після відновлення вузли передають hints адресатам (hinted handoff) і видаляють файли:
+[21:04:58.104] $ tail -n +7192 .cassandradata/node1/logs/system.log | grep "Finished hinted handoff"
+2026-11-16 21:04:09,762 Finished hinted handoff of file 5b8125d3-3e66-4a85-afcd-7d990a7b4768-1794863009339-2.hints to endpoint /127.0.0.13:21450: 5b8125d3-3e66-4a85-afcd-7d990a7b4768
+2026-11-16 21:04:09,778 Finished hinted handoff of file 92d7826b-d7dc-4e21-973f-0caaf7510a8c-1794863009339-2.hints to endpoint /127.0.0.12:21450: 92d7826b-d7dc-4e21-973f-0caaf7510a8c
+[21:04:58.110] $ tail -n +7177 .cassandradata/node2/logs/system.log | grep "Finished hinted handoff"
+2026-11-16 21:04:12,558 Finished hinted handoff of file ac88ba70-e3a0-4649-af2d-5b3262f7a499-1794863007137-2.hints to endpoint /127.0.0.11:21450: ac88ba70-e3a0-4649-af2d-5b3262f7a499
+2026-11-16 21:04:12,572 Finished hinted handoff of file 5b8125d3-3e66-4a85-afcd-7d990a7b4768-1794863007139-2.hints to endpoint /127.0.0.13:21450: 5b8125d3-3e66-4a85-afcd-7d990a7b4768
+[21:04:58.116] $ tail -n +6345 .cassandradata/node3/logs/system.log | grep "Finished hinted handoff"
+2026-11-16 21:04:15,784 Finished hinted handoff of file ac88ba70-e3a0-4649-af2d-5b3262f7a499-1794863010681-2.hints to endpoint /127.0.0.11:21450: ac88ba70-e3a0-4649-af2d-5b3262f7a499
+2026-11-16 21:04:15,784 Finished hinted handoff of file 92d7826b-d7dc-4e21-973f-0caaf7510a8c-1794863010689-2.hints to endpoint /127.0.0.12:21450: 92d7826b-d7dc-4e21-973f-0caaf7510a8c
+[21:04:58.123] $ ls -1 .cassandradata/node1/hints .cassandradata/node2/hints .cassandradata/node3/hints
+.cassandradata/node1/hints:
+
+.cassandradata/node2/hints:
+
+.cassandradata/node3/hints:
+
+# Читаємо з кожного вузла з CONSISTENCY ONE: усі репліки зійшлися на одному значенні.
+
+[21:04:58.130] $ scripts/cassandra.sh cqlsh 1
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> SELECT id, value, WRITETIME(value) FROM ks_rf3.kv WHERE id IN (100, 101);
+ id  | value           | writetime(value)
+-----+-----------------+------------------
+ 100 |         з node3 | 1794863008317830
+ 101 | з node1, раніше | 1794863013513193
+
+(2 rows)
+
+[21:04:59.828] $ scripts/cassandra.sh cqlsh 2
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> SELECT id, value, WRITETIME(value) FROM ks_rf3.kv WHERE id IN (100, 101);
+ id  | value           | writetime(value)
+-----+-----------------+------------------
+ 100 |         з node3 | 1794863008317830
+ 101 | з node1, раніше | 1794863013513193
+
+(2 rows)
+
+[21:05:01.576] $ scripts/cassandra.sh cqlsh 3
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> SELECT id, value, WRITETIME(value) FROM ks_rf3.kv WHERE id IN (100, 101);
+ id  | value           | writetime(value)
+-----+-----------------+------------------
+ 100 |         з node3 | 1794863008317830
+ 101 | з node1, раніше | 1794863013513193
+
+(2 rows)
+
+# І з CONSISTENCY ALL (відповідь усіх трьох реплік):
+
+[21:05:03.402] $ scripts/cassandra.sh cqlsh 1
+cqlsh> CONSISTENCY ALL
+Consistency level set to ALL.
+cqlsh> SELECT id, value, WRITETIME(value) FROM ks_rf3.kv WHERE id IN (100, 101);
+ id  | value           | writetime(value)
+-----+-----------------+------------------
+ 100 |         з node3 | 1794863008317830
+ 101 | з node1, раніше | 1794863013513193
+
+(2 rows)
+

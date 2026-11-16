@@ -1,0 +1,13 @@
+# Події gossip з system.log вузлів (UTC): split о 21:01:48.803, heal о 21:03:58.554.
+2026-11-16 21:02:06,663  node3: node1 is now DOWN
+2026-11-16 21:02:06,664  node3: node2 is now DOWN
+2026-11-16 21:02:07,674  node2: node1 is now DOWN
+2026-11-16 21:02:07,674  node2: node3 is now DOWN
+2026-11-16 21:02:07,920  node1: node2 is now DOWN
+2026-11-16 21:02:07,920  node1: node3 is now DOWN
+2026-11-16 21:03:59,015  node2: node3 is now UP
+2026-11-16 21:03:59,015  node3: node2 is now UP
+2026-11-16 21:03:59,247  node2: node1 is now UP
+2026-11-16 21:03:59,248  node1: node2 is now UP
+2026-11-16 21:03:59,256  node3: node1 is now UP
+2026-11-16 21:03:59,259  node1: node3 is now UP

@@ -9,7 +9,10 @@ enum StoreKind: String, CaseIterable, ExpressibleByArgument {
     case postgresSharded = "postgres-sharded"
     case hazelcast
     case mongo
+    case cassandra
 }
+
+extension CassandraConsistency: ExpressibleByArgument {}
 
 /// Everything needed to open one of the counter stores.
 struct StoreConfiguration {
@@ -24,9 +27,12 @@ struct StoreConfiguration {
     var mongoURL: String
     var mongoClients = 10
     var mongoShards = 1
+    var cassandraHosts: [String] = []
+    var cassandraPort = 21440
+    var cassandraConsistency = CassandraConsistency.one
 
     /// Opens the selected store, runs `body` with it, and closes it again.
-    /// Stores that hold connections (PostgreSQL, Hazelcast, MongoDB) are only alive for
+    /// Stores that hold connections (PostgreSQL, Hazelcast, MongoDB, Cassandra) are only alive for
     /// the duration of `body`.
     func withStore<Result: Sendable>(
         _ body: (any CounterStore) async throws -> Result
@@ -62,6 +68,12 @@ struct StoreConfiguration {
                 url: mongoURL,
                 clients: mongoClients,
                 location: MongoCounterLocation(shards: mongoShards)
+            ) { try await body($0) }
+        case .cassandra:
+            return try await CassandraCounterStore.withStore(
+                contactPoints: cassandraHosts,
+                port: cassandraPort,
+                consistency: cassandraConsistency
             ) { try await body($0) }
         }
     }

@@ -16,12 +16,13 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.6.0"),
         .package(url: "https://github.com/orlandos-nl/MongoKitten.git", from: "7.9.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.6.0"),
+        .package(url: "https://github.com/apple/swift-cassandra-client.git", from: "0.9.1"),
     ],
     targets: [
         // Counter storage backends shared by the server and the tests:
         // PostgresNIO for Task 2, our HazelcastClient for Task 3 and
         // MongoKitten (connections and replica set discovery only; the
-        // retryable writes are ours) for Task 4.
+        // retryable writes are ours) for Task 4, swift-cassandra-client for Task 5.
         .target(
             name: "CounterCore",
             dependencies: [
@@ -32,6 +33,7 @@ let package = Package(
                 .product(name: "MongoKitten", package: "MongoKitten"),
                 .product(name: "MongoClient", package: "MongoKitten"),
                 .product(name: "Logging", package: "swift-log"),
+                .product(name: "CassandraClient", package: "swift-cassandra-client"),
             ]
         ),
         // Our client for the Hazelcast Open Binary Client Protocol 2.x.
@@ -88,6 +90,15 @@ let package = Package(
             dependencies: [
                 "CommandLineSupport",
                 "CounterCore",
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ]
+        ),
+        .executableTarget(
+            name: "cassandra-bench",
+            dependencies: [
+                "CommandLineSupport",
+                "CounterCore",
+                .product(name: "CassandraClient", package: "swift-cassandra-client"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
         ),

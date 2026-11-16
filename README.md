@@ -12,10 +12,11 @@
 | 2 | Лічильник на PostgreSQL: способи оновлення і втрата значень | [solution.ipynb](lab2/solution.ipynb) | [PDF](lab2/LR2_PostgreSQL_Vovkotrub_FB-61mn.pdf) |
 | 3 | Лічильник на Hazelcast: розподілена мапа і IAtomicLong з CP Subsystem | [solution.ipynb](lab3/solution.ipynb) | [PDF](lab3/LR3_Hazelcast_Vovkotrub_FB-61mn.pdf) |
 | 4 | Реплікація MongoDB: відмовостійкість і лічильник | [solution.ipynb](lab4/solution.ipynb) | [PDF](lab4/LR4_MongoDB_Vovkotrub_FB-61mn.pdf) |
+| 5 | Cassandra: моделювання даних, реплікація і лічильник | [solution.ipynb](lab5/solution.ipynb) | [PDF](lab5/LR5_Cassandra_Vovkotrub_FB-61mn.pdf) |
 
-Усі чотири роботи будують один і той самий сервіс: HTTP-лічильник (`GET /inc`,
+Усі роботи будують один і той самий сервіс: HTTP-лічильник (`GET /inc`,
 `GET /count`) на Swift 6 і SwiftNIO зі змінним сховищем (пам'ять, файл з
-`fsync`, PostgreSQL, Hazelcast, MongoDB). Для Hazelcast написано власний клієнт на
+`fsync`, PostgreSQL, Hazelcast, MongoDB, Cassandra). Для Hazelcast написано власний клієнт на
 Swift поверх Open Binary Client Protocol 2.x.
 
 Ноутбуки опубліковано з результатами виконання: вони обчислюють усі таблиці
@@ -28,18 +29,18 @@ Swift поверх Open Binary Client Protocol 2.x.
 | Тека | Що там |
 |------|--------|
 | `Sources/counter-server` | HTTP-лічильник на SwiftNIO: рушії `async`, `handler`, `raw` (власний розбір HTTP) і `uring` (io_uring) |
-| `Sources/CounterCore` | сховища лічильника: пам'ять, файл з `fsync`, групування комітів, PostgreSQL, Hazelcast, MongoDB (retryable writes) |
+| `Sources/CounterCore` | сховища лічильника: пам'ять, файл з `fsync`, групування комітів, PostgreSQL, Hazelcast, MongoDB (retryable writes), Cassandra (`counter`) |
 | `Sources/HazelcastClient` | власний клієнт Hazelcast на Swift (Open Binary Client Protocol 2.x) |
 | `Sources/loadgen` | генератор навантаження: N клієнтів, кожен зі своїм з'єднанням і послідовними запитами |
-| `Sources/pg-bench`, `Sources/hz-bench`, `Sources/mongo-bench` | варіанти оновлення лічильника з робіт № 2...4 |
+| `Sources/pg-bench`, `Sources/hz-bench`, `Sources/mongo-bench`, `Sources/cassandra-bench` | варіанти оновлення лічильника з робіт № 2...5 |
 | `Tests` | тести (swift-testing) |
-| `scripts` | запуск вимірювань, PostgreSQL, кластера Hazelcast, replica set MongoDB, flame graph |
+| `scripts` | запуск вимірювань, PostgreSQL, кластера Hazelcast, replica set MongoDB, кластера Cassandra з розривом мережі, flame graph |
 | `deploy` | конфігурація вузлів Hazelcast і схема PostgreSQL |
 | `reports` | виміряні дані (`data/*.csv`), flame graph'и, знімки терміналу, логи вузлів |
 
 ## Відтворення
 
-Потрібні Swift 6, PostgreSQL 18, MongoDB 8.2 з mongosh, Java 17+ і
+Потрібні Swift 6, PostgreSQL 18, MongoDB 8.2 з mongosh, Cassandra 4.1 з cqlsh, Java 17+ і
 [Hazelcast 5.4.0](https://repo1.maven.org/maven2/com/hazelcast/hazelcast-distribution/5.4.0/hazelcast-distribution-5.4.0.tar.gz),
 розпакований у `.toolchain/hazelcast-5.4.0`. Для flame graph потрібні `perf` і
 [FlameGraph](https://github.com/brendangregg/FlameGraph), для рушія `uring`
@@ -54,6 +55,8 @@ scripts/task1.sh                 # робота № 1: пам'ять і диск
 scripts/pg.sh start && scripts/task2.sh && scripts/pg.sh stop
 scripts/hz.sh start && scripts/task3.sh && scripts/hz.sh stop
 scripts/task4-part1.sh && scripts/task4.sh   # replica set запускають і зупиняють самі
+scripts/task5-part1.sh && scripts/task5-part2.sh && scripts/task5.sh   # кластер Cassandra запускають самі
+scripts/cassandra.sh stop
 ```
 
 Ноутбуки (Python 3.13):
@@ -62,7 +65,7 @@ scripts/task4-part1.sh && scripts/task4.sh   # replica set запускають 
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-jupyter notebook lab1/solution.ipynb   # або lab2/..., lab3/..., lab4/...
+jupyter notebook lab1/solution.ipynb   # або lab2/..., lab5/...
 ```
 
 Ноутбук читає виміряні дані з `reports/data`, тож таблиці й рисунки

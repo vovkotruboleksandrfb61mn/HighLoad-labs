@@ -8,6 +8,7 @@ The transcript is plain text as the Task 4 scripts write it:
   # comment                          a note, dimmed
   [12:00:00.000] $ command           a shell command with its UTC time
   rs0 [primary] lab4> input          a mongosh prompt with the typed input
+  cqlsh:shop> input                  a cqlsh prompt with the typed input
   anything else                      output; errors are shown in red
 
 Blocks are the runs of lines between blank lines; --blocks 4-6 renders only
@@ -33,9 +34,10 @@ from pathlib import Path
 SCALE = 2  # device pixels per CSS pixel, for a sharp picture in the PDF
 
 SHELL = re.compile(r"^\[(\d\d:\d\d:\d\d\.\d{3})\] \$ (.*)$")
-MONGOSH = re.compile(r"^(rs0 \[[^\]]*\] [\w.-]+> )(.*)$")
+MONGOSH = re.compile(r"^(rs0 \[[^\]]*\] [\w.-]+> |cqlsh(?::\w+)?> |   \.\.\. )(.*)$")
 ERROR = re.compile(
-    r"^(Uncaught:|Mongo\w*Error|MongoServerError|\(exit \d+\)|no PRIMARY|.*did not catch up)"
+    r"^(Uncaught:|Mongo\w*Error|MongoServerError|\(exit \d+\)|no PRIMARY|.*did not catch up"
+    r"|<stdin>:\d+:|InvalidRequest|Unavailable|NoHostAvailable|\w+Timeout:|OperationTimedOut|ConnectionShutdown)"
 )
 
 CSS = """

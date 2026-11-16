@@ -1,0 +1,120 @@
+# Розриваємо мережу між вузлами: проксі між ними закриває всі зʼєднання й не приймає нових.
+# Клієнти (cqlsh) і далі підключаються до кожного вузла напряму.
+[21:01:48.803] $ scripts/cassandra.sh split
+split: no node reaches another
+# Як кластер бачить node1:
+[21:03:03.107] $ scripts/cassandra.sh nodetool 1 status ks_rf3
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address     Load        Tokens  Owns (effective)  Host ID                               Rack 
+UN  127.0.0.11  397,89 KiB  16      100,0%            ac88ba70-e3a0-4649-af2d-5b3262f7a499  rack1
+DN  127.0.0.13  344,31 KiB  16      100,0%            5b8125d3-3e66-4a85-afcd-7d990a7b4768  rack1
+DN  127.0.0.12  391,43 KiB  16      100,0%            92d7826b-d7dc-4e21-973f-0caaf7510a8c  rack1
+
+
+# Як кластер бачить node2:
+[21:03:08.638] $ scripts/cassandra.sh nodetool 2 status ks_rf3
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address     Load        Tokens  Owns (effective)  Host ID                               Rack 
+DN  127.0.0.11  397,89 KiB  16      100,0%            ac88ba70-e3a0-4649-af2d-5b3262f7a499  rack1
+DN  127.0.0.13  344,31 KiB  16      100,0%            5b8125d3-3e66-4a85-afcd-7d990a7b4768  rack1
+UN  127.0.0.12  391,43 KiB  16      100,0%            92d7826b-d7dc-4e21-973f-0caaf7510a8c  rack1
+
+
+# Як кластер бачить node3:
+[21:03:14.487] $ scripts/cassandra.sh nodetool 3 status ks_rf3
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address     Load        Tokens  Owns (effective)  Host ID                               Rack 
+DN  127.0.0.11  397,89 KiB  16      100,0%            ac88ba70-e3a0-4649-af2d-5b3262f7a499  rack1
+UN  127.0.0.13  344,31 KiB  16      100,0%            5b8125d3-3e66-4a85-afcd-7d990a7b4768  rack1
+DN  127.0.0.12  391,43 KiB  16      100,0%            92d7826b-d7dc-4e21-973f-0caaf7510a8c  rack1
+
+
+# CONSISTENCY ONE: кожен вузол сам собі репліка ks_rf3, тож запис через нього вдається.
+# Пишемо id = 100 по черзі через node1, node2, node3, кожен раз інше значення.
+
+[21:03:20.636] $ scripts/cassandra.sh cqlsh 1
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> INSERT INTO ks_rf3.kv (id, value) VALUES (100, 'з node1');
+cqlsh> SELECT id, value, WRITETIME(value) FROM ks_rf3.kv WHERE id = 100;
+ id  | value   | writetime(value)
+-----+---------+------------------
+ 100 | з node1 | 1794863002494468
+
+(1 rows)
+
+[21:03:23.626] $ scripts/cassandra.sh cqlsh 2
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> INSERT INTO ks_rf3.kv (id, value) VALUES (100, 'з node2');
+cqlsh> SELECT id, value, WRITETIME(value) FROM ks_rf3.kv WHERE id = 100;
+ id  | value   | writetime(value)
+-----+---------+------------------
+ 100 | з node2 | 1794863005324226
+
+(1 rows)
+
+[21:03:26.456] $ scripts/cassandra.sh cqlsh 3
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> INSERT INTO ks_rf3.kv (id, value) VALUES (100, 'з node3');
+cqlsh> SELECT id, value, WRITETIME(value) FROM ks_rf3.kv WHERE id = 100;
+ id  | value   | writetime(value)
+-----+---------+------------------
+ 100 | з node3 | 1794863008317830
+
+(1 rows)
+
+# QUORUM під час розриву неможливий: живої більшості реплік немає.
+
+[21:03:29.534] $ scripts/cassandra.sh cqlsh 1
+cqlsh> CONSISTENCY QUORUM
+Consistency level set to QUORUM.
+cqlsh> INSERT INTO ks_rf3.kv (id, value) VALUES (100, 'QUORUM з node1');
+NoHostAvailable: ('Unable to complete the operation against any hosts', {<Host: 127.0.0.11:21440 datacenter1>: Unavailable('Error from server: code=1000 [Unavailable exception] message="Cannot achieve consistency level QUORUM" info={\'consistency\': \'QUORUM\', \'required_replicas\': 2, \'alive_replicas\': 1}')})
+
+# Другий конфлікт, id = 101: node1 пише першим, node2 на секунду пізніше, але з міткою часу
+# на 1 мкс старшою за мітку node1 (USING TIMESTAMP).
+
+[21:03:31.754] $ scripts/cassandra.sh cqlsh 1
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> INSERT INTO ks_rf3.kv (id, value) VALUES (101, 'з node1, раніше');
+cqlsh> SELECT id, value, WRITETIME(value) FROM ks_rf3.kv WHERE id = 101;
+ id  | value           | writetime(value)
+-----+-----------------+------------------
+ 101 | з node1, раніше | 1794863013513193
+
+(1 rows)
+
+[21:03:34.621] $ scripts/cassandra.sh cqlsh 2
+cqlsh> CONSISTENCY ONE
+Consistency level set to ONE.
+cqlsh> INSERT INTO ks_rf3.kv (id, value) VALUES (101, 'з node2, пізніше') USING TIMESTAMP 1794863013513192;
+cqlsh> SELECT id, value, WRITETIME(value) FROM ks_rf3.kv WHERE id = 101;
+ id  | value            | writetime(value)
+-----+------------------+------------------
+ 101 | з node2, пізніше | 1794863013513192
+
+(1 rows)
+
+# Записи для недоступних реплік кожен вузол зберігає як hints, файл на кожну недоступну репліку
+# (імʼя файла починається з її Host ID):
+[21:03:48.578] $ ls -1 .cassandradata/node1/hints
+5b8125d3-3e66-4a85-afcd-7d990a7b4768-1794863009339-2.hints
+92d7826b-d7dc-4e21-973f-0caaf7510a8c-1794863009339-2.hints
+[21:03:48.592] $ ls -1 .cassandradata/node2/hints
+5b8125d3-3e66-4a85-afcd-7d990a7b4768-1794863007139-2.hints
+ac88ba70-e3a0-4649-af2d-5b3262f7a499-1794863007137-2.hints
+[21:03:48.597] $ ls -1 .cassandradata/node3/hints
+92d7826b-d7dc-4e21-973f-0caaf7510a8c-1794863010689-2.hints
+ac88ba70-e3a0-4649-af2d-5b3262f7a499-1794863010681-2.hints
