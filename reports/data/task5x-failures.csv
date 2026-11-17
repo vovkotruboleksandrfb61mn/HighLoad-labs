@@ -1,0 +1,34 @@
+repeat,label,consistency,workers,increments_per_worker,disruption,disrupted_at_seconds,retry,seconds,ops_per_sec,final_value,expected,acknowledged,errors,retries,failures,applied_unacknowledged,p50_ms,p99_ms,max_ms,reader_reads,reader_failed,reader_backwards,reader_stale,reader_largest_shortfall,method,conflicts,driver
+1,kill-one,ONE,10,10000,kill-node2,7.000,false,32.6767,3058.8,99958,100000,99952,48,0,Request timed out=8;Write timeout=40,6,1.022,4.425,25.907,10642,1,1169,49,10,counter,0,datastax
+1,kill-one-retry,ONE,10,10000,kill-node2,7.000,true,37.0705,2697.6,100002,100000,100000,0,46,Request timed out=6;Write timeout=40,2,1.188,8.244,15157.553,12281,1,3924,116,7,counter,0,datastax
+1,kill-quorum,QUORUM,10,10000,kill-node2,7.000,false,41.7336,2395.0,99957,100000,99954,46,0,Request timed out=6;Write timeout=40,3,1.780,7.709,52.157,9446,1,0,0,0,counter,0,datastax
+1,kill-quorum-retry,QUORUM,10,10000,kill-node2,7.001,true,41.0909,2433.6,100001,100000,100000,0,45,Request timed out=5;Write timeout=40,1,1.650,7.905,15155.963,9678,1,0,0,0,counter,0,datastax
+1,split-one,ONE,10,10000,split,7.000,false,31.4306,3181.0,99985,100000,99980,20,0,Write timeout=20,5,1.699,7.830,1104.686,5827,2,21,408,11,counter,0,datastax
+1,split-one-retry,ONE,10,10000,split,7.000,true,29.9471,3339.2,100004,100000,100000,0,20,Write timeout=20,4,1.612,6.702,11107.532,9691,0,1511,2964,15,counter,0,datastax
+1,split-quorum,QUORUM,10,10000,split,7.000,false,35.3913,2824.8,99992,100000,99975,25,0,Write failure=12;Write timeout=13,17,2.173,6.740,3994.175,3981,2,0,0,0,counter,0,datastax
+1,split-quorum-retry,QUORUM,10,10000,split,7.000,true,31.1286,3212.5,100015,100000,100000,0,25,Write failure=12;Write timeout=13,15,1.823,5.440,11061.532,3671,2,0,0,0,counter,0,datastax
+1,killall-one,ONE,10,10000,kill-all,7.000,false,8.4868,5239.3,44465,100000,44465,55535,0,No hosts available=55513;Request timed out=22,0,1.387,5.189,25.381,32295,1252,23615,23681,213,counter,0,datastax
+1,killall-quorum,QUORUM,10,10000,kill-all,7.000,false,9.5960,525.4,5041,100000,5042,94958,0,No hosts available=94944;Request timed out=14,-1,11.547,52.181,109.016,21337,1200,0,21054,1,counter,0,datastax
+1,killall-one-retry,ONE,10,10000,kill-all,7.000,true,78.9511,1266.6,99883,100000,100000,0,11894,No hosts available=11884;Request timed out=10,-117,0.453,13.147,64832.692,30844,1139,13,29566,85778,counter,0,datastax
+2,kill-one,ONE,10,10000,kill-node2,7.000,false,39.9341,2503.0,99958,100000,99954,46,0,Request timed out=6;Write timeout=40,4,1.097,13.774,404.183,12870,1,4034,109,6,counter,0,datastax
+2,kill-one-retry,ONE,10,10000,kill-node2,7.003,true,37.3100,2680.2,100002,100000,100000,0,48,Request timed out=8;Write timeout=40,2,1.127,9.994,15153.528,12985,1,9,125,8,counter,0,datastax
+2,kill-quorum,QUORUM,10,10000,kill-node2,7.000,false,38.2373,2614.1,99960,100000,99955,45,0,Request timed out=5;Write timeout=40,5,1.317,8.897,37.597,8959,1,0,0,0,counter,0,datastax
+2,kill-quorum-retry,QUORUM,10,10000,kill-node2,7.000,true,45.5058,2197.5,100002,100000,100000,0,46,Request timed out=6;Write timeout=40,2,1.980,9.964,15438.752,9514,1,0,0,0,counter,0,datastax
+2,split-one,ONE,10,10000,split,7.000,false,35.2778,2834.1,99987,100000,99980,20,0,Write timeout=20,7,2.006,9.955,1020.329,10458,0,2670,2917,9,counter,0,datastax
+2,split-one-retry,ONE,10,10000,split,7.000,true,32.4477,3081.9,100004,100000,100000,0,20,Write timeout=20,4,1.915,7.033,11108.092,6141,2,243,396,11,counter,0,datastax
+2,split-quorum,QUORUM,10,10000,split,7.000,false,38.3148,2609.4,99995,100000,99977,23,0,Write failure=9;Write timeout=14,18,2.460,7.261,4023.448,3967,2,0,0,0,counter,0,datastax
+2,split-quorum-retry,QUORUM,10,10000,split,7.000,true,37.4568,2669.7,100012,100000,100000,0,22,Write failure=5;Write timeout=17,12,2.291,7.765,11186.565,3898,2,0,0,0,counter,0,datastax
+2,killall-one,ONE,10,10000,kill-all,7.001,false,10.0476,2354.9,23660,100000,23661,76339,0,No hosts available=76320;Request timed out=19,-1,2.227,16.497,147.971,30420,1248,23965,29093,71,counter,0,datastax
+2,killall-quorum,QUORUM,10,10000,kill-all,7.002,false,9.5017,1014.0,9508,100000,9635,90365,0,No hosts available=90346;Request timed out=19,-127,5.460,29.180,90.037,21765,1269,21294,21294,127,counter,0,datastax
+2,killall-one-retry,ONE,10,10000,kill-all,7.000,true,80.8043,1237.6,99927,100000,100000,0,12289,No hosts available=12279;Request timed out=10,-73,0.906,12.210,65226.958,27288,1200,1197,26016,84429,counter,0,datastax
+3,kill-one,ONE,10,10000,kill-node2,7.000,false,30.5726,3269.4,99956,100000,99954,46,0,Request timed out=6;Write timeout=40,2,0.794,5.642,28.444,11551,1,0,69,8,counter,0,datastax
+3,kill-one-retry,ONE,10,10000,kill-node2,7.000,true,32.2029,3105.3,100003,100000,100000,0,45,Request timed out=5;Write timeout=40,3,0.853,6.720,10287.446,8046,1,2166,66,6,counter,0,datastax
+3,kill-quorum,QUORUM,10,10000,kill-node2,7.000,false,41.5712,2404.4,99955,100000,99954,46,0,Request timed out=6;Write timeout=40,1,1.393,11.062,63.839,8830,1,0,0,0,counter,0,datastax
+3,kill-quorum-retry,QUORUM,10,10000,kill-node2,7.000,true,31.8380,3140.9,100002,100000,100000,0,47,Request timed out=7;Write timeout=40,2,0.968,3.220,15152.166,10503,1,0,0,0,counter,0,datastax
+3,split-one,ONE,10,10000,split,7.000,false,20.1766,4955.2,99984,100000,99980,20,0,Write timeout=20,4,0.924,2.762,1024.856,3716,2,246,424,18,counter,0,datastax
+3,split-one-retry,ONE,10,10000,split,7.000,true,19.5803,5107.2,100003,100000,100000,0,20,Write timeout=20,3,0.913,1.871,11104.810,5710,1,1519,2540,16,counter,0,datastax
+3,split-quorum,QUORUM,10,10000,split,7.000,false,24.0293,4160.5,99995,100000,99975,25,0,Write failure=14;Write timeout=11,20,1.296,2.657,3903.569,3152,2,0,0,0,counter,0,datastax
+3,split-quorum-retry,QUORUM,10,10000,split,7.000,true,23.5043,4254.5,100015,100000,100000,0,23,Write failure=10;Write timeout=13,15,1.276,2.177,11057.471,3222,2,0,0,0,counter,0,datastax
+3,killall-one,ONE,10,10000,kill-all,7.000,false,7.8461,9598.6,75285,100000,75312,24688,0,No hosts available=24665;Request timed out=23,-27,0.969,2.492,8.714,29555,1201,27208,27248,835,counter,0,datastax
+3,killall-quorum,QUORUM,10,10000,kill-all,7.000,false,9.0141,2154.3,19377,100000,19419,80581,0,No hosts available=80565;Request timed out=16,-42,2.590,14.589,48.712,23405,1230,22589,22589,42,counter,0,datastax
+3,killall-one-retry,ONE,10,10000,kill-all,7.000,true,81.2372,1231.0,99815,100000,100000,0,11797,No hosts available=11787;Request timed out=10,-185,0.693,14.850,62969.055,25801,1108,8302,24516,85865,counter,0,datastax

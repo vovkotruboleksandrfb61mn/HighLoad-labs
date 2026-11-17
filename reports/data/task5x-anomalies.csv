@@ -1,0 +1,25 @@
+repeat,label,consistency,workers,increments_per_worker,disruption,disrupted_at_seconds,retry,seconds,ops_per_sec,final_value,expected,acknowledged,errors,retries,failures,applied_unacknowledged,p50_ms,p99_ms,max_ms,reader_reads,reader_failed,reader_backwards,reader_stale,reader_largest_shortfall,method,conflicts,driver
+1,w-one-r-one,ONE,10,10000,,,false,19.6737,5082.9,100000,100000,100000,0,0,,0,1.925,5.561,22.568,5014,0,3,194,8,counter,0,datastax
+1,w-one-r-quorum,ONE,10,10000,,,false,20.9980,4762.4,100000,100000,100000,0,0,,0,2.037,5.838,19.389,2258,0,0,0,0,counter,0,datastax
+1,w-quorum-r-one,QUORUM,10,10000,,,false,26.0686,3836.0,100000,100000,100000,0,0,,0,2.502,5.530,20.660,6210,0,0,1,1,counter,0,datastax
+1,w-quorum-r-quorum,QUORUM,10,10000,,,false,27.6036,3622.7,100000,100000,100000,0,0,,0,2.603,6.407,20.270,3959,0,0,0,0,counter,0,datastax
+1,rmw-one,ONE,10,1000,,,false,3.1304,3194.5,1380,10000,10000,0,0,,-8620,2.323,12.739,34.974,,,,,,rmw,0,datastax
+1,rmw-quorum,QUORUM,10,1000,,,false,4.5710,2187.7,1519,10000,10000,0,0,,-8481,4.229,10.206,17.626,,,,,,rmw,0,datastax
+1,lwt-quorum,QUORUM,10,1000,,,false,86.6240,96.5,8727,10000,8362,1638,0,Write timeout=1638,365,5.651,630.693,2775.468,,,,,,lwt,3132,datastax
+1,counter-quorum,QUORUM,10,1000,,,false,5.2314,1911.5,10000,10000,10000,0,0,,0,3.834,21.836,66.999,,,,,,counter,0,datastax
+2,w-one-r-one,ONE,10,10000,,,false,17.9108,5583.2,100000,100000,100000,0,0,,0,1.761,4.810,20.924,3920,0,0,28,4,counter,0,datastax
+2,w-one-r-quorum,ONE,10,10000,,,false,17.6814,5655.7,100000,100000,100000,0,0,,0,1.761,4.688,17.762,2223,0,0,0,0,counter,0,datastax
+2,w-quorum-r-one,QUORUM,10,10000,,,false,23.9318,4178.5,100000,100000,100000,0,0,,0,2.335,4.887,18.272,8798,0,0,7,3,counter,0,datastax
+2,w-quorum-r-quorum,QUORUM,10,10000,,,false,31.4127,3183.4,100000,100000,100000,0,0,,0,2.281,24.482,126.907,4164,0,0,0,0,counter,0,datastax
+2,rmw-one,ONE,10,1000,,,false,10.4178,959.9,1365,10000,10000,0,0,,-8635,7.809,50.095,172.824,,,,,,rmw,0,datastax
+2,rmw-quorum,QUORUM,10,1000,,,false,15.9711,626.1,1581,10000,10000,0,0,,-8419,4.931,75.588,173.961,,,,,,rmw,0,datastax
+2,lwt-quorum,QUORUM,10,1000,,,false,62.9586,140.0,9140,10000,8812,1188,0,Write timeout=1188,328,4.638,633.712,1305.472,,,,,,lwt,2682,datastax
+2,counter-quorum,QUORUM,10,1000,,,false,2.1923,4561.4,10000,10000,10000,0,0,,0,2.173,4.258,23.162,,,,,,counter,0,datastax
+3,w-one-r-one,ONE,10,10000,,,false,38.0243,2629.9,100000,100000,100000,0,0,,0,1.827,29.441,147.974,5075,0,5,244,10,counter,0,datastax
+3,w-one-r-quorum,ONE,10,10000,,,false,19.0168,5258.5,100000,100000,100000,0,0,,0,1.764,6.073,70.598,2441,0,0,0,0,counter,0,datastax
+3,w-quorum-r-one,QUORUM,10,10000,,,false,37.0589,2698.4,100000,100000,100000,0,0,,0,2.180,30.095,153.919,9967,0,91,7,3,counter,0,datastax
+3,w-quorum-r-quorum,QUORUM,10,10000,,,false,22.6583,4413.4,100000,100000,100000,0,0,,0,2.087,12.197,137.275,3946,0,0,0,0,counter,0,datastax
+3,rmw-one,ONE,10,1000,,,false,2.0757,4817.6,1264,10000,10000,0,0,,-8736,1.968,3.728,10.148,,,,,,rmw,0,datastax
+3,rmw-quorum,QUORUM,10,1000,,,false,3.2850,3044.1,1538,10000,10000,0,0,,-8462,3.074,6.304,13.283,,,,,,rmw,0,datastax
+3,lwt-quorum,QUORUM,10,1000,,,false,79.6925,107.0,8886,10000,8529,1471,0,Write timeout=1471,357,5.081,651.059,1521.454,,,,,,lwt,3149,datastax
+3,counter-quorum,QUORUM,10,1000,,,false,4.8939,2043.3,10000,10000,10000,0,0,,0,3.655,17.047,44.506,,,,,,counter,0,datastax

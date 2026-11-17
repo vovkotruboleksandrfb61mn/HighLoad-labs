@@ -8,6 +8,8 @@
 #   scripts/cassandra.sh stop           stop every node and the proxy
 #   scripts/cassandra.sh stop-node N    drain and stop node N (clean shutdown)
 #   scripts/cassandra.sh kill-node N    sudden failure of node N (SIGKILL)
+#   scripts/cassandra.sh kill-all       sudden failure of every node (SIGKILL,
+#                                       all at once); `start` brings them back
 #   scripts/cassandra.sh start-node N   start node N again
 #   scripts/cassandra.sh wait-up N      wait until every live node sees N as UN
 #   scripts/cassandra.sh wait-down N    wait until the other nodes see N as DN
@@ -30,7 +32,8 @@
 #
 # Data, configuration and logs live in $CASSANDRA_DATA_DIR/nodeN
 # (.cassandradata, gitignored). Overridable: CASSANDRA_HEAP (1G per node),
-# CASSANDRA_START_TIMEOUT seconds (180).
+# CASSANDRA_START_TIMEOUT seconds (180), CASSANDRA_COMMITLOG (periodic, the
+# default; batch; group:<ms>), applied when a node starts.
 set -euo pipefail
 
 script_dir=$(cd "$(dirname "$0")" && pwd)
@@ -105,6 +108,17 @@ data_file_directories:
     - {dir}/data
 """
 text = re.sub(r'- seeds: "[^"]*"', f'- seeds: "127.0.0.11:{storage},127.0.0.12:{storage}"', text)
+# Commit log mode: periodic (default, fsync every 10 s), batch (fsync before
+# every acknowledgement) or group:<ms> (fsync at most every <ms>, writes wait).
+mode = os.environ.get("CASSANDRA_COMMITLOG", "periodic")
+if mode == "batch":
+    text = re.sub(r"^commitlog_sync: periodic$", "commitlog_sync: batch", text, flags=re.M)
+    text = re.sub(r"^commitlog_sync_period: .*$", "", text, flags=re.M)
+elif mode.startswith("group:"):
+    text = re.sub(r"^commitlog_sync: periodic$", "commitlog_sync: group", text, flags=re.M)
+    text = re.sub(r"^commitlog_sync_period: .*$", f"commitlog_sync_group_window: {mode[6:]}ms", text, flags=re.M)
+elif mode != "periodic":
+    raise SystemExit(f"CASSANDRA_COMMITLOG must be periodic, batch or group:<ms>, not {mode}")
 open(path, "w").write(text)
 EOF
 }
@@ -219,6 +233,11 @@ case "$cmd" in
         ;;
     stop-node) stop_node "${1:-}" ;;
     kill-node) stop_node "${1:-}" KILL ;;
+    kill-all)
+        # Signal all three first, then wait, so no node outlives the others.
+        for n in "${NODES[@]}"; do node_alive "$n" && kill -KILL "$(cat "$(pid_file "$n")")"; done
+        for n in "${NODES[@]}"; do stop_node "$n" KILL; done
+        ;;
     start-node) start_proxy; start_node "${1:-}"; wait_state "$1" UN ;;
     wait-up) check_node "${1:-}"; wait_state "$1" UN ;;
     wait-down) check_node "${1:-}"; wait_state "$1" DN ;;

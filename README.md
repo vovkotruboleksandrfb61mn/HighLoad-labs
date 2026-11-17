@@ -16,8 +16,8 @@
 
 Усі роботи будують один і той самий сервіс: HTTP-лічильник (`GET /inc`,
 `GET /count`) на Swift 6 і SwiftNIO зі змінним сховищем (пам'ять, файл з
-`fsync`, PostgreSQL, Hazelcast, MongoDB, Cassandra). Для Hazelcast написано власний клієнт на
-Swift поверх Open Binary Client Protocol 2.x.
+`fsync`, PostgreSQL, Hazelcast, MongoDB, Cassandra). Для Hazelcast і Cassandra написано власні клієнти на
+Swift (Open Binary Client Protocol 2.x і CQL native protocol v4).
 
 Ноутбуки опубліковано з результатами виконання: вони обчислюють усі таблиці
 та рисунки звітів із виміряних даних і містять живу перевірку справжніх
@@ -31,6 +31,7 @@ Swift поверх Open Binary Client Protocol 2.x.
 | `Sources/counter-server` | HTTP-лічильник на SwiftNIO: рушії `async`, `handler`, `raw` (власний розбір HTTP) і `uring` (io_uring) |
 | `Sources/CounterCore` | сховища лічильника: пам'ять, файл з `fsync`, групування комітів, PostgreSQL, Hazelcast, MongoDB (retryable writes), Cassandra (`counter`) |
 | `Sources/HazelcastClient` | власний клієнт Hazelcast на Swift (Open Binary Client Protocol 2.x) |
+| `Sources/CQLClient` | власний клієнт Cassandra на Swift (CQL native protocol v4, token-aware) |
 | `Sources/loadgen` | генератор навантаження: N клієнтів, кожен зі своїм з'єднанням і послідовними запитами |
 | `Sources/pg-bench`, `Sources/hz-bench`, `Sources/mongo-bench`, `Sources/cassandra-bench` | варіанти оновлення лічильника з робіт № 2...5 |
 | `Tests` | тести (swift-testing) |

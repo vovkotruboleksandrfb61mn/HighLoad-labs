@@ -10,7 +10,7 @@ import CassandraClient
 /// A counter increment is not idempotent: a statement that times out may or
 /// may not have been applied, and repeating it may count twice. The store
 /// therefore never retries, and a failed increment is reported to the caller.
-public final class CassandraCounterStore: CounterStore {
+public final class CassandraCounterStore: CassandraBenchStore {
     private let client: CassandraClient
     private let incrementStatement: CassandraClient.PreparedStatement
     private let readStatement: CassandraClient.PreparedStatement
@@ -35,14 +35,7 @@ public final class CassandraCounterStore: CounterStore {
         consistency: CassandraConsistency,
         location: CassandraCounterLocation = CassandraCounterLocation()
     ) async throws -> CassandraCounterStore {
-        var configuration = CassandraClient.Configuration(
-            contactPointsProvider: { $0(.success(contactPoints)) },
-            port: Int32(port),
-            protocolVersion: .v4
-        )
-        configuration.requestTimeoutMillis = 12_000
-        configuration.tcpNodelay = true
-        let client = CassandraClient(configuration: configuration)
+        let client = CassandraClient(configuration: configuration(contactPoints: contactPoints, port: port))
         do {
             try await createSchema(location, on: client)
             return try await CassandraCounterStore(client: client, location: location, consistency: consistency)
@@ -75,17 +68,33 @@ public final class CassandraCounterStore: CounterStore {
         try await client.shutdownAsync()
     }
 
-    /// Creates the keyspace (SimpleStrategy) and the counter table. Schema
-    /// changes need every node up (consistency ALL).
-    private static func createSchema(_ location: CassandraCounterLocation, on client: CassandraClient) async throws {
-        let all = CassandraClient.Statement.Options(consistency: .all)
+    static func configuration(contactPoints: [String], port: Int) -> CassandraClient.Configuration {
+        var configuration = CassandraClient.Configuration(
+            contactPointsProvider: { $0(.success(contactPoints)) },
+            port: Int32(port),
+            protocolVersion: .v4
+        )
+        configuration.requestTimeoutMillis = 12_000
+        configuration.tcpNodelay = true
+        return configuration
+    }
+
+    /// Creates the keyspace (SimpleStrategy). Schema changes need every node
+    /// up (consistency ALL).
+    static func createKeyspace(_ location: CassandraCounterLocation, on client: CassandraClient) async throws {
         try await client.run(
             """
             CREATE KEYSPACE IF NOT EXISTS \(location.keyspace) \
             WITH replication = {'class': 'SimpleStrategy', 'replication_factor': \(location.replicationFactor)}
             """,
-            options: all
+            options: CassandraClient.Statement.Options(consistency: .all)
         )
+    }
+
+    /// Creates the keyspace and the counter table.
+    private static func createSchema(_ location: CassandraCounterLocation, on client: CassandraClient) async throws {
+        let all = CassandraClient.Statement.Options(consistency: .all)
+        try await createKeyspace(location, on: client)
         try await client.run(
             "CREATE TABLE IF NOT EXISTS \(location.qualifiedTable) (id text PRIMARY KEY, likes counter)",
             options: all

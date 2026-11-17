@@ -22,11 +22,12 @@ let package = Package(
         // Counter storage backends shared by the server and the tests:
         // PostgresNIO for Task 2, our HazelcastClient for Task 3 and
         // MongoKitten (connections and replica set discovery only; the
-        // retryable writes are ours) for Task 4, swift-cassandra-client for Task 5.
+        // retryable writes are ours) for Task 4, swift-cassandra-client and our CQLClient for Task 5.
         .target(
             name: "CounterCore",
             dependencies: [
                 "HazelcastClient",
+                "CQLClient",
                 .product(name: "NIOCore", package: "swift-nio"),
                 .product(name: "NIOPosix", package: "swift-nio"),
                 .product(name: "PostgresNIO", package: "postgres-nio"),
@@ -39,6 +40,14 @@ let package = Package(
         // Our client for the Hazelcast Open Binary Client Protocol 2.x.
         .target(
             name: "HazelcastClient",
+            dependencies: [
+                .product(name: "NIOCore", package: "swift-nio"),
+                .product(name: "NIOPosix", package: "swift-nio"),
+            ]
+        ),
+        // Our client for the Cassandra native protocol v4 (CQL).
+        .target(
+            name: "CQLClient",
             dependencies: [
                 .product(name: "NIOCore", package: "swift-nio"),
                 .product(name: "NIOPosix", package: "swift-nio"),
@@ -117,6 +126,14 @@ let package = Package(
                 .product(name: "NIOPosix", package: "swift-nio"),
                 .product(name: "MongoKitten", package: "MongoKitten"),
                 .product(name: "MongoClient", package: "MongoKitten"),
+            ]
+        ),
+        .testTarget(
+            name: "CQLClientTests",
+            dependencies: [
+                "CQLClient",
+                .product(name: "NIOCore", package: "swift-nio"),
+                .product(name: "NIOEmbedded", package: "swift-nio"),
             ]
         ),
         .testTarget(

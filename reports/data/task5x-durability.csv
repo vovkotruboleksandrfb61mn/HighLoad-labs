@@ -1,0 +1,28 @@
+repeat,label,consistency,workers,increments_per_worker,disruption,disrupted_at_seconds,retry,seconds,ops_per_sec,final_value,expected,acknowledged,errors,retries,failures,applied_unacknowledged,p50_ms,p99_ms,max_ms,reader_reads,reader_failed,reader_backwards,reader_stale,reader_largest_shortfall,method,conflicts,driver,waiting_on_commit,node1_wait_mean_us
+1,periodic,ONE,10,10000,,,false,23.3095,4290.1,100000,100000,100000,0,0,,0,1.545,16.133,204.726,,,,,,counter,0,datastax,0,NaN
+1,periodic,QUORUM,10,10000,,,false,44.2989,2257.4,100000,100000,100000,0,0,,0,2.005,58.506,436.794,,,,,,counter,0,datastax,0,NaN
+2,periodic,ONE,10,10000,,,false,45.8026,2183.3,100000,100000,100000,0,0,,0,3.221,20.234,63.517,,,,,,counter,0,datastax,0,NaN
+2,periodic,QUORUM,10,10000,,,false,30.4511,3284.0,100000,100000,100000,0,0,,0,2.374,13.321,41.112,,,,,,counter,0,datastax,0,NaN
+3,periodic,ONE,10,10000,,,false,26.4876,3775.4,100000,100000,100000,0,0,,0,1.850,14.202,49.449,,,,,,counter,0,datastax,0,NaN
+3,periodic,QUORUM,10,10000,,,false,20.9826,4765.9,100000,100000,100000,0,0,,0,2.043,5.156,17.558,,,,,,counter,0,datastax,0,NaN
+1,periodic,QUORUM,10,10000,kill-all,7.000,false,9.0934,2308.5,20924,100000,20992,79008,0,No hosts available=78986;Request timed out=22,-68,2.779,12.022,41.725,,,,,,counter,0,datastax,,
+2,periodic,QUORUM,10,10000,kill-all,7.000,false,9.2262,1358.3,12197,100000,12532,87468,0,No hosts available=87446;Request timed out=22,-335,4.252,21.042,42.461,,,,,,counter,0,datastax,,
+3,periodic,QUORUM,10,10000,kill-all,7.000,false,9.2268,1160.4,10591,100000,10707,89293,0,No hosts available=89275;Request timed out=18,-116,4.590,30.331,106.232,,,,,,counter,0,datastax,,
+1,batch,ONE,10,10000,,,false,309.2780,323.3,100000,100000,100000,0,0,,0,25.628,102.421,256.939,,,,,,counter,0,datastax,300275,10760.78517840805
+1,batch,QUORUM,10,10000,,,false,244.2141,409.5,100000,100000,100000,0,0,,0,22.127,65.821,119.276,,,,,,counter,0,datastax,300271,6166.204067525286
+2,batch,ONE,10,10000,,,false,362.8011,275.6,100000,100000,100000,0,0,,0,30.016,109.998,266.287,,,,,,counter,0,datastax,300298,12137.586770791617
+2,batch,QUORUM,10,10000,,,false,314.3796,318.1,100000,100000,100000,0,0,,0,26.719,92.607,311.056,,,,,,counter,0,datastax,300271,10771.366121537625
+3,batch,ONE,10,10000,,,false,225.9237,442.6,100000,100000,100000,0,0,,0,20.263,54.357,108.307,,,,,,counter,0,datastax,300271,6170.262920397659
+3,batch,QUORUM,10,10000,,,false,244.4745,409.0,100000,100000,100000,0,0,,0,21.842,66.237,128.347,,,,,,counter,0,datastax,300298,6931.63757756657
+1,batch,QUORUM,10,10000,kill-all,7.000,false,9.3412,165.2,1549,100000,1543,98457,0,No hosts available=98436;Request timed out=21,6,42.602,94.497,116.816,,,,,,counter,0,datastax,,
+2,batch,QUORUM,10,10000,kill-all,7.000,false,9.3629,307.9,2890,100000,2883,97117,0,No hosts available=97102;Request timed out=15,7,22.716,51.387,104.081,,,,,,counter,0,datastax,,
+3,batch,QUORUM,10,10000,kill-all,7.000,false,9.3982,308.8,2910,100000,2902,97098,0,No hosts available=97081;Request timed out=17,8,22.534,54.674,98.380,,,,,,counter,0,datastax,,
+1,group:10,ONE,10,10000,,,false,373.9172,267.4,100000,100000,100000,0,0,,0,32.338,94.803,124.851,,,,,,counter,0,datastax,300277,8234.908391842193
+1,group:10,QUORUM,10,10000,,,false,389.0756,257.0,100000,100000,100000,0,0,,0,34.116,91.074,1423.143,,,,,,counter,0,datastax,300331,9077.248690787908
+2,group:10,ONE,10,10000,,,false,410.1252,243.8,100000,100000,100000,0,0,,0,34.727,149.389,766.748,,,,,,counter,0,datastax,300411,8844.61752332175
+2,group:10,QUORUM,10,10000,,,false,379.5696,263.5,100000,100000,100000,0,0,,0,33.464,90.450,145.965,,,,,,counter,0,datastax,300271,8657.620107823368
+3,group:10,ONE,10,10000,,,false,407.2826,245.5,100000,100000,100000,0,0,,0,35.731,114.946,311.699,,,,,,counter,0,datastax,300533,8618.922966121227
+3,group:10,QUORUM,10,10000,,,false,400.3129,249.8,100000,100000,100000,0,0,,0,36.580,91.012,199.674,,,,,,counter,0,datastax,300298,11347.940321900054
+1,group:10,QUORUM,10,10000,kill-all,7.000,false,9.5163,185.7,1769,100000,1767,98233,0,No hosts available=98214;Request timed out=19,2,37.611,91.144,104.632,,,,,,counter,0,datastax,,
+2,group:10,QUORUM,10,10000,kill-all,7.000,false,9.6770,190.1,1847,100000,1840,98160,0,No hosts available=98140;Request timed out=20,7,35.355,90.880,131.317,,,,,,counter,0,datastax,,
+3,group:10,QUORUM,10,10000,kill-all,7.000,false,9.6071,186.3,1793,100000,1790,98210,0,No hosts available=98194;Request timed out=16,3,36.159,89.885,116.935,,,,,,counter,0,datastax,,
