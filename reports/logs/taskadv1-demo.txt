@@ -1,0 +1,122 @@
+# 1. Таблиця user_likes і налаштування MapStore обох мап (лише конфігурація, без власного коду).
+[08:47:48.685] $ scripts/pg.sh psql -c \d user_likes
+             Table "public.user_likes"
+ Column  |  Type  | Collation | Nullable | Default 
+---------+--------+-----------+----------+---------
+ user_id | bigint |           | not null | 
+ likes   | bigint |           | not null | 
+Indexes:
+    "user_likes_pkey" PRIMARY KEY, btree (user_id)
+
+[08:47:48.722] $ grep -A 14 likes_write_through: deploy/hazelcast-node1.yaml
+    likes_write_through:
+      map-store:
+        enabled: true
+        class-name: com.hazelcast.mapstore.GenericMapStore
+        write-delay-seconds: 0
+        properties:
+          data-connection-ref: likes-db
+          external-name: user_likes
+          id-column: user_id
+          columns: likes
+          # The value is the likes column itself (a Long), not a GenericRecord.
+          single-column-as-value: "true"
+          # Read-through only: no loading of every row when the map starts.
+          load-all-keys: "false"
+    # Write-behind: changes are queued and stored 5 s later, the latest value
+[08:47:48.727] $ grep -A 11 likes_write_behind: deploy/hazelcast-node1.yaml
+    likes_write_behind:
+      map-store:
+        enabled: true
+        class-name: com.hazelcast.mapstore.GenericMapStore
+        write-delay-seconds: 5
+        write-coalescing: true
+        properties:
+          data-connection-ref: likes-db
+          external-name: user_likes
+          id-column: user_id
+          columns: likes
+          single-column-as-value: "true"
+
+# 2. Write-through: рядок у таблиці змінено ще до відповіді на запит.
+[08:47:48.858] $ curl -s -w %{http_code}\n -X POST http://127.0.0.1:21400/inc?user_id=42
+204
+[08:47:48.888] $ curl -s -w %{http_code}\n -X POST http://127.0.0.1:21400/inc?user_id=42
+204
+[08:47:48.903] $ curl -s -w %{http_code}\n -X POST http://127.0.0.1:21400/inc?user_id=42
+204
+[08:47:48.920] $ curl -s http://127.0.0.1:21400/count?user_id=42
+3
+[08:47:48.931] $ scripts/pg.sh psql -c SELECT * FROM user_likes WHERE user_id = 42
+ user_id | likes 
+---------+-------
+      42 |     3
+(1 row)
+
+
+# 3. Write-behind: мапа вже має 6, таблиця ще 3; через write-delay-seconds (5 с) таблиця наздоганяє мапу.
+[08:47:49.083] $ curl -s -w %{http_code}\n -X POST http://127.0.0.1:21400/inc?user_id=42
+204
+[08:47:49.096] $ curl -s -w %{http_code}\n -X POST http://127.0.0.1:21400/inc?user_id=42
+204
+[08:47:49.107] $ curl -s -w %{http_code}\n -X POST http://127.0.0.1:21400/inc?user_id=42
+204
+[08:47:49.119] $ curl -s http://127.0.0.1:21400/count?user_id=42
+6
+[08:47:49.129] $ scripts/pg.sh psql -c SELECT * FROM user_likes WHERE user_id = 42
+ user_id | likes 
+---------+-------
+      42 |     3
+(1 row)
+
+[08:47:49.151] $ sleep 6
+[08:47:55.156] $ scripts/pg.sh psql -c SELECT * FROM user_likes WHERE user_id = 42
+ user_id | likes 
+---------+-------
+      42 |     6
+(1 row)
+
+
+# 4. Read-through: evictAll прибирає записи з пам'яті (таблицю не чіпає), наступне читання йде через MapLoader.
+[08:47:55.180] $ .build/release/cache-check --header --map likes_write_behind --users 42 --evict
+label,map,user,imap,db_at_start,db_after_wait,waited_seconds,equal,reloaded_after_evict
+,likes_write_behind,42,6,6,6,0.00,true,6
+[08:47:55.209] $ curl -s http://127.0.0.1:21400/count?user_id=42
+6
+
+# 5. Прогони по 100 000 інкрементів (reports/data/taskadv1.csv) і перевірка мапа = таблиця.
+[08:47:55.224] $ bash -c cut -d, -f1,2,3,7,8,9,11,12,14 reports/data/taskadv1.csv | column -s, -t
+repeat  users     store                    seconds   rps     final_value  correct  conflicts  db_rows_written
+1       distinct  postgres-users           28.8622   3464.7  100000       true                100010
+1       distinct  hazelcast-write-through  93.7341   1066.8  100000       true     0          100010
+1       distinct  hazelcast-write-behind   13.6540   7323.8  100000       true     0          96
+2       distinct  postgres-users           29.0821   3438.5  100000       true                100010
+2       distinct  hazelcast-write-through  86.9936   1149.5  100000       true     0          100010
+2       distinct  hazelcast-write-behind   12.5910   7942.2  100000       true     0          126
+3       distinct  postgres-users           28.8555   3465.5  100000       true                100010
+3       distinct  hazelcast-write-through  83.5312   1197.2  100000       true     0          100010
+3       distinct  hazelcast-write-behind   14.0349   7125.1  100000       true     0          131
+1       shared    postgres-users           150.2963  665.4   100000       true                100001
+1       shared    hazelcast-write-behind   39.0894   2558.2  100000       true     448938     39
+2       shared    postgres-users           148.6928  672.5   100000       true                100001
+2       shared    hazelcast-write-behind   39.3664   2540.2  100000       true     447942     40
+3       shared    postgres-users           149.9267  667.0   100000       true                100001
+3       shared    hazelcast-write-behind   39.4959   2531.9  100000       true     447879     37
+1       shared    hazelcast-write-through  322.5789  310.0   100000       true     459517     100001
+2       shared    hazelcast-write-through  323.2365  309.4   100000       true     458984     100001
+3       shared    hazelcast-write-through  421.7375  237.1   100000       true     463107     100001
+
+[08:47:55.234] $ bash -c cut -d, -f1,3,4,5,6,7,8,9 reports/data/taskadv1-check.csv | grep -v ',[2-9],\|,10,' | column -s, -t
+label                               user  imap    db_at_start  db_after_wait  waited_seconds  equal  reloaded_after_evict
+1-distinct-hazelcast-write-through  1     10000   10000        10000          0.00            true   10000
+1-distinct-hazelcast-write-behind   1     10000   9605         10000          0.21            true   10000
+2-distinct-hazelcast-write-through  1     10000   10000        10000          0.00            true   10000
+2-distinct-hazelcast-write-behind   1     10000   9876         10000          0.51            true   10000
+3-distinct-hazelcast-write-through  1     10000   10000        10000          0.00            true   10000
+3-distinct-hazelcast-write-behind   1     10000   10000        10000          0.00            true   10000
+1-shared-hazelcast-write-behind     1     100000  99862        100000         0.91            true   100000
+2-shared-hazelcast-write-behind     1     100000  99931        100000         0.96            true   100000
+3-shared-hazelcast-write-behind     1     100000  98989        100000         0.56            true   100000
+1-shared-hazelcast-write-through    1     100000  100000       100000         0.00            true   100000
+2-shared-hazelcast-write-through    1     100000  100000       100000         0.00            true   100000
+3-shared-hazelcast-write-through    1     100000  100000       100000         0.00            true   100000

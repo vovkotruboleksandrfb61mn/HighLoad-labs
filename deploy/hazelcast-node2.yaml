@@ -29,3 +29,50 @@ hazelcast:
   cp-subsystem:
     cp-member-count: 3
     group-size: 3
+
+  # Task Adv 1: the maps likes_write_through and likes_write_behind cache the
+  # PostgreSQL table user_likes (user_id bigint PRIMARY KEY, likes bigint).
+  # The generic MapLoader/MapStore (hazelcast-mapstore) reaches the table
+  # over the JDBC data connection below and the SQL engine, which needs Jet;
+  # the PostgreSQL JDBC driver comes from CLASSPATH (scripts/hz.sh). No
+  # MapStore code of our own: only this configuration.
+  jet:
+    enabled: true
+  data-connection:
+    likes-db:
+      type: JDBC
+      shared: true
+      properties:
+        jdbcUrl: jdbc:postgresql://127.0.0.1:21410/postgres
+        user: postgres
+  map:
+    # Write-through: a change is in the table before the member answers.
+    likes_write_through:
+      map-store:
+        enabled: true
+        class-name: com.hazelcast.mapstore.GenericMapStore
+        write-delay-seconds: 0
+        properties:
+          data-connection-ref: likes-db
+          external-name: user_likes
+          id-column: user_id
+          columns: likes
+          # The value is the likes column itself (a Long), not a GenericRecord.
+          single-column-as-value: "true"
+          # Read-through only: no loading of every row when the map starts.
+          load-all-keys: "false"
+    # Write-behind: changes are queued and stored 5 s later, the latest value
+    # of each key only (write-coalescing).
+    likes_write_behind:
+      map-store:
+        enabled: true
+        class-name: com.hazelcast.mapstore.GenericMapStore
+        write-delay-seconds: 5
+        write-coalescing: true
+        properties:
+          data-connection-ref: likes-db
+          external-name: user_likes
+          id-column: user_id
+          columns: likes
+          single-column-as-value: "true"
+          load-all-keys: "false"

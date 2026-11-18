@@ -35,6 +35,34 @@ struct CodecRequestTests {
         )
     }
 
+    /// The same layout as Map.Put; only the message type differs.
+    @Test("Map.PutIfAbsent")
+    func mapPutIfAbsent() throws {
+        let message = MapPutIfAbsentCodec.encodeRequest(
+            name: "counters",
+            key: key,
+            value: Int64(5).hazelcastData(),
+            threadID: 7
+        )
+        #expect(
+            try wireHex(message)
+                == "2600000000c0000e01000000000000000000ffffffff0700000000000000ffffffffffffffff"
+                + "0e0000000000636f756e7465727319000000000000000000fffffff500000007636f756e746572"
+                + "16000000002000000000fffffff80000000000000005"
+        )
+    }
+
+    /// No fixed fields: the initial frame is the bare request header, then
+    /// the name as the final frame.
+    @Test("Map.EvictAll")
+    func mapEvictAll() throws {
+        let message = MapEvictAllCodec.encodeRequest(name: "counters")
+        #expect(
+            try wireHex(message)
+                == "1600000000c0001f01000000000000000000ffffffff" + "0e0000000020636f756e74657273"
+        )
+    }
+
     @Test("Map.Lock")
     func mapLock() throws {
         let message = MapLockCodec.encodeRequest(name: "counters", key: key, threadID: 7, referenceID: 3)

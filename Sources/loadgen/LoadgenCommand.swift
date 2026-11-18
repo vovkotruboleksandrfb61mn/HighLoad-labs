@@ -11,7 +11,9 @@ struct LoadgenCommand: AsyncParsableCommand {
         discussion: """
             Calls POST /reset, lets every client open its connection, starts all \
             clients together, times N x requests GET /inc, then checks that \
-            GET /count equals N x requests. Exits with status 2 if it does not.
+            GET /count equals N x requests. Exits with status 2 if it does not. \
+            With --user-id the counters are per user: POST /inc?user_id=N, and \
+            the check is on the sum of GET /count?user_id=N over the users.
             """
     )
 
@@ -27,6 +29,12 @@ struct LoadgenCommand: AsyncParsableCommand {
     @Option(name: .customLong("store-label"), help: "Value of the CSV 'store' column.")
     var storeLabel = "unknown"
 
+    @Option(name: .customLong("user-id"), help: "Increment the counter of this user with POST /inc?user_id=N instead of GET /inc.")
+    var userID: Int64?
+
+    @Flag(name: .customLong("distinct-users"), help: "With --user-id: client i increments user N + i instead of every client incrementing user N.")
+    var distinctUsers = false
+
     @Option(help: "HTTP client for the timed requests: ahc (AsyncHTTPClient) or nio (a channel handler per connection). Both send each client's requests one at a time over its own keep-alive connection.")
     var engine: LoadEngine = .ahc
 
@@ -40,6 +48,7 @@ struct LoadgenCommand: AsyncParsableCommand {
         guard clients > 0 else { throw ValidationError("--clients must be positive") }
         guard requests > 0 else { throw ValidationError("--requests must be positive") }
         guard eventLoops > 0 else { throw ValidationError("--event-loops must be positive") }
+        if distinctUsers && userID == nil { throw ValidationError("--distinct-users needs --user-id") }
     }
 
     func run() async throws {
@@ -60,6 +69,7 @@ struct LoadgenCommand: AsyncParsableCommand {
                 baseURL: baseURL,
                 clients: clients,
                 requests: requests,
+                workload: Workload(firstUser: userID, distinctUsers: distinctUsers),
                 engine: engine,
                 eventLoops: eventLoops
             ).run()

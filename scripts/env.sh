@@ -48,6 +48,21 @@ if [ "${HLS_IO_URING:-}" != 0 ]; then
     unset _hls_input
 fi
 
+# The PostgreSQL JDBC driver for the Hazelcast members' generic MapStore
+# (Task Adv 1): nixpkgs postgresql_jdbc, from the Nix env's inputs.
+if [ -z "${HLS_PG_JDBC_JAR:-}" ]; then
+    for _hls_input in ${nativeBuildInputs:-} ${buildInputs:-}; do
+        case "$_hls_input" in
+            *-postgresql-jdbc-*)
+                for _hls_jar in "$_hls_input"/share/java/*.jar; do
+                    [ -f "$_hls_jar" ] && export HLS_PG_JDBC_JAR="$_hls_jar"
+                done
+                ;;
+        esac
+    done
+    unset _hls_input _hls_jar
+fi
+
 if ! command -v swift >/dev/null 2>&1; then
     echo "env.sh: swift is not on PATH (Swift 6 is required)" >&2
 fi
@@ -103,6 +118,9 @@ hls_store_args() {
         disk) printf '%s\n' --file "$HLS_DATA/counter.txt" ;;
         postgres) printf '%s\n' --pg-url "$PG_URL" ;;
         hazelcast) printf '%s\n' --hz-address "$HZ_ADDRESS" ;;
+        postgres-users) printf '%s\n' --pg-url "$PG_URL" ;;
+        hazelcast-write-through) printf '%s\n' --hz-address "$HZ_ADDRESS" --hz-map likes_write_through ;;
+        hazelcast-write-behind) printf '%s\n' --hz-address "$HZ_ADDRESS" --hz-map likes_write_behind ;;
         mongo) printf '%s\n' --mongo-url "$MONGO_URL" ;;
         cassandra-one | cassandra-quorum)
             printf '%s\n' --cassandra-hosts "$CASSANDRA_HOSTS" --cassandra-port "$CASSANDRA_PORT" \
@@ -114,10 +132,13 @@ hls_store_args() {
 
 # hls_start_server <store>: starts the release server in the background, sets
 # HLS_SERVER_PID and waits until it answers GET /count. cassandra-one and
-# cassandra-quorum are --store cassandra at that consistency level.
+# cassandra-quorum are --store cassandra at that consistency level;
+# hazelcast-write-through and hazelcast-write-behind are --store
+# hazelcast-cache on the map of that name.
 hls_start_server() {
     local store=$1 kind=${1%-one} args
     kind=${kind%-quorum}
+    case $kind in hazelcast-write-*) kind=hazelcast-cache ;; esac
     mkdir -p "$HLS_DATA" "$HLS_LOG_DIR"
     [ "$store" = disk ] && rm -f "$HLS_DATA/counter.txt"
     args=$(hls_store_args "$store") || return 1

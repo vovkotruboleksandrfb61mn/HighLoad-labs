@@ -8,6 +8,10 @@ enum StoreKind: String, CaseIterable, ExpressibleByArgument {
     case postgres
     case postgresSharded = "postgres-sharded"
     case hazelcast
+    /// Task Adv 1: per-user counters in PostgreSQL, written directly.
+    case postgresUsers = "postgres-users"
+    /// Task Adv 1: per-user counters in a Hazelcast IMap backed by PostgreSQL.
+    case hazelcastCache = "hazelcast-cache"
     case mongo
     case cassandra
 }
@@ -24,6 +28,7 @@ struct StoreConfiguration {
     var postgresPoolSize = 20
     var postgresShards = 10
     var hazelcastAddress: String
+    var hazelcastMap = "likes_write_through"
     var mongoURL: String
     var mongoClients = 10
     var mongoShards = 1
@@ -63,6 +68,14 @@ struct StoreConfiguration {
             ) { try await body($0) }
         case .hazelcast:
             return try await HazelcastCounterStore.withStore(address: hazelcastAddress, log: { Log.info($0) }) { try await body($0) }
+        case .postgresUsers:
+            return try await PostgresUserCounterStore.withStore(url: postgresURL, maximumConnections: postgresPoolSize) {
+                try await body($0)
+            }
+        case .hazelcastCache:
+            return try await HazelcastCacheCounterStore.withStore(address: hazelcastAddress, mapName: hazelcastMap) {
+                try await body($0)
+            }
         case .mongo:
             return try await MongoCounterStore.withStore(
                 url: mongoURL,

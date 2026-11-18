@@ -6,7 +6,7 @@ import NIOCore
 struct CounterServerCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "counter-server",
-        abstract: "An HTTP counter: GET /inc, GET /count, POST /reset."
+        abstract: "An HTTP counter: GET /inc, GET /count, POST /reset; per user: POST /inc?user_id=N, GET /count?user_id=N, POST /reset?user_id=N, GET /stats."
     )
 
     @Option(help: "Where the counter lives: \(StoreKind.allValueStrings.joined(separator: "|")).")
@@ -38,6 +38,9 @@ struct CounterServerCommand: AsyncParsableCommand {
 
     @Option(name: .customLong("hz-address"), help: "Hazelcast member host:port for --store hazelcast; with a comma-separated list, the member answering fastest (normally the CP group leader) is used.")
     var hzAddress = "127.0.0.1:5701"
+
+    @Option(name: .customLong("hz-map"), help: "For --store hazelcast-cache: the IMap, likes_write_through or likes_write_behind (deploy/hazelcast-node*.yaml).")
+    var hzMap = "likes_write_through"
 
     @Option(name: .customLong("mongo-url"), help: "MongoDB replica set URL for --store mongo; list every member, so the store finds the new primary after a failover.")
     var mongoURL = "mongodb://127.0.0.1:21430,127.0.0.1:21431,127.0.0.1:21432/?replicaSet=rs0"
@@ -91,6 +94,7 @@ struct CounterServerCommand: AsyncParsableCommand {
             postgresPoolSize: pgPool,
             postgresShards: pgShards,
             hazelcastAddress: hzAddress,
+            hazelcastMap: hzMap,
             mongoURL: mongoURL,
             mongoClients: mongoClients,
             mongoShards: mongoShards,

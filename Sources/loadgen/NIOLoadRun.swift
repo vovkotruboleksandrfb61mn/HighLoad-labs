@@ -16,6 +16,7 @@ struct NIOLoadRun: Sendable {
     let port: Int
     let clients: Int
     let requests: Int
+    var workload = Workload()
     let eventLoops: Int
 
     /// Opens every connection and makes one GET /count on each, then sends
@@ -57,18 +58,24 @@ struct NIOLoadRun: Sendable {
 
         // Warm-up: one GET /count per connection, outside the clock.
         try await EventLoopFuture.andAllSucceed(
-            channels.map { Self.send(path: "/count", count: 1, expecting: .ok, on: $0) },
+            channels.enumerated().map { index, channel in
+                Self.send(.GET, path: workload.count(of: workload.user(ofClient: index)), count: 1, expecting: .ok, on: channel)
+            },
             on: group.any()
         ).get()
 
+        let increments = channels.indices.map { workload.increment(ofClient: $0) }
         let clock = ContinuousClock()
         let start = clock.now
-        let runs = channels.map { Self.send(path: "/inc", count: requests, expecting: .noContent, on: $0) }
+        let runs = zip(channels, increments).map { channel, increment in
+            Self.send(increment.method, path: increment.path, count: requests, expecting: .noContent, on: channel)
+        }
         try await EventLoopFuture.andAllSucceed(runs, on: group.any()).get()
         return clock.now - start
     }
 
     private static func send(
+        _ method: HTTPMethod,
         path: String,
         count: Int,
         expecting status: HTTPResponseStatus,
@@ -78,7 +85,7 @@ struct NIOLoadRun: Sendable {
         channel.eventLoop.execute {
             do {
                 let requester = try channel.pipeline.syncOperations.handler(type: SequentialRequester.self)
-                requester.start(path: path, count: count, expecting: status, promise: promise)
+                requester.start(method, path: path, count: count, expecting: status, promise: promise)
             } catch {
                 promise.fail(error)
             }
@@ -118,14 +125,17 @@ final class SequentialRequester: ChannelDuplexHandler {
         self.context = nil
     }
 
-    func start(path: String, count: Int, expecting: HTTPResponseStatus, promise: EventLoopPromise<Void>) {
+    func start(_ method: HTTPMethod, path: String, count: Int, expecting: HTTPResponseStatus, promise: EventLoopPromise<Void>) {
         guard job == nil, let context else {
             promise.fail(LoadgenError(description: "connection busy or closed"))
             return
         }
         var headers = HTTPHeaders()
         headers.add(name: "host", value: host)
-        let head = HTTPRequestHead(version: .http1_1, method: .GET, uri: path, headers: headers)
+        if method == .POST {
+            headers.add(name: "content-length", value: "0")
+        }
+        let head = HTTPRequestHead(version: .http1_1, method: method, uri: path, headers: headers)
         job = Job(head: head, remaining: count, expecting: expecting, promise: promise)
         sendNext(context: context)
     }
@@ -148,7 +158,7 @@ final class SequentialRequester: ChannelDuplexHandler {
                 self.job = nil
                 job.promise.fail(
                     LoadgenError(
-                        description: "GET \(job.head.uri) returned \(lastStatus?.code ?? 0), expected \(job.expecting.code)"
+                        description: "\(job.head.method) \(job.head.uri) returned \(lastStatus?.code ?? 0), expected \(job.expecting.code)"
                     )
                 )
                 return

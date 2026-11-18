@@ -94,6 +94,17 @@ let package = Package(
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
         ),
+        // Task Adv 1: a Hazelcast map against the PostgreSQL table behind it.
+        .executableTarget(
+            name: "cache-check",
+            dependencies: [
+                "CommandLineSupport",
+                "CounterCore",
+                "HazelcastClient",
+                .product(name: "PostgresNIO", package: "postgres-nio"),
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ]
+        ),
         .executableTarget(
             name: "mongo-bench",
             dependencies: [

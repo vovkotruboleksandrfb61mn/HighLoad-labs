@@ -23,6 +23,25 @@ NODES=(1 2 3)
 # Printed by every CP member once the METADATA group has its 3 members.
 CP_READY_PATTERN='CP Group Members \{.*size:3'
 
+# Hazelcast 5.4 needs Java 17 or newer; the Nix env puts JDK 8 first on PATH
+# (for other tools). HZ_JAVA_HOME overrides the search.
+java_home() {
+    local java major
+    if [ -n "${HZ_JAVA_HOME:-}" ]; then
+        printf '%s\n' "$HZ_JAVA_HOME"
+        return
+    fi
+    while read -r java; do
+        major=$("$java" -version 2>&1 | sed -n '1s/.*version "\([0-9]*\).*/\1/p')
+        if [ "${major:-0}" -ge 17 ]; then
+            dirname "$(dirname "$(readlink -f "$java")")"
+            return
+        fi
+    done < <(type -ap java)
+    echo "no Java 17 or newer on PATH; set HZ_JAVA_HOME" >&2
+    return 1
+}
+
 pid_file() { printf '%s/hz-node%s.pid\n' "$HZ_RUN_DIR" "$1"; }
 log_file() { printf '%s/hz-node%s.log\n' "$HZ_LOG_DIR" "$1"; }
 member_port() { printf '%s\n' $((5700 + $1)); }
@@ -58,13 +77,21 @@ start_member() {
     # (HZ_ADDRESS would become `hazelcast.address`), so the member gets none
     # of ours. The subshell, nohup and `hz start` all exec, so $! ends up
     # being the member's JVM.
+    local java_home
+    java_home=$(java_home) || return 1
     (
         home=$HZ_HOME heap=$HZ_HEAP
+        export JAVA_HOME=$java_home
         for variable in "${!HZ_@}"; do
             unset "$variable"
         done
         export HAZELCAST_CONFIG="$HLS_ROOT/deploy/hazelcast-node$n.yaml"
         export LOGGING_CONFIG="$HLS_ROOT/deploy/hazelcast-log4j2.properties"
+        # The generic MapStore of the Task Adv 1 maps needs the PostgreSQL
+        # JDBC driver; bin/hz appends CLASSPATH to its own.
+        if [ -n "${HLS_PG_JDBC_JAR:-}" ]; then
+            export CLASSPATH="$HLS_PG_JDBC_JAR${CLASSPATH:+:$CLASSPATH}"
+        fi
         export MIN_HEAP_SIZE="$heap" MAX_HEAP_SIZE="$heap"
         exec nohup "$home/bin/hz" start >"$log" 2>&1 </dev/null
     ) &
@@ -96,6 +123,9 @@ start() {
     if [ ! -x "$HZ_HOME/bin/hz" ]; then
         echo "Hazelcast 5.4.0 not found at $HZ_HOME" >&2
         exit 1
+    fi
+    if [ -z "${HLS_PG_JDBC_JAR:-}" ]; then
+        echo "no PostgreSQL JDBC driver (nixpkgs postgresql_jdbc): the Task Adv 1 maps will not reach the database" >&2
     fi
     mkdir -p "$HZ_LOG_DIR" "$HZ_RUN_DIR"
     local n

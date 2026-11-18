@@ -39,6 +39,32 @@ public struct HazelcastMap<Key: HazelcastSerializable, Value: HazelcastSerializa
         }
     }
 
+    /// Stores `value` under `key` only if the key has no value yet, and
+    /// returns the value already there (`nil` if `value` was stored). A map
+    /// with a MapLoader asks the loader first, so a key that is only in the
+    /// external store counts as present.
+    public func putIfAbsent(_ key: Key, _ value: Value, threadID: Int64) async throws -> Value? {
+        let keyData = key.hazelcastData()
+        let request = MapPutIfAbsentCodec.encodeRequest(
+            name: name,
+            key: keyData,
+            value: value.hazelcastData(),
+            threadID: threadID
+        )
+        let response = try await client.invoke(request, on: keyData, expecting: MapPutIfAbsentCodec.responseType)
+        return try MapPutIfAbsentCodec.decodeResponse(response).map { data throws(HazelcastError) in
+            try Value(hazelcastData: data)
+        }
+    }
+
+    /// Drops every entry from the members' memory. Unlike `clear()`, the
+    /// map's MapStore is not called: the external store keeps its rows, and
+    /// the next `get` loads the key from it again (read-through).
+    public func evictAll() async throws {
+        let request = MapEvictAllCodec.encodeRequest(name: name)
+        _ = try await client.invoke(request, expecting: MapEvictAllCodec.responseType)
+    }
+
     /// Replaces the value of `key` with `new` only if it currently equals
     /// `expected` (compared in serialized form). Returns whether it did.
     public func replace(_ key: Key, expected: Value, new: Value, threadID: Int64) async throws -> Bool {
